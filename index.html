@@ -7,7 +7,8 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="theme-color" content="#19324D">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="apple-touch-icon" href="icons/icon-192.png">
+<link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png">
 <title>ABA – Anděl Bet Analytics</title>
 <style>
 :root{
@@ -85,9 +86,36 @@ th{color:var(--muted);font-weight:600;background:#FAFBFC}
 .check-row input{width:auto}
 @media(max-width:900px){.country-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:560px){.cards,.country-grid{grid-template-columns:1fr}}
+
+#abaSplash{
+  position:fixed;inset:0;z-index:9999;
+  display:flex;align-items:center;justify-content:center;
+  background:#080B0D;
+  transition:opacity .35s ease,visibility .35s ease;
+}
+#abaSplash.hide{opacity:0;visibility:hidden;pointer-events:none}
+#abaSplashInner{text-align:center;padding:24px}
+#abaSplash img{
+  width:min(52vw,320px);height:auto;border-radius:24%;
+  display:block;margin:0 auto 18px;
+}
+#abaSplashTitle{font-size:28px;font-weight:700;letter-spacing:.08em;color:#fff}
+#abaSplashSub{margin-top:8px;font-size:14px;letter-spacing:.12em;color:#1FD6E5}
+#abaSplashVersion{margin-top:12px;font-size:12px;color:#8AA0AE}
+
 </style>
 </head>
 <body>
+
+<div id="abaSplash" aria-label="Spouštění ABA">
+  <div id="abaSplashInner">
+    <img src="icons/icon-512.png" alt="ABA – Angel Bet Analytics">
+    <div id="abaSplashTitle">ABA</div>
+    <div id="abaSplashSub">ANGEL BET ANALYTICS</div>
+    <div id="abaSplashVersion">v0.11.0</div>
+  </div>
+</div>
+
 <section id="login">
   <div class="login-card">
     <h1>ABA</h1>
@@ -124,7 +152,7 @@ th{color:var(--muted);font-weight:600;background:#FAFBFC}
 <section id="app" class="hidden">
 <header>
   <strong>ABA – Anděl Bet Analytics</strong>
-  <div style="display:flex;align-items:center;gap:10px"><span id="versionBadge" class="small">v0.10.0</span><span>Zobák</span><button class="secondary" onclick="logout()">Odhlásit</button></div>
+  <div style="display:flex;align-items:center;gap:10px"><span id="versionBadge" class="small">v0.11.0</span><span>Zobák</span><button class="secondary" onclick="logout()">Odhlásit</button></div>
 </header>
 <div class="layout">
 <nav>
@@ -147,7 +175,7 @@ th{color:var(--muted);font-weight:600;background:#FAFBFC}
 </section>
 
 <script>
-const APP_VERSION='0.10.0';
+const APP_VERSION='0.11.0';
 const KEY='aba_ipad_v01';
 const AUTH_KEY='aba_auth_v1';
 const COMPETITIONS = [
@@ -256,7 +284,7 @@ function migrateData(raw){
       if(!m.status)m.status='Čeká';
     });
   });
-  d.schemaVersion=7;
+  d.schemaVersion=8;
   return d;
 }
 function loadData(){
@@ -266,7 +294,7 @@ function loadData(){
   }catch(e){}
   return migrateData(structuredClone(defaultData));
 }
-function saveData(){data.schemaVersion=7;localStorage.setItem(KEY,JSON.stringify(data))}
+function saveData(){data.schemaVersion=8;localStorage.setItem(KEY,JSON.stringify(data))}
 function money(n){return new Intl.NumberFormat('cs-CZ',{maximumFractionDigits:0}).format(Number(n)||0)+' Kč'}
 function esc(s){return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
 function bytesToB64(bytes){
@@ -964,7 +992,7 @@ function renderSettings(){
 <button class="secondary" onclick="resetLogin()">Změnit přihlášení</button>
 <button class="danger" onclick="resetData()">Obnovit výchozí data</button>
 </div>
- <p class="small">Verze: ABA 0.10.0 · Data jsou uložená pouze v tomto prohlížeči na tomto zařízení.</p></div>`;
+ <p class="small">Verze: ABA 0.11.0 · Data jsou uložená pouze v tomto prohlížeči na tomto zařízení.</p></div>`;
 }
 function saveSettings(){data.settings.startingBankroll=Number(document.getElementById('bankroll').value.replace(',','.'))||200000;saveData();alert('Nastavení uloženo.');renderDashboard()}
 function exportData(){const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`ABA_zaloha_${new Date().toISOString().slice(0,10)}_v${APP_VERSION}.json`;a.click();URL.revokeObjectURL(a.href)}
@@ -1032,5 +1060,13 @@ if ("serviceWorker" in navigator) {
   });
 }
 </script>
+
+<script>
+window.addEventListener('load',()=>{
+  const splash=document.getElementById('abaSplash');
+  setTimeout(()=>splash?.classList.add('hide'),900);
+});
+</script>
+
 </body>
 </html>

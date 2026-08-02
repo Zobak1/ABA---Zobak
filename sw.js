@@ -1,5 +1,13 @@
-const CACHE='aba-pwa-v0-10-bet-types';
-const ASSETS=['./','./manifest.webmanifest','./icons/icon-192.png','./icons/icon-512.png'];
+const CACHE='aba-pwa-v0-11-branding';
+const ASSETS=[
+  './',
+  './index.html',
+  './manifest.webmanifest',
+  './icons/icon-192.png',
+  './icons/icon-512.png',
+  './icons/apple-touch-icon.png',
+  './icons/favicon-32.png'
+];
 
 self.addEventListener('install',event=>{
   event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(ASSETS)));

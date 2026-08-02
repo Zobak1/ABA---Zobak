@@ -124,7 +124,7 @@ th{color:var(--muted);font-weight:600;background:#FAFBFC}
 <section id="app" class="hidden">
 <header>
   <strong>ABA – Anděl Bet Analytics</strong>
-  <div style="display:flex;align-items:center;gap:10px"><span id="versionBadge" class="small">v0.9.0</span><span>Zobák</span><button class="secondary" onclick="logout()">Odhlásit</button></div>
+  <div style="display:flex;align-items:center;gap:10px"><span id="versionBadge" class="small">v0.10.0</span><span>Zobák</span><button class="secondary" onclick="logout()">Odhlásit</button></div>
 </header>
 <div class="layout">
 <nav>
@@ -147,7 +147,7 @@ th{color:var(--muted);font-weight:600;background:#FAFBFC}
 </section>
 
 <script>
-const APP_VERSION='0.9.0';
+const APP_VERSION='0.10.0';
 const KEY='aba_ipad_v01';
 const AUTH_KEY='aba_auth_v1';
 const COMPETITIONS = [
@@ -173,6 +173,28 @@ const COMPETITIONS = [
   {country:'Evropské poháry',league:'Liga mistrů'},
   {country:'Evropské poháry',league:'Evropská liga'},
   {country:'Evropské poháry',league:'Konferenční liga'}
+];
+
+const BET_TYPES = [
+  {category:'Výsledek zápasu',type:'1 – výhra domácích'},
+  {category:'Výsledek zápasu',type:'X – remíza'},
+  {category:'Výsledek zápasu',type:'2 – výhra hostů'},
+  {category:'Dvojitá šance',type:'1X'},
+  {category:'Dvojitá šance',type:'X2'},
+  {category:'Dvojitá šance',type:'12'},
+  {category:'Góly',type:'Over 1,5'},
+  {category:'Góly',type:'Over 2,5'},
+  {category:'Góly',type:'Over 3,5'},
+  {category:'Góly',type:'Under 1,5'},
+  {category:'Góly',type:'Under 2,5'},
+  {category:'Góly',type:'Under 3,5'},
+  {category:'Oba dají gól',type:'Ano'},
+  {category:'Oba dají gól',type:'Ne'},
+  {category:'Handicap',type:'Handicap domácí'},
+  {category:'Handicap',type:'Handicap hosté'},
+  {category:'Postup',type:'Postup domácího týmu'},
+  {category:'Postup',type:'Postup hostujícího týmu'},
+  {category:'Jiné',type:'Jiný typ'}
 ];
 const defaultData={
   settings:{startingBankroll:200000},
@@ -205,6 +227,8 @@ data.tickets.forEach(t=>t.matches.forEach(m=>{
   if(m.country===undefined)m.country='';
   if(m.league===undefined)m.league='';
   if(m.euroLoad===undefined)m.euroLoad='none';
+      if(m.betCategory===undefined)m.betCategory='';
+      if(m.betType===undefined)m.betType='';
 }));
 saveData()
 let draft=null;
@@ -225,12 +249,14 @@ function migrateData(raw){
       if(m.country===undefined)m.country='';
       if(m.league===undefined)m.league='';
       if(m.euroLoad===undefined)m.euroLoad='none';
+      if(m.betCategory===undefined)m.betCategory='';
+      if(m.betType===undefined)m.betType='';
       if(m.note===undefined)m.note='';
       if(m.result===undefined)m.result='';
       if(!m.status)m.status='Čeká';
     });
   });
-  d.schemaVersion=6;
+  d.schemaVersion=7;
   return d;
 }
 function loadData(){
@@ -240,7 +266,7 @@ function loadData(){
   }catch(e){}
   return migrateData(structuredClone(defaultData));
 }
-function saveData(){data.schemaVersion=6;localStorage.setItem(KEY,JSON.stringify(data))}
+function saveData(){data.schemaVersion=7;localStorage.setItem(KEY,JSON.stringify(data))}
 function money(n){return new Intl.NumberFormat('cs-CZ',{maximumFractionDigits:0}).format(Number(n)||0)+' Kč'}
 function esc(s){return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
 function bytesToB64(bytes){
@@ -386,7 +412,7 @@ function nextId(){
  return `${y} - ${String(n).padStart(6,'0')}`;
 }
 function startDraft(){
- draft={id:nextId(),date:new Date().toISOString().slice(0,10),stake:0,totalOdds:1,payout:0,status:'Otevřený',note:'',matches:[{name:'',pick:'',odds:1,result:'',status:'Čeká',country:'',league:'',euroLoad:'none',note:''}]};
+ draft={id:nextId(),date:new Date().toISOString().slice(0,10),stake:0,totalOdds:1,payout:0,status:'Otevřený',note:'',matches:[{name:'',pick:'',odds:1,result:'',status:'Čeká',country:'',league:'',euroLoad:'none',betCategory:'',betType:'',note:''}]};
  renderDraft();
 }
 function renderDraft(){
@@ -422,6 +448,22 @@ function euroIcon(value){
 function setCompetition(i,value){
  const parts=value.split('||'); draft.matches[i].country=parts[0]||''; draft.matches[i].league=parts[1]||'';
 }
+
+function betTypeOptions(selectedCategory='',selectedType=''){
+ const groups={};
+ BET_TYPES.forEach(x=>{if(!groups[x.category])groups[x.category]=[];groups[x.category].push(x.type)});
+ return `<option value="">Vyber typ sázky</option>`+Object.entries(groups).map(([category,types])=>
+   `<optgroup label="${esc(category)}">${types.map(type=>{
+      const value=category+'||'+type;
+      return `<option value="${esc(value)}" ${category===selectedCategory&&type===selectedType?'selected':''}>${esc(type)}</option>`;
+   }).join('')}</optgroup>`).join('');
+}
+function setBetType(i,value){
+ const parts=value.split('||');
+ draft.matches[i].betCategory=parts[0]||'';
+ draft.matches[i].betType=parts[1]||'';
+}
+
 function matchEditor(m,i){
  return `<div class="match-card"><strong>Zápas ${i+1} ${euroIcon(m.euroLoad)?`<span class="icon-badge">${euroIcon(m.euroLoad)}</span>`:''}</strong>
  <div class="grid3">
@@ -430,6 +472,7 @@ function matchEditor(m,i){
  ${field('Kurz',`<input inputmode="decimal" value="${m.odds}" oninput="setMatch(${i},'odds',this.value)">`)}
  </div>
  <div class="grid3" style="margin-top:8px">
+ ${field('Typ sázky',`<select onchange="setBetType(${i},this.value)">${betTypeOptions(m.betCategory,m.betType)}</select>`)}
  ${field('Země / soutěž',`<select onchange="setCompetition(${i},this.value)">${competitionOptions(m.country,m.league)}</select>`)}
  ${field('Evropský pohár v týdnu',`<select onchange="setMatch(${i},'euroLoad',this.value)">
    <option value="none" ${m.euroLoad==='none'?'selected':''}>Nikdo</option>
@@ -437,7 +480,6 @@ function matchEditor(m,i){
    <option value="away" ${m.euroLoad==='away'?'selected':''}>🏆 Hostující tým</option>
    <option value="both" ${m.euroLoad==='both'?'selected':''}>🏆 Oba týmy</option>
  </select>`)}
- <div></div>
  </div>
  ${field('Poznámka',`<textarea oninput="setMatch(${i},'note',this.value)">${esc(m.note)}</textarea>`)}
  ${draft.matches.length>1?`<button class="danger" onclick="removeMatch(${i})">Odebrat zápas</button>`:''}</div>`;
@@ -445,7 +487,7 @@ function matchEditor(m,i){
 function setMatch(i,k,v){draft.matches[i][k]=k==='odds'?(Number(String(v).replace(',','.'))||1):v;if(k==='odds')updateDraftTotals()}
 function calcDraft(){return draft.matches.reduce((p,m)=>p*(Number(m.odds)||1),1)}
 function updateDraftTotals(){const t=calcDraft();document.getElementById('d-total').textContent=t.toFixed(2);document.getElementById('d-possible').textContent=money(t*Number(draft.stake||0))}
-function addMatch(){draft.matches.push({name:'',pick:'',odds:1,result:'',status:'Čeká',country:'',league:'',euroLoad:'none',note:''});renderDraft()}
+function addMatch(){draft.matches.push({name:'',pick:'',odds:1,result:'',status:'Čeká',country:'',league:'',euroLoad:'none',betCategory:'',betType:'',note:''});renderDraft()}
 function removeMatch(i){draft.matches.splice(i,1);renderDraft()}
 function saveDraft(){
  if(!draft.date||draft.matches.some(m=>!m.name.trim()||!m.pick.trim()))return alert('Doplň datum, název zápasu a tip.');
@@ -525,6 +567,7 @@ function matchDetail(t,i){const m=t.matches[i];return `<div class="match-card">
  ${field('Výsledek',`<input value="${esc(m.result)}" onchange="editMatch('${t.id}',${i},'result',this.value)">`)}
  </div>
  <div class="grid3" style="margin-top:8px">
+ ${field('Typ sázky',`<select onchange="editBetType('${t.id}',${i},this.value)">${betTypeOptions(m.betCategory,m.betType)}</select>`)}
  ${field('Země / soutěž',`<select onchange="editCompetition('${t.id}',${i},this.value)">${competitionOptions(m.country,m.league)}</select>`)}
  ${field('Evropský pohár v týdnu',`<select onchange="editMatch('${t.id}',${i},'euroLoad',this.value)">
    <option value="none" ${m.euroLoad==='none'?'selected':''}>Nikdo</option>
@@ -536,6 +579,13 @@ function matchDetail(t,i){const m=t.matches[i];return `<div class="match-card">
  </div>
  ${field('Poznámka',`<textarea onchange="editMatch('${t.id}',${i},'note',this.value)">${esc(m.note)}</textarea>`)}
  </div>`}
+function editBetType(id,i,value){
+ const t=data.tickets.find(x=>x.id===id);
+ const parts=value.split('||');
+ t.matches[i].betCategory=parts[0]||'';
+ t.matches[i].betType=parts[1]||'';
+ saveData();
+}
 function editCompetition(id,i,value){const t=data.tickets.find(x=>x.id===id);const parts=value.split('||');t.matches[i].country=parts[0]||'';t.matches[i].league=parts[1]||'';saveData()}
 function editTicket(id,k,v){
  const t=data.tickets.find(x=>x.id===id);
@@ -766,6 +816,7 @@ function aggregateTicketFinancials(tickets){
  tickets.forEach(t=>{
    const uniqueCountries=[...new Set(t.matches.map(m=>m.country).filter(Boolean))];
    const uniqueLeagues=[...new Set(t.matches.map(m=>m.league).filter(Boolean))];
+   const uniqueBetTypes=[...new Set(t.matches.map(m=>m.betType).filter(Boolean))];
    const profit=ticketProfit(t),stake=Number(t.stake||0);
    uniqueCountries.forEach(k=>{
      if(!map['C:'+k])map['C:'+k]={stake:0,profit:0,tickets:0};
@@ -774,6 +825,10 @@ function aggregateTicketFinancials(tickets){
    uniqueLeagues.forEach(k=>{
      if(!map['L:'+k])map['L:'+k]={stake:0,profit:0,tickets:0};
      map['L:'+k].stake+=stake;map['L:'+k].profit+=profit;map['L:'+k].tickets++;
+   });
+   uniqueBetTypes.forEach(k=>{
+     if(!map['B:'+k])map['B:'+k]={stake:0,profit:0,tickets:0};
+     map['B:'+k].stake+=stake;map['B:'+k].profit+=profit;map['B:'+k].tickets++;
    });
  });
  return map;
@@ -787,12 +842,30 @@ function analyticsColor(success,total){
 function roiValue(fin){
  return fin&&fin.stake?fin.profit/fin.stake*100:0;
 }
+
+function aggregateByBetType(tickets){
+ const map={};
+ tickets.forEach(t=>t.matches.forEach(m=>{
+   if(!m.betType||!['Vyšla','Nevyšla','Vrácena'].includes(m.status))return;
+   const key=(m.betCategory||'Jiné')+'||'+m.betType;
+   if(!map[key])map[key]={category:m.betCategory||'Jiné',name:m.betType,wins:0,losses:0,voids:0,total:0};
+   const x=map[key];
+   x.total++;
+   if(m.status==='Vyšla')x.wins++;
+   if(m.status==='Nevyšla')x.losses++;
+   if(m.status==='Vrácena')x.voids++;
+ }));
+ return Object.values(map).map(x=>({...x,success:(x.wins+x.losses)?x.wins/(x.wins+x.losses)*100:0}))
+   .sort((a,b)=>b.success-a.success||b.total-a.total);
+}
+
 function renderAnalyticsTables(){
  const tickets=filteredTickets();
  const settled=filteredSettledTickets();
  const financials=aggregateTicketFinancials(settled);
  const countries=aggregateByCountry(tickets);
  const leagues=aggregateByLeague(tickets);
+ const betTypes=aggregateByBetType(tickets);
  const days=dayStatsForTickets(settled);
 
  document.getElementById('countryAnalytics').innerHTML=`<div class="table-wrap"><table class="analytics-table"><thead><tr>
@@ -819,6 +892,14 @@ function renderAnalyticsTables(){
    const color=analyticsColor(x.success,x.wins+x.losses);
    return `<tr><td><span class="status-dot status-${color}"></span>${x.name}</td><td>${x.tickets}</td><td>${x.wins}</td><td>${x.losses}</td><td>${x.success.toFixed(1)} %</td><td class="${x.roi>=0?'pos':'neg'}">${x.roi.toFixed(2)} %</td><td class="${x.profit>=0?'pos':'neg'}">${x.profit>=0?'+':''}${money(x.profit)}</td></tr>`;
  }).join('')}</tbody></table></div>`;
+ document.getElementById('betTypeAnalytics').innerHTML=`<div class="table-wrap"><table class="analytics-table"><thead><tr>
+ <th>Kategorie</th><th>Typ sázky</th><th>Zápasy</th><th>Výhry</th><th>Prohry</th><th>Úspěšnost</th><th>ROI*</th><th>Profit*</th>
+ </tr></thead><tbody>${betTypes.length?betTypes.map(x=>{
+   const fin=financials['B:'+x.name]||{stake:0,profit:0};
+   const color=analyticsColor(x.success,x.wins+x.losses);
+   return `<tr><td>${esc(x.category)}</td><td><span class="status-dot status-${color}"></span>${esc(x.name)}</td><td>${x.total}</td><td>${x.wins}</td><td>${x.losses}</td><td>${x.success.toFixed(1)} %</td><td class="${roiValue(fin)>=0?'pos':'neg'}">${roiValue(fin).toFixed(2)} %</td><td class="${fin.profit>=0?'pos':'neg'}">${fin.profit>=0?'+':''}${money(fin.profit)}</td></tr>`;
+ }).join(''):`<tr><td colspan="8">Pro zvolené období zatím nejsou data.</td></tr>`}</tbody></table></div>
+ <div class="small" style="margin-top:8px">* U kombinovaných tiketů je finanční výsledek orientačně přiřazen každému typu sázky zastoupenému na tiketu.</div>`;
 }
 function dayStatsForTickets(tickets){
  const names=['Neděle','Pondělí','Úterý','Středa','Čtvrtek','Pátek','Sobota'];
@@ -867,6 +948,7 @@ function renderStats(){
  <div class="analytics-section"><h2 style="font-size:18px">1. Analýza podle zemí</h2><div id="countryAnalytics"></div></div>
  <div class="analytics-section"><h2 style="font-size:18px">2. Analýza podle soutěží</h2><div id="leagueAnalytics"></div></div>
  <div class="analytics-section"><h2 style="font-size:18px">3. Analýza podle dnů</h2><div id="dayAnalytics"></div></div>
+ <div class="analytics-section"><h2 style="font-size:18px">4. Analýza podle typu sázky</h2><div id="betTypeAnalytics"></div></div>
  <div class="analytics-section"><h2 style="font-size:18px">Vývoj bankrollu</h2>${bankrollChart()}</div>`;
  renderAnalyticsTables();
 }
@@ -882,7 +964,7 @@ function renderSettings(){
 <button class="secondary" onclick="resetLogin()">Změnit přihlášení</button>
 <button class="danger" onclick="resetData()">Obnovit výchozí data</button>
 </div>
- <p class="small">Verze: ABA 0.9.0 · Data jsou uložená pouze v tomto prohlížeči na tomto zařízení.</p></div>`;
+ <p class="small">Verze: ABA 0.10.0 · Data jsou uložená pouze v tomto prohlížeči na tomto zařízení.</p></div>`;
 }
 function saveSettings(){data.settings.startingBankroll=Number(document.getElementById('bankroll').value.replace(',','.'))||200000;saveData();alert('Nastavení uloženo.');renderDashboard()}
 function exportData(){const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`ABA_zaloha_${new Date().toISOString().slice(0,10)}_v${APP_VERSION}.json`;a.click();URL.revokeObjectURL(a.href)}

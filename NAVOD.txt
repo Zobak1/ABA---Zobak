@@ -1,0 +1,23 @@
+ABA PWA v0.2 – zdarma pro iPad
+
+Přihlášení:
+Login: zobak
+Heslo: aba2026
+
+Bezplatné zveřejnění přes GitHub Pages:
+1. Vytvoř bezplatný účet na GitHubu.
+2. Vytvoř nový veřejný repozitář, například aba-zobak.
+3. Nahraj všechny soubory z této složky.
+4. Otevři Settings → Pages.
+5. Zvol Deploy from a branch, branch main, složku /(root), a ulož.
+6. Otevři vzniklou adresu na iPadu v Safari.
+7. Zvol Sdílet → Přidat na plochu.
+
+Aplikace pak funguje samostatně a po prvním načtení také offline.
+Data zůstávají v prohlížeči daného zařízení. Pravidelně používej export zálohy.
+
+
+NOVINKA VE VERZI 0.3
+- nová záložka Zvažované zápasy
+- evidence analyzovaných, ale nevsazených zápasů
+- vyhledávání a vlastní poznámky

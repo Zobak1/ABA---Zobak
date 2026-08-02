@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#19324D">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<title>ABA – Anděl Bet Analytics</title>
+<style>
+:root{
+  --nav:#19324D; --nav2:#274A6A; --bg:#F4F6F8; --card:#fff; --text:#263238;
+  --muted:#607D8B; --gold:#B08D57; --pos:#2E7D32; --neg:#B23A3A; --line:#E0E5E9;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;background:var(--bg);color:var(--text)}
+.hidden{display:none!important}
+button,input,textarea,select{font:inherit}
+button{cursor:pointer}
+#login{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
+.login-card{background:#fff;width:min(420px,100%);padding:28px;border-radius:18px;box-shadow:0 12px 40px rgba(0,0,0,.08)}
+.login-card h1{margin:0;color:var(--nav);font-size:30px}
+.login-card p{margin:4px 0 24px;color:var(--muted)}
+label{display:block;font-size:13px;color:var(--muted);margin:12px 0 5px}
+input,textarea,select{width:100%;border:1px solid var(--line);border-radius:10px;padding:12px;background:white}
+textarea{min-height:90px;resize:vertical}
+.primary{background:var(--nav);color:#fff;border:0;border-radius:10px;padding:12px 16px}
+.secondary{background:#fff;color:var(--nav);border:1px solid var(--line);border-radius:10px;padding:11px 14px}
+.danger{background:var(--neg);color:#fff;border:0;border-radius:10px;padding:10px 14px}
+#app{min-height:100vh}
+header{height:58px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 18px;position:sticky;top:0;z-index:3}
+header strong{color:var(--nav)}
+.layout{display:grid;grid-template-columns:210px 1fr;min-height:calc(100vh - 58px)}
+nav{background:var(--nav);padding:14px 10px}
+nav button{display:block;width:100%;text-align:left;background:transparent;color:#fff;border:0;border-radius:9px;padding:13px 14px;margin:3px 0}
+nav button.active,nav button:hover{background:var(--nav2)}
+main{padding:24px;min-width:0}
+h2{margin:0 0 18px;color:var(--nav)}
+.cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px}
+.card .k{font-size:13px;color:var(--muted)}
+.card .v{font-size:24px;font-weight:700;margin-top:8px}
+.table-wrap{overflow:auto;background:#fff;border:1px solid var(--line);border-radius:14px}
+table{width:100%;border-collapse:collapse;min-width:720px}
+th,td{padding:12px 10px;border-bottom:1px solid var(--line);text-align:left;font-size:14px}
+th{color:var(--muted);font-weight:600;background:#FAFBFC}
+.toolbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:14px}
+.toolbar input{max-width:360px}
+.ticket-head{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;background:#fff;border:1px solid var(--line);padding:16px;border-radius:14px}
+.match-card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px;margin-top:12px}
+.grid3{display:grid;grid-template-columns:2fr 2fr 1fr;gap:10px}
+.row-actions{display:flex;gap:10px;justify-content:space-between;margin-top:14px}
+.small{font-size:12px;color:var(--muted)}
+.pos{color:var(--pos)} .neg{color:var(--neg)}
+@media(max-width:900px){
+  .layout{grid-template-columns:1fr}
+  nav{position:sticky;top:58px;display:flex;overflow:auto;z-index:2;padding:8px}
+  nav button{white-space:nowrap;width:auto}
+  .cards{grid-template-columns:repeat(2,1fr)}
+  .ticket-head,.grid3{grid-template-columns:1fr}
+  main{padding:16px}
+}
+@media(max-width:560px){.cards{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<section id="login">
+  <div class="login-card">
+    <h1>ABA</h1>
+    <p>Anděl Bet Analytics</p>
+    <label>Login</label>
+    <input id="loginUser" value="zobak" autocomplete="username">
+    <label>Heslo</label>
+    <input id="loginPass" type="password" value="aba2026" autocomplete="current-password">
+    <button class="primary" style="width:100%;margin-top:18px" onclick="login()">Přihlásit</button>
+    <div class="small" style="margin-top:12px">Funguje lokálně v tomto zařízení. Data se nikam neposílají.</div>
+  </div>
+</section>
+
+<section id="app" class="hidden">
+<header>
+  <strong>ABA – Anděl Bet Analytics</strong>
+  <span>Zobák</span>
+</header>
+<div class="layout">
+<nav>
+  <button data-view="dashboard" class="active">Dashboard</button>
+  <button data-view="new">Nový tiket</button>
+  <button data-view="history">Historie tiketů</button>
+  <button data-view="watchlist">Zvažované zápasy</button>
+  <button data-view="stats">Statistiky</button>
+  <button data-view="settings">Nastavení</button>
+</nav>
+<main>
+  <section id="view-dashboard"></section>
+  <section id="view-new" class="hidden"></section>
+  <section id="view-history" class="hidden"></section>
+  <section id="view-watchlist" class="hidden"></section>
+  <section id="view-stats" class="hidden"></section>
+  <section id="view-settings" class="hidden"></section>
+</main>
+</div>
+</section>
+
+<script>
+const KEY='aba_ipad_v01';
+const defaultData={
+  settings:{startingBankroll:200000},
+  tickets:[{
+    id:'2026 - 000001', date:'2026-08-02', stake:0, totalOdds:1, payout:0, status:'Rozpracovaný', note:'Předvyplněné dnešní zápasy.',
+    matches:[
+      {name:'Midtjylland – Horsens',pick:'Midtjylland vyhraje',odds:1,result:'2:1',status:'Vyšla',note:'Nepřesvědčivá výhra. Vedli 2:0 po poločase, ale závěr neměli plně pod kontrolou.'},
+      {name:'CSKA Sofia – dnešní soupeř',pick:'CSKA Sofia vyhraje',odds:1,result:'',status:'Čeká',note:''},
+      {name:'Riga FC – dnešní soupeř',pick:'Riga FC vyhraje',odds:1,result:'4:0',status:'Vyšla',note:'První poločas měl pomalejší rozjezd. Po prvním gólu měla Riga zápas ve svých rukou a zvítězila přesvědčivě 4:0.'},
+      {name:'Ludogorec – dnešní soupeř',pick:'Ludogorec vyhraje',odds:1,result:'',status:'Čeká',note:''}
+    ]
+  }]
+};
+if(!defaultData.consideredMatches){defaultData.consideredMatches=[]}
+let data=loadData();
+if(!data.consideredMatches){data.consideredMatches=[];saveData()}
+let draft=null;
+
+function loadData(){try{return JSON.parse(localStorage.getItem(KEY))||structuredClone(defaultData)}catch(e){return structuredClone(defaultData)}}
+function saveData(){localStorage.setItem(KEY,JSON.stringify(data))}
+function money(n){return new Intl.NumberFormat('cs-CZ',{maximumFractionDigits:0}).format(Number(n)||0)+' Kč'}
+function esc(s){return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
+function login(){
+  if(document.getElementById('loginUser').value.trim()==='zobak'&&document.getElementById('loginPass').value==='aba2026'){
+    document.getElementById('login').classList.add('hidden'); document.getElementById('app').classList.remove('hidden'); renderAll();
+  } else alert('Nesprávný login nebo heslo.');
+}
+document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>showView(b.dataset.view));
+function showView(v){
+  document.querySelectorAll('main>section').forEach(s=>s.classList.add('hidden'));
+  document.getElementById('view-'+v).classList.remove('hidden');
+  document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('active',b.dataset.view===v));
+  if(v==='dashboard')renderDashboard(); if(v==='history')renderHistory(); if(v==='watchlist')renderWatchlist(); if(v==='stats')renderStats(); if(v==='settings')renderSettings(); if(v==='new')startDraft();
+}
+function summary(){
+  let profit=0,wins=0,losses=0,settledStake=0,open=0;
+  data.tickets.forEach(t=>{
+    if(['Otevřený','Rozpracovaný'].includes(t.status))open++;
+    if(t.status==='Výherní'){profit+=(t.payout-t.stake);wins++;settledStake+=t.stake}
+    if(t.status==='Proherní'){profit-=t.stake;losses++;settledStake+=t.stake}
+    if(t.status==='Vrácený'){profit+=(t.payout-t.stake);settledStake+=t.stake}
+  });
+  return {profit,current:data.settings.startingBankroll+profit,roi:settledStake?profit/settledStake*100:0,success:(wins+losses)?wins/(wins+losses)*100:0,open};
+}
+function renderDashboard(){
+  const s=summary(), el=document.getElementById('view-dashboard');
+  el.innerHTML=`<h2>Dashboard</h2><div class="cards">
+  ${card('Počáteční bankroll',money(data.settings.startingBankroll))}
+  ${card('Aktuální stav',money(s.current))}
+  ${card('Profit',`${s.profit>=0?'+':''}${money(s.profit)}`,s.profit>=0?'pos':'neg')}
+  ${card('ROI',s.roi.toFixed(2)+' %',s.roi>=0?'pos':'neg')}
+  ${card('Počet tiketů',data.tickets.length)}
+  ${card('Úspěšnost',s.success.toFixed(1)+' %')}
+  </div><h2 style="margin-top:28px;font-size:18px">Poslední tikety</h2>${ticketTable(data.tickets.slice().reverse().slice(0,10))}`;
+}
+function card(k,v,c=''){return `<div class="card"><div class="k">${k}</div><div class="v ${c}">${v}</div></div>`}
+function ticketTable(list){
+ return `<div class="table-wrap"><table><thead><tr><th>Tiket</th><th>Datum</th><th>Zápasů</th><th>Kurz</th><th>Vklad</th><th>Výplata</th><th>Stav</th></tr></thead><tbody>
+ ${list.map(t=>`<tr onclick="openTicket('${t.id}')" style="cursor:pointer"><td>${esc(t.id)}</td><td>${esc(t.date)}</td><td>${t.matches.length}</td><td>${Number(t.totalOdds).toFixed(2)}</td><td>${money(t.stake)}</td><td>${money(t.payout)}</td><td>${esc(t.status)}</td></tr>`).join('')}
+ </tbody></table></div>`;
+}
+function nextId(){
+ const y=new Date().getFullYear(), n=data.tickets.filter(t=>t.id.startsWith(y+' - ')).length+1;
+ return `${y} - ${String(n).padStart(6,'0')}`;
+}
+function startDraft(){
+ draft={id:nextId(),date:new Date().toISOString().slice(0,10),stake:0,totalOdds:1,payout:0,status:'Otevřený',note:'',matches:[{name:'',pick:'',odds:1,result:'',status:'Čeká',note:''}]};
+ renderDraft();
+}
+function renderDraft(){
+ const el=document.getElementById('view-new');
+ el.innerHTML=`<h2>Nový tiket</h2><div class="ticket-head">
+ ${field('Datum',`<input id="d-date" value="${draft.date}">`)}
+ ${field('Vklad',`<input id="d-stake" inputmode="decimal" value="${draft.stake}">`)}
+ ${field('Poznámka k tiketu',`<input id="d-note" value="${esc(draft.note)}">`)}
+ </div>
+ <div class="toolbar" style="margin-top:12px"><strong>Celkový kurz: <span id="d-total">${calcDraft().toFixed(2)}</span></strong><strong>Možná výhra: <span id="d-possible">${money(calcDraft()*Number(draft.stake||0))}</span></strong></div>
+ <div id="matches">${draft.matches.map((m,i)=>matchEditor(m,i)).join('')}</div>
+ <div class="row-actions"><button class="secondary" onclick="addMatch()">+ Přidat zápas</button><button class="primary" onclick="saveDraft()">Uložit tiket</button></div>`;
+ document.getElementById('d-date').oninput=e=>draft.date=e.target.value;
+ document.getElementById('d-stake').oninput=e=>{draft.stake=Number(e.target.value.replace(',','.'))||0;updateDraftTotals()};
+ document.getElementById('d-note').oninput=e=>draft.note=e.target.value;
+}
+function field(label,html){return `<div><label>${label}</label>${html}</div>`}
+function matchEditor(m,i){
+ return `<div class="match-card"><strong>Zápas ${i+1}</strong><div class="grid3">
+ ${field('Název zápasu',`<input value="${esc(m.name)}" oninput="setMatch(${i},'name',this.value)">`)}
+ ${field('Tip',`<input value="${esc(m.pick)}" oninput="setMatch(${i},'pick',this.value)">`)}
+ ${field('Kurz',`<input inputmode="decimal" value="${m.odds}" oninput="setMatch(${i},'odds',this.value)">`)}
+ </div>${field('Poznámka',`<textarea oninput="setMatch(${i},'note',this.value)">${esc(m.note)}</textarea>`)}
+ ${draft.matches.length>1?`<button class="danger" onclick="removeMatch(${i})">Odebrat zápas</button>`:''}</div>`;
+}
+function setMatch(i,k,v){draft.matches[i][k]=k==='odds'?(Number(String(v).replace(',','.'))||1):v;if(k==='odds')updateDraftTotals()}
+function calcDraft(){return draft.matches.reduce((p,m)=>p*(Number(m.odds)||1),1)}
+function updateDraftTotals(){const t=calcDraft();document.getElementById('d-total').textContent=t.toFixed(2);document.getElementById('d-possible').textContent=money(t*Number(draft.stake||0))}
+function addMatch(){draft.matches.push({name:'',pick:'',odds:1,result:'',status:'Čeká',note:''});renderDraft()}
+function removeMatch(i){draft.matches.splice(i,1);renderDraft()}
+function saveDraft(){
+ if(!draft.date||draft.matches.some(m=>!m.name.trim()||!m.pick.trim()))return alert('Doplň datum, název zápasu a tip.');
+ draft.totalOdds=calcDraft();data.tickets.push(structuredClone(draft));saveData();alert('Tiket uložen.');showView('history');
+}
+function renderHistory(){
+ const el=document.getElementById('view-history');
+ el.innerHTML=`<h2>Historie tiketů</h2><div class="toolbar"><input id="search" placeholder="Hledat podle týmu nebo tipu"></div><div id="hist"></div>`;
+ const inp=document.getElementById('search');inp.oninput=()=>drawHistory(inp.value);drawHistory('');
+}
+function drawHistory(q){
+ q=q.toLowerCase().trim();
+ const list=data.tickets.filter(t=>!q||t.id.toLowerCase().includes(q)||t.date.includes(q)||t.matches.some(m=>(m.name+' '+m.pick+' '+m.note).toLowerCase().includes(q)));
+ document.getElementById('hist').innerHTML=ticketTable(list.slice().reverse());
+}
+function openTicket(id){
+ const t=data.tickets.find(x=>x.id===id); if(!t)return;
+ document.querySelectorAll('main>section').forEach(s=>s.classList.add('hidden'));
+ const el=document.getElementById('view-history');el.classList.remove('hidden');
+ el.innerHTML=`<h2>Tiket ${esc(t.id)}</h2><div class="ticket-head">
+ ${field('Datum',`<input value="${t.date}" onchange="editTicket('${id}','date',this.value)">`)}
+ ${field('Vklad',`<input inputmode="decimal" value="${t.stake}" onchange="editTicket('${id}','stake',this.value)">`)}
+ ${field('Celkový kurz',`<input inputmode="decimal" value="${t.totalOdds}" onchange="editTicket('${id}','totalOdds',this.value)">`)}
+ ${field('Skutečná výplata',`<input inputmode="decimal" value="${t.payout}" onchange="editTicket('${id}','payout',this.value)">`)}
+ ${field('Stav',`<select onchange="editTicket('${id}','status',this.value)">${['Rozpracovaný','Otevřený','Výherní','Proherní','Vrácený','Storno'].map(s=>`<option ${s===t.status?'selected':''}>${s}</option>`).join('')}</select>`)}
+ ${field('Poznámka k tiketu',`<input value="${esc(t.note)}" onchange="editTicket('${id}','note',this.value)">`)}
+ </div><div style="margin-top:16px">${t.matches.map((m,i)=>matchDetail(t,i)).join('')}</div><button class="secondary" onclick="renderHistory()">← Zpět do historie</button>`;
+}
+function matchDetail(t,i){const m=t.matches[i];return `<div class="match-card"><strong>${esc(m.name)}</strong><div class="grid3">
+ ${field('Tip',`<input value="${esc(m.pick)}" onchange="editMatch('${t.id}',${i},'pick',this.value)">`)}
+ ${field('Kurz',`<input inputmode="decimal" value="${m.odds}" onchange="editMatch('${t.id}',${i},'odds',this.value)">`)}
+ ${field('Výsledek',`<input value="${esc(m.result)}" onchange="editMatch('${t.id}',${i},'result',this.value)">`)}
+ </div>${field('Stav zápasu',`<select onchange="editMatch('${t.id}',${i},'status',this.value)">${['Čeká','Vyšla','Nevyšla','Vrácena'].map(s=>`<option ${s===m.status?'selected':''}>${s}</option>`).join('')}</select>`)}
+ ${field('Poznámka',`<textarea onchange="editMatch('${t.id}',${i},'note',this.value)">${esc(m.note)}</textarea>`)}</div>`}
+function editTicket(id,k,v){const t=data.tickets.find(x=>x.id===id);t[k]=['stake','totalOdds','payout'].includes(k)?(Number(String(v).replace(',','.'))||0):v;saveData();renderDashboard()}
+function editMatch(id,i,k,v){const t=data.tickets.find(x=>x.id===id);t.matches[i][k]=k==='odds'?(Number(String(v).replace(',','.'))||1):v;saveData()}
+
+function renderWatchlist(){
+ const el=document.getElementById('view-watchlist');
+ el.innerHTML=`<h2>Zvažované zápasy</h2>
+ <div class="card" style="margin-bottom:14px">
+   <div class="grid3">
+     ${field('Datum',`<input id="w-date" value="${new Date().toISOString().slice(0,10)}">`)}
+     ${field('Zápas',`<input id="w-match" placeholder="např. AIK Stockholm – Örgryte">`)}
+     ${field('Zvažovaný tip',`<input id="w-pick" placeholder="např. AIK vyhraje">`)}
+   </div>
+   ${field('Poznámka',`<textarea id="w-note" placeholder="Proč jsi zápas zvažoval, rizika, důvody nevsazení..."></textarea>`)}
+   <div class="row-actions"><span></span><button class="primary" onclick="addConsidered()">Přidat zápas</button></div>
+ </div>
+ <div class="toolbar"><input id="w-search" placeholder="Hledat podle týmu nebo poznámky"></div>
+ <div id="w-list"></div>`;
+ document.getElementById('w-search').oninput=drawConsidered;
+ drawConsidered();
+}
+function addConsidered(){
+ const date=document.getElementById('w-date').value;
+ const match=document.getElementById('w-match').value.trim();
+ const pick=document.getElementById('w-pick').value.trim();
+ const note=document.getElementById('w-note').value.trim();
+ if(!date||!match)return alert('Doplň datum a název zápasu.');
+ data.consideredMatches.push({
+   id:Date.now().toString(),date,match,pick,note,status:'Zvažováno'
+ });
+ saveData();renderWatchlist();
+}
+function drawConsidered(){
+ const q=(document.getElementById('w-search')?.value||'').toLowerCase().trim();
+ const list=data.consideredMatches.filter(x=>!q||(x.match+' '+x.pick+' '+x.note+' '+x.status).toLowerCase().includes(q)).slice().reverse();
+ document.getElementById('w-list').innerHTML=`<div class="table-wrap"><table><thead><tr>
+ <th>Datum</th><th>Zápas</th><th>Tip</th><th>Stav</th><th>Poznámka</th><th></th></tr></thead><tbody>
+ ${list.map(x=>`<tr>
+ <td>${esc(x.date)}</td>
+ <td>${esc(x.match)}</td>
+ <td>${esc(x.pick)}</td>
+ <td><select onchange="editConsidered('${x.id}','status',this.value)">
+ ${['Zvažováno','Nevsazeno','Později vsazeno'].map(s=>`<option ${s===x.status?'selected':''}>${s}</option>`).join('')}
+ </select></td>
+ <td><textarea style="min-height:55px" onchange="editConsidered('${x.id}','note',this.value)">${esc(x.note)}</textarea></td>
+ <td><button class="danger" onclick="removeConsidered('${x.id}')">Odstranit</button></td>
+ </tr>`).join('')}
+ </tbody></table></div>`;
+}
+function editConsidered(id,key,value){
+ const x=data.consideredMatches.find(i=>i.id===id); if(!x)return;
+ x[key]=value; saveData();
+}
+function removeConsidered(id){
+ if(!confirm('Odstranit tento zvažovaný zápas?'))return;
+ data.consideredMatches=data.consideredMatches.filter(i=>i.id!==id);
+ saveData();drawConsidered();
+}
+
+function renderStats(){const s=summary(),el=document.getElementById('view-stats');el.innerHTML=`<h2>Statistiky</h2><div class="cards">${card('Počet tiketů',data.tickets.length)}${card('Otevřené tikety',s.open)}${card('Úspěšnost',s.success.toFixed(1)+' %')}${card('ROI',s.roi.toFixed(2)+' %')}${card('Profit',money(s.profit),s.profit>=0?'pos':'neg')}</div>`}
+function renderSettings(){
+ const el=document.getElementById('view-settings');el.innerHTML=`<h2>Nastavení</h2><div class="card">
+ ${field('Počáteční bankroll',`<input id="bankroll" inputmode="decimal" value="${data.settings.startingBankroll}">`)}
+ <div class="row-actions"><button class="primary" onclick="saveSettings()">Uložit</button><button class="secondary" onclick="exportData()">Exportovat zálohu</button><button class="danger" onclick="resetData()">Obnovit výchozí data</button></div>
+ <p class="small">Data jsou uložená pouze v tomto prohlížeči na tomto zařízení.</p></div>`;
+}
+function saveSettings(){data.settings.startingBankroll=Number(document.getElementById('bankroll').value.replace(',','.'))||200000;saveData();alert('Nastavení uloženo.');renderDashboard()}
+function exportData(){const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='ABA_zaloha.json';a.click();URL.revokeObjectURL(a.href)}
+function resetData(){if(confirm('Opravdu obnovit výchozí data?')){data=structuredClone(defaultData);saveData();renderAll();showView('dashboard')}}
+function renderAll(){renderDashboard();renderHistory();renderWatchlist();renderStats();renderSettings()}
+if ("serviceWorker" in navigator) { window.addEventListener("load", () => navigator.serviceWorker.register("./sw.js")); }
+</script>
+</body>
+</html>

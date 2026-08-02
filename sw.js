@@ -1,4 +1,4 @@
-const CACHE='aba-pwa-v0-8-analytics';
+const CACHE='aba-pwa-v0-9-dashboard';
 const ASSETS=['./','./manifest.webmanifest','./icons/icon-192.png','./icons/icon-512.png'];
 
 self.addEventListener('install',event=>{

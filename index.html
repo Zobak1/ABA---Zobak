@@ -124,7 +124,7 @@ th{color:var(--muted);font-weight:600;background:#FAFBFC}
 <section id="app" class="hidden">
 <header>
   <strong>ABA – Anděl Bet Analytics</strong>
-  <div style="display:flex;align-items:center;gap:10px"><span id="versionBadge" class="small">v0.8.0</span><span>Zobák</span><button class="secondary" onclick="logout()">Odhlásit</button></div>
+  <div style="display:flex;align-items:center;gap:10px"><span id="versionBadge" class="small">v0.9.0</span><span>Zobák</span><button class="secondary" onclick="logout()">Odhlásit</button></div>
 </header>
 <div class="layout">
 <nav>
@@ -147,7 +147,7 @@ th{color:var(--muted);font-weight:600;background:#FAFBFC}
 </section>
 
 <script>
-const APP_VERSION='0.8.0';
+const APP_VERSION='0.9.0';
 const KEY='aba_ipad_v01';
 const AUTH_KEY='aba_auth_v1';
 const COMPETITIONS = [
@@ -230,7 +230,7 @@ function migrateData(raw){
       if(!m.status)m.status='Čeká';
     });
   });
-  d.schemaVersion=5;
+  d.schemaVersion=6;
   return d;
 }
 function loadData(){
@@ -240,7 +240,7 @@ function loadData(){
   }catch(e){}
   return migrateData(structuredClone(defaultData));
 }
-function saveData(){data.schemaVersion=5;localStorage.setItem(KEY,JSON.stringify(data))}
+function saveData(){data.schemaVersion=6;localStorage.setItem(KEY,JSON.stringify(data))}
 function money(n){return new Intl.NumberFormat('cs-CZ',{maximumFractionDigits:0}).format(Number(n)||0)+' Kč'}
 function esc(s){return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
 function bytesToB64(bytes){
@@ -339,18 +339,41 @@ function summary(){
   });
   return {profit,current:data.settings.startingBankroll+profit,roi:settledStake?profit/settledStake*100:0,success:(wins+losses)?wins/(wins+losses)*100:0,open};
 }
+
+function todayProfit(){
+ const today=new Date().toISOString().slice(0,10);
+ return data.tickets
+   .filter(t=>t.date===today && ['Výherní','Proherní','Vrácený'].includes(t.status))
+   .reduce((sum,t)=>sum+ticketProfit(t),0);
+}
+function bankrollMetrics(){
+ const series=bankrollSeries();
+ const values=series.map(x=>Number(x.value||0));
+ const current=values.length?values[values.length-1]:Number(data.settings.startingBankroll||200000);
+ const maximum=values.length?Math.max(...values):current;
+ return {current,maximum,drawdown:current-maximum};
+}
+
 function renderDashboard(){
-  const s=summary(), el=document.getElementById('view-dashboard');
-  el.innerHTML=`<h2>Dashboard</h2><div class="cards">
-  ${card('Počáteční bankroll',money(data.settings.startingBankroll))}
-  ${card('Aktuální stav',money(s.current))}
-  ${card('Profit',`${s.profit>=0?'+':''}${money(s.profit)}`,s.profit>=0?'pos':'neg')}
-  ${card('ROI',s.roi.toFixed(2)+' %',s.roi>=0?'pos':'neg')}
-  ${card('Počet tiketů',data.tickets.length)}
-  ${card('Úspěšnost',s.success.toFixed(1)+' %')}
+  const s=summary(), today=todayProfit(), bm=bankrollMetrics();
+  const el=document.getElementById('view-dashboard');
+
+  el.innerHTML=`<h2>Dashboard</h2>
+  <div class="cards">
+    ${card('Bankroll',money(s.current))}
+    ${card('Dnes',`${today>=0?'+':''}${money(today)}`,today>=0?'pos':'neg')}
+    ${card('ROI',s.roi.toFixed(2)+' %',s.roi>=0?'pos':'neg')}
   </div>
-  <div class="analytics-section"><h2 style="font-size:18px">Vývoj bankrollu</h2>${bankrollChart()}</div>
-  <h2 style="margin-top:28px;font-size:18px">Poslední tikety</h2>${ticketTable(data.tickets.slice().reverse().slice(0,10))}`;
+
+  <div class="analytics-section">
+    <h2 style="font-size:18px">Vývoj bankrollu</h2>
+    ${bankrollChart()}
+    <div class="cards" style="margin-top:14px">
+      ${card('Nejvyšší bankroll',money(bm.maximum))}
+      ${card('Aktuální stav',money(bm.current))}
+      ${card('Rozdíl od maxima',`${bm.drawdown>=0?'+':''}${money(bm.drawdown)}`,bm.drawdown>=0?'pos':'neg')}
+    </div>
+  </div>`;
 }
 function card(k,v,c=''){return `<div class="card"><div class="k">${k}</div><div class="v ${c}">${v}</div></div>`}
 function ticketTable(list){
@@ -859,7 +882,7 @@ function renderSettings(){
 <button class="secondary" onclick="resetLogin()">Změnit přihlášení</button>
 <button class="danger" onclick="resetData()">Obnovit výchozí data</button>
 </div>
- <p class="small">Verze: ABA 0.8.0 · Data jsou uložená pouze v tomto prohlížeči na tomto zařízení.</p></div>`;
+ <p class="small">Verze: ABA 0.9.0 · Data jsou uložená pouze v tomto prohlížeči na tomto zařízení.</p></div>`;
 }
 function saveSettings(){data.settings.startingBankroll=Number(document.getElementById('bankroll').value.replace(',','.'))||200000;saveData();alert('Nastavení uloženo.');renderDashboard()}
 function exportData(){const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`ABA_zaloha_${new Date().toISOString().slice(0,10)}_v${APP_VERSION}.json`;a.click();URL.revokeObjectURL(a.href)}

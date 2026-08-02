@@ -117,7 +117,7 @@ th{color:var(--muted);font-weight:600;background:#FAFBFC}
 <section id="app" class="hidden">
 <header>
   <strong>ABA – Anděl Bet Analytics</strong>
-  <div style="display:flex;align-items:center;gap:10px"><span id="versionBadge" class="small">v0.6.0</span><span>Zobák</span><button class="secondary" onclick="logout()">Odhlásit</button></div>
+  <div style="display:flex;align-items:center;gap:10px"><span id="versionBadge" class="small">v0.7.0</span><span>Zobák</span><button class="secondary" onclick="logout()">Odhlásit</button></div>
 </header>
 <div class="layout">
 <nav>
@@ -140,7 +140,7 @@ th{color:var(--muted);font-weight:600;background:#FAFBFC}
 </section>
 
 <script>
-const APP_VERSION='0.6.0';
+const APP_VERSION='0.7.0';
 const KEY='aba_ipad_v01';
 const AUTH_KEY='aba_auth_v1';
 const COMPETITIONS = [
@@ -181,6 +181,18 @@ const defaultData={
 };
 if(!defaultData.consideredMatches){defaultData.consideredMatches=[]}
 let data=loadData();
+data.tickets.forEach(t=>{
+  if(t.status==='Výherní' && Number(t.payout||0)<=0){
+    t.payout=Number(t.stake||0)*Number(t.totalOdds||1);
+  }
+  if(t.status==='Vrácený' && Number(t.payout||0)<=0){
+    t.payout=Number(t.stake||0);
+  }
+  if(t.status==='Proherní'){
+    t.payout=0;
+  }
+});
+saveData();
 if(!data.consideredMatches){data.consideredMatches=[]}
 data.tickets.forEach(t=>t.matches.forEach(m=>{
   if(m.country===undefined)m.country='';
@@ -211,7 +223,7 @@ function migrateData(raw){
       if(!m.status)m.status='Čeká';
     });
   });
-  d.schemaVersion=3;
+  d.schemaVersion=4;
   return d;
 }
 function loadData(){
@@ -221,7 +233,7 @@ function loadData(){
   }catch(e){}
   return migrateData(structuredClone(defaultData));
 }
-function saveData(){data.schemaVersion=3;localStorage.setItem(KEY,JSON.stringify(data))}
+function saveData(){data.schemaVersion=4;localStorage.setItem(KEY,JSON.stringify(data))}
 function money(n){return new Intl.NumberFormat('cs-CZ',{maximumFractionDigits:0}).format(Number(n)||0)+' Kč'}
 function esc(s){return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
 function bytesToB64(bytes){
@@ -407,6 +419,8 @@ function addMatch(){draft.matches.push({name:'',pick:'',odds:1,result:'',status:
 function removeMatch(i){draft.matches.splice(i,1);renderDraft()}
 function saveDraft(){
  if(!draft.date||draft.matches.some(m=>!m.name.trim()||!m.pick.trim()))return alert('Doplň datum, název zápasu a tip.');
+ if(Number(draft.stake||0)<0)return alert('Vklad nesmí být záporný.');
+ if(draft.matches.some(m=>Number(m.odds||0)<=0))return alert('Každý kurz musí být větší než nula.');
  draft.totalOdds=calcDraft();data.tickets.push(structuredClone(draft));saveData();alert('Tiket uložen.');showView('history');
 }
 function renderHistory(){
@@ -419,18 +433,59 @@ function drawHistory(q){
  const list=data.tickets.filter(t=>!q||t.id.toLowerCase().includes(q)||t.date.includes(q)||t.matches.some(m=>(m.name+' '+m.pick+' '+m.note).toLowerCase().includes(q)));
  document.getElementById('hist').innerHTML=ticketTable(list.slice().reverse());
 }
+
+function suggestedTicketStatus(t){
+  const statuses=t.matches.map(m=>m.status);
+  if(!statuses.length)return 'Rozpracovaný';
+  if(statuses.some(s=>s==='Nevyšla'))return 'Proherní';
+  if(statuses.every(s=>s==='Vyšla'||s==='Vrácena')){
+    return statuses.every(s=>s==='Vrácena')?'Vrácený':'Výherní';
+  }
+  if(statuses.some(s=>s==='Vyšla'||s==='Vrácena'))return 'Otevřený';
+  return 'Rozpracovaný';
+}
+function syncTicketFromMatches(id, showMessage=true){
+  const t=data.tickets.find(x=>x.id===id);
+  if(!t)return;
+  const suggested=suggestedTicketStatus(t);
+  t.status=suggested;
+  if(suggested==='Výherní'){
+    t.payout=Number(t.stake||0)*Number(t.totalOdds||1);
+  }else if(suggested==='Vrácený'){
+    t.payout=Number(t.stake||0);
+  }else if(suggested==='Proherní'){
+    t.payout=0;
+  }
+  saveData();
+  if(showMessage)alert(`Tiket byl vyhodnocen jako: ${suggested}`);
+}
+function ticketStatusWarning(t){
+  const suggested=suggestedTicketStatus(t);
+  if(t.status===suggested)return '';
+  return `<div class="viz-callout" style="margin:12px 0">
+    Stav zápasů naznačuje: <strong>${suggested}</strong>, ale tiket je veden jako <strong>${esc(t.status)}</strong>.
+  </div>`;
+}
+
 function openTicket(id){
  const t=data.tickets.find(x=>x.id===id); if(!t)return;
  document.querySelectorAll('main>section').forEach(s=>s.classList.add('hidden'));
  const el=document.getElementById('view-history');el.classList.remove('hidden');
- el.innerHTML=`<h2>Tiket ${esc(t.id)}</h2><div class="ticket-head">
+ el.innerHTML=`<h2>Tiket ${esc(t.id)}</h2>${ticketStatusWarning(t)}<div class="ticket-head">
  ${field('Datum',`<input value="${t.date}" onchange="editTicket('${id}','date',this.value)">`)}
  ${field('Vklad',`<input inputmode="decimal" value="${t.stake}" onchange="editTicket('${id}','stake',this.value)">`)}
  ${field('Celkový kurz',`<input inputmode="decimal" value="${t.totalOdds}" onchange="editTicket('${id}','totalOdds',this.value)">`)}
  ${field('Skutečná výplata',`<input inputmode="decimal" value="${effectivePayout(t)}" onchange="editTicket('${id}','payout',this.value)">`)}
+ ${field('Profit / ztráta',`<input value="${money(ticketProfit(t))}" readonly>`)}
  ${field('Stav',`<select onchange="editTicket('${id}','status',this.value)">${['Rozpracovaný','Otevřený','Výherní','Proherní','Vrácený','Storno'].map(s=>`<option ${s===t.status?'selected':''}>${s}</option>`).join('')}</select>`)}
  ${field('Poznámka k tiketu',`<input value="${esc(t.note)}" onchange="editTicket('${id}','note',this.value)">`)}
- </div><div style="margin-top:16px">${t.matches.map((m,i)=>matchDetail(t,i)).join('')}</div><button class="secondary" onclick="renderHistory()">← Zpět do historie</button>`;
+ </div>
+ <div class="row-actions" style="margin:14px 0">
+   <button class="primary" onclick="syncTicketFromMatches('${t.id}');openTicket('${t.id}')">Vyhodnotit tiket podle zápasů</button>
+   <span class="small">ABA zkontroluje jednotlivé zápasy, dopočítá stav tiketu a výplatu.</span>
+ </div>
+ <div style="margin-top:16px">${t.matches.map((m,i)=>matchDetail(t,i)).join('')}</div>
+ <button class="secondary" onclick="renderHistory()">← Zpět do historie</button>`;
 }
 function matchDetail(t,i){const m=t.matches[i];return `<div class="match-card">
  <strong>${esc(m.name)} ${euroIcon(m.euroLoad)?`<span class="icon-badge">${euroIcon(m.euroLoad)}</span>`:''}</strong>
@@ -469,7 +524,17 @@ function editTicket(id,k,v){
  saveData();
  renderDashboard();
 }
-function editMatch(id,i,k,v){const t=data.tickets.find(x=>x.id===id);t.matches[i][k]=k==='odds'?(Number(String(v).replace(',','.'))||1):v;saveData()}
+function editMatch(id,i,k,v){
+ const t=data.tickets.find(x=>x.id===id);
+ t.matches[i][k]=k==='odds'?(Number(String(v).replace(',','.'))||1):v;
+ saveData();
+ if(k==='status'){
+   const suggested=suggestedTicketStatus(t);
+   if(['Výherní','Proherní','Vrácený'].includes(suggested)){
+     syncTicketFromMatches(id,false);
+   }
+ }
+}
 
 function renderWatchlist(){
  const el=document.getElementById('view-watchlist');
@@ -644,7 +709,7 @@ function renderSettings(){
 <button class="secondary" onclick="resetLogin()">Změnit přihlášení</button>
 <button class="danger" onclick="resetData()">Obnovit výchozí data</button>
 </div>
- <p class="small">Verze: ABA 0.6.0 · Data jsou uložená pouze v tomto prohlížeči na tomto zařízení.</p></div>`;
+ <p class="small">Verze: ABA 0.7.0 · Data jsou uložená pouze v tomto prohlížeči na tomto zařízení.</p></div>`;
 }
 function saveSettings(){data.settings.startingBankroll=Number(document.getElementById('bankroll').value.replace(',','.'))||200000;saveData();alert('Nastavení uloženo.');renderDashboard()}
 function exportData(){const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`ABA_zaloha_${new Date().toISOString().slice(0,10)}_v${APP_VERSION}.json`;a.click();URL.revokeObjectURL(a.href)}

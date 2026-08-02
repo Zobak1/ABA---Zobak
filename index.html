@@ -105,6 +105,7 @@ th{color:var(--muted);font-weight:600;background:#FAFBFC}
       <label>Heslo</label>
       <input id="loginPass" type="password" autocomplete="new-password">
       <button class="primary" style="width:100%;margin-top:18px" onclick="login()">Přihlásit</button>
+<button class="secondary" style="width:100%;margin-top:10px" onclick="recoverAccess()">Obnovit přístup</button>
     </div>
 
     <div class="small" style="margin-top:12px">
@@ -249,6 +250,15 @@ async function login(){
   } else {
     alert('Nesprávný login nebo heslo.');
   }
+}
+function recoverAccess(){
+  const ok=confirm('Obnovit přístup? Smaže se pouze uložený login a heslo. Tikety, bankroll a ostatní data zůstanou zachovaná.');
+  if(!ok)return;
+  localStorage.removeItem(AUTH_KEY);
+  document.getElementById('loginUser').value='';
+  document.getElementById('loginPass').value='';
+  initAuthScreen();
+  alert('Přístup byl obnoven. Nyní si nastav nový login a heslo.');
 }
 function logout(){
   sessionStorage.removeItem('aba_unlocked');
@@ -569,7 +579,7 @@ function renderSettings(){
  const el=document.getElementById('view-settings');el.innerHTML=`<h2>Nastavení</h2><div class="card">
  ${field('Počáteční bankroll',`<input id="bankroll" inputmode="decimal" value="${data.settings.startingBankroll}">`)}
  <div class="row-actions"><button class="primary" onclick="saveSettings()">Uložit</button><button class="secondary" onclick="exportData()">Exportovat zálohu</button><button class="secondary" onclick="resetLogin()">Změnit přihlášení</button><button class="danger" onclick="resetData()">Obnovit výchozí data</button></div>
- <p class="small">Data jsou uložená pouze v tomto prohlížeči na tomto zařízení.</p></div>`;
+ <p class="small">Verze: ABA 0.5.1 · Data jsou uložená pouze v tomto prohlížeči na tomto zařízení.</p></div>`;
 }
 function saveSettings(){data.settings.startingBankroll=Number(document.getElementById('bankroll').value.replace(',','.'))||200000;saveData();alert('Nastavení uloženo.');renderDashboard()}
 function exportData(){const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='ABA_zaloha.json';a.click();URL.revokeObjectURL(a.href)}

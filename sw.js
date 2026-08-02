@@ -1,4 +1,4 @@
-const CACHE='aba-pwa-v0-7-ticket-stability';
+const CACHE='aba-pwa-v0-8-analytics';
 const ASSETS=['./','./manifest.webmanifest','./icons/icon-192.png','./icons/icon-512.png'];
 
 self.addEventListener('install',event=>{

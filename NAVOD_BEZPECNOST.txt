@@ -1,0 +1,22 @@
+ABA PWA v0.4 – bezpečnostní aktualizace
+
+Co se změnilo:
+- login ani heslo nejsou předvyplněné,
+- výchozí heslo bylo odstraněno z kódu,
+- při prvním spuštění si nastavíš vlastní login a heslo,
+- heslo se ukládá pouze jako odvozený kryptografický otisk,
+- po každém novém otevření aplikace je nutné se znovu přihlásit,
+- v horní liště je tlačítko Odhlásit,
+- v Nastavení lze přístup změnit.
+
+Aktualizace na GitHubu:
+1. Nejdříve v ABA použij Nastavení → Exportovat zálohu.
+2. Na GitHubu otevři repozitář ABA---Zobak.
+3. Nahraď soubory index.html, sw.js, manifest.webmanifest a složku icons soubory z tohoto balíčku.
+4. Commitni změny.
+5. Po zelené fajfce v Actions otevři ABA v Safari.
+6. Pokud se stále zobrazuje stará verze, odeber ikonu ABA z plochy, v Safari stránku obnov a znovu zvol Přidat na plochu.
+7. Při prvním spuštění nastav nový vlastní login a heslo.
+
+Důležité:
+Tato statická offline aplikace chrání přístup před běžným otevřením. Samotná data v úložišti prohlížeče zatím nejsou šifrovaná. Dalším bezpečnostním krokem může být šifrování celé databáze heslem.

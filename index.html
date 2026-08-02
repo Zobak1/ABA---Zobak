@@ -70,19 +70,38 @@ th{color:var(--muted);font-weight:600;background:#FAFBFC}
   <div class="login-card">
     <h1>ABA</h1>
     <p>Anděl Bet Analytics</p>
-    <label>Login</label>
-    <input id="loginUser" value="zobak" autocomplete="username">
-    <label>Heslo</label>
-    <input id="loginPass" type="password" value="aba2026" autocomplete="current-password">
-    <button class="primary" style="width:100%;margin-top:18px" onclick="login()">Přihlásit</button>
-    <div class="small" style="margin-top:12px">Funguje lokálně v tomto zařízení. Data se nikam neposílají.</div>
+
+    <div id="setupBox" class="hidden">
+      <div class="small" style="margin-bottom:12px">
+        První bezpečné spuštění: nastav si vlastní login a heslo.
+      </div>
+      <label>Nový login</label>
+      <input id="setupUser" autocomplete="off" autocapitalize="none" spellcheck="false">
+      <label>Nové heslo</label>
+      <input id="setupPass" type="password" autocomplete="new-password">
+      <label>Heslo znovu</label>
+      <input id="setupPass2" type="password" autocomplete="new-password">
+      <button class="primary" style="width:100%;margin-top:18px" onclick="createAccount()">Nastavit přístup</button>
+    </div>
+
+    <div id="loginBox">
+      <label>Login</label>
+      <input id="loginUser" autocomplete="off" autocapitalize="none" spellcheck="false">
+      <label>Heslo</label>
+      <input id="loginPass" type="password" autocomplete="new-password">
+      <button class="primary" style="width:100%;margin-top:18px" onclick="login()">Přihlásit</button>
+    </div>
+
+    <div class="small" style="margin-top:12px">
+      Přihlašovací údaje se nepředvyplňují a nejsou uloženy v kódu aplikace.
+    </div>
   </div>
 </section>
 
 <section id="app" class="hidden">
 <header>
   <strong>ABA – Anděl Bet Analytics</strong>
-  <span>Zobák</span>
+  <div style="display:flex;align-items:center;gap:12px"><span>Zobák</span><button class="secondary" onclick="logout()">Odhlásit</button></div>
 </header>
 <div class="layout">
 <nav>
@@ -106,6 +125,7 @@ th{color:var(--muted);font-weight:600;background:#FAFBFC}
 
 <script>
 const KEY='aba_ipad_v01';
+const AUTH_KEY='aba_auth_v1';
 const defaultData={
   settings:{startingBankroll:200000},
   tickets:[{
@@ -127,11 +147,76 @@ function loadData(){try{return JSON.parse(localStorage.getItem(KEY))||structured
 function saveData(){localStorage.setItem(KEY,JSON.stringify(data))}
 function money(n){return new Intl.NumberFormat('cs-CZ',{maximumFractionDigits:0}).format(Number(n)||0)+' Kč'}
 function esc(s){return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
-function login(){
-  if(document.getElementById('loginUser').value.trim()==='zobak'&&document.getElementById('loginPass').value==='aba2026'){
-    document.getElementById('login').classList.add('hidden'); document.getElementById('app').classList.remove('hidden'); renderAll();
-  } else alert('Nesprávný login nebo heslo.');
+function bytesToB64(bytes){
+  let s=''; bytes.forEach(b=>s+=String.fromCharCode(b)); return btoa(s);
 }
+function b64ToBytes(s){
+  return Uint8Array.from(atob(s), c=>c.charCodeAt(0));
+}
+async function derivePassword(password, saltBytes){
+  const enc=new TextEncoder();
+  const material=await crypto.subtle.importKey(
+    'raw', enc.encode(password), 'PBKDF2', false, ['deriveBits']
+  );
+  const bits=await crypto.subtle.deriveBits(
+    {name:'PBKDF2', salt:saltBytes, iterations:120000, hash:'SHA-256'},
+    material, 256
+  );
+  return bytesToB64(new Uint8Array(bits));
+}
+function authRecord(){
+  try{return JSON.parse(localStorage.getItem(AUTH_KEY))}catch(e){return null}
+}
+function initAuthScreen(){
+  const hasAuth=!!authRecord();
+  document.getElementById('setupBox').classList.toggle('hidden',hasAuth);
+  document.getElementById('loginBox').classList.toggle('hidden',!hasAuth);
+  document.getElementById('loginUser').value='';
+  document.getElementById('loginPass').value='';
+}
+async function createAccount(){
+  const username=document.getElementById('setupUser').value.trim();
+  const pass=document.getElementById('setupPass').value;
+  const pass2=document.getElementById('setupPass2').value;
+  if(username.length<3)return alert('Login musí mít alespoň 3 znaky.');
+  if(pass.length<6)return alert('Heslo musí mít alespoň 6 znaků.');
+  if(pass!==pass2)return alert('Hesla se neshodují.');
+  const salt=crypto.getRandomValues(new Uint8Array(16));
+  const hash=await derivePassword(pass,salt);
+  localStorage.setItem(AUTH_KEY,JSON.stringify({username, salt:bytesToB64(salt), hash}));
+  document.getElementById('setupPass').value='';
+  document.getElementById('setupPass2').value='';
+  alert('Přístup byl nastaven. Nyní se přihlas.');
+  initAuthScreen();
+}
+async function login(){
+  const rec=authRecord();
+  if(!rec){initAuthScreen();return;}
+  const username=document.getElementById('loginUser').value.trim();
+  const password=document.getElementById('loginPass').value;
+  const hash=await derivePassword(password,b64ToBytes(rec.salt));
+  document.getElementById('loginPass').value='';
+  if(username===rec.username && hash===rec.hash){
+    sessionStorage.setItem('aba_unlocked','1');
+    document.getElementById('login').classList.add('hidden');
+    document.getElementById('app').classList.remove('hidden');
+    renderAll();
+  } else {
+    alert('Nesprávný login nebo heslo.');
+  }
+}
+function logout(){
+  sessionStorage.removeItem('aba_unlocked');
+  document.getElementById('app').classList.add('hidden');
+  document.getElementById('login').classList.remove('hidden');
+  initAuthScreen();
+}
+window.addEventListener('pageshow',()=>{
+  sessionStorage.removeItem('aba_unlocked');
+  document.getElementById('app').classList.add('hidden');
+  document.getElementById('login').classList.remove('hidden');
+  initAuthScreen();
+});
 document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>showView(b.dataset.view));
 function showView(v){
   document.querySelectorAll('main>section').forEach(s=>s.classList.add('hidden'));
@@ -297,11 +382,16 @@ function renderStats(){const s=summary(),el=document.getElementById('view-stats'
 function renderSettings(){
  const el=document.getElementById('view-settings');el.innerHTML=`<h2>Nastavení</h2><div class="card">
  ${field('Počáteční bankroll',`<input id="bankroll" inputmode="decimal" value="${data.settings.startingBankroll}">`)}
- <div class="row-actions"><button class="primary" onclick="saveSettings()">Uložit</button><button class="secondary" onclick="exportData()">Exportovat zálohu</button><button class="danger" onclick="resetData()">Obnovit výchozí data</button></div>
+ <div class="row-actions"><button class="primary" onclick="saveSettings()">Uložit</button><button class="secondary" onclick="exportData()">Exportovat zálohu</button><button class="secondary" onclick="resetLogin()">Změnit přihlášení</button><button class="danger" onclick="resetData()">Obnovit výchozí data</button></div>
  <p class="small">Data jsou uložená pouze v tomto prohlížeči na tomto zařízení.</p></div>`;
 }
 function saveSettings(){data.settings.startingBankroll=Number(document.getElementById('bankroll').value.replace(',','.'))||200000;saveData();alert('Nastavení uloženo.');renderDashboard()}
 function exportData(){const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='ABA_zaloha.json';a.click();URL.revokeObjectURL(a.href)}
+function resetLogin(){
+  if(!confirm('Opravdu chceš zrušit současný login a nastavit nový?'))return;
+  localStorage.removeItem(AUTH_KEY);
+  logout();
+}
 function resetData(){if(confirm('Opravdu obnovit výchozí data?')){data=structuredClone(defaultData);saveData();renderAll();showView('dashboard')}}
 function renderAll(){renderDashboard();renderHistory();renderWatchlist();renderStats();renderSettings()}
 if ("serviceWorker" in navigator) { window.addEventListener("load", () => navigator.serviceWorker.register("./sw.js")); }

@@ -1,4 +1,4 @@
-const CACHE='aba-pwa-v0-16-5-ipad-polish';
+const CACHE='aba-pwa-v0-17-analysis-archive';
 const ASSETS=[
   './',
   './index.html',

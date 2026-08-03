@@ -1058,6 +1058,122 @@ body.codex-open{
   }
 }
 
+
+/* ABA 0.17.0 — Archiv analýz */
+.dashboard-analysis-link{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  border:1px solid var(--teal);
+  background:rgba(0,214,214,.07);
+  color:var(--teal);
+  border-radius:10px;
+  padding:8px 12px;
+  font-size:13px;
+  white-space:nowrap;
+}
+.dashboard-analysis-link:hover{background:rgba(0,214,214,.13)}
+.dashboard-analysis-link svg{
+  width:18px;height:18px;fill:none;stroke:currentColor;
+  stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;
+}
+.analysis-layout{
+  display:grid;
+  grid-template-columns:minmax(300px,420px) minmax(0,1fr);
+  gap:16px;
+  align-items:start;
+}
+.analysis-form-card,.analysis-list-card{
+  background:linear-gradient(180deg,var(--card),var(--card2));
+  border:1px solid var(--line);
+  border-radius:16px;
+  padding:17px;
+  box-shadow:0 10px 28px rgba(0,0,0,.2);
+}
+.analysis-form-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+}
+.analysis-form-grid .full{grid-column:1/-1}
+.analysis-form-actions{
+  display:flex;
+  gap:10px;
+  margin-top:14px;
+  flex-wrap:wrap;
+}
+.analysis-toolbar{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  margin-bottom:13px;
+}
+.analysis-count{
+  color:var(--teal);
+  font-weight:700;
+}
+.analysis-item{
+  border:1px solid var(--line);
+  border-radius:14px;
+  padding:14px;
+  background:#091720;
+  margin-bottom:10px;
+}
+.analysis-item:last-child{margin-bottom:0}
+.analysis-item-head{
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  align-items:flex-start;
+}
+.analysis-match{
+  font-size:17px;
+  font-weight:750;
+  color:#fff;
+}
+.analysis-meta{
+  color:var(--muted);
+  font-size:12px;
+  margin-top:4px;
+}
+.analysis-badges{
+  display:flex;
+  gap:7px;
+  flex-wrap:wrap;
+  margin:10px 0;
+}
+.analysis-badge{
+  border-radius:999px;
+  border:1px solid #27505A;
+  color:var(--teal);
+  padding:4px 8px;
+  font-size:12px;
+}
+.analysis-text{
+  white-space:pre-wrap;
+  line-height:1.5;
+  color:#D9E4EA;
+}
+.analysis-item-actions{
+  display:flex;
+  gap:8px;
+  margin-top:12px;
+}
+.analysis-empty{
+  color:var(--muted);
+  text-align:center;
+  padding:32px 15px;
+}
+@media(max-width:900px){
+  .analysis-layout{grid-template-columns:1fr}
+}
+@media(max-width:620px){
+  .analysis-form-grid{grid-template-columns:1fr}
+  .analysis-form-grid .full{grid-column:auto}
+  .dashboard-analysis-link span{display:none}
+}
+
 </style>
 </head>
 <body>
@@ -1075,7 +1191,7 @@ body.codex-open{
     <img src="icon-512.png?v=0111" alt="ABA – Angel Bet Analytics">
     <div id="abaSplashTitle">ABA</div>
     <div id="abaSplashSub">ANGEL BET ANALYTICS</div>
-    <div id="abaSplashVersion">v0.16.5</div>
+    <div id="abaSplashVersion">v0.17.0</div>
   </div>
 </div>
 
@@ -1115,7 +1231,7 @@ body.codex-open{
 <section id="app" class="hidden">
 <header>
   <strong>ABA – Anděl Bet Analytics</strong>
-  <div style="display:flex;align-items:center;gap:10px"><span id="versionBadge" class="small">v0.16.5</span><span>Zobák</span><button class="secondary" onclick="logout()">Odhlásit</button></div>
+  <div style="display:flex;align-items:center;gap:10px"><span id="versionBadge" class="small">v0.17.0</span><span>Zobák</span><button class="secondary" onclick="logout()">Odhlásit</button></div>
 </header>
 <div class="layout">
 <nav>
@@ -1124,6 +1240,7 @@ body.codex-open{
   <button data-view="new"><svg class="nav-svg" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M12 8v8M8 12h8"/></svg><span>Nový tiket</span></button>
   <button data-view="history"><svg class="nav-svg" viewBox="0 0 24 24"><rect x="4" y="3" width="14" height="18" rx="2"/><path d="M8 7h6M8 11h6"/><circle cx="17.5" cy="16.5" r="3.5"/><path d="M17.5 14.5v2.2l1.4.8"/></svg><span>Historie tiketů</span></button>
   <button data-view="watchlist"><svg class="nav-svg" viewBox="0 0 24 24"><path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2L12 17.3l-5.6 2.9 1.1-6.2L3 9.6l6.2-.9z"/></svg><span>Zvažované zápasy</span></button>
+  <button data-view="analyses"><svg class="nav-svg" viewBox="0 0 24 24"><path d="M4 4h16v16H4z"/><path d="M8 9h8M8 13h5M8 17h7"/><path d="m15 13 2 2 3-4"/></svg><span>Analýzy</span></button>
   <button data-view="stats"><svg class="nav-svg" viewBox="0 0 24 24"><path d="M5 20V10M10 20V5M15 20v-8M20 20V3"/></svg><span>Statistiky</span></button>
   <button data-view="settings"><svg class="nav-svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1-2.8 2.8-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.5V21h-4v-.1a1.7 1.7 0 0 0-1-1.5 1.7 1.7 0 0 0-1.9.3l-.1.1L4.2 17l.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.5-1H3v-4h.1a1.7 1.7 0 0 0 1.5-1 1.7 1.7 0 0 0-.3-1.9L4.2 7 7 4.2l.1.1a1.7 1.7 0 0 0 1.9.3 1.7 1.7 0 0 0 1-1.5V3h4v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.9-.3l.1-.1L19.8 7l-.1.1a1.7 1.7 0 0 0-.3 1.9 1.7 1.7 0 0 0 1.5 1h.1v4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg><span>Nastavení</span></button>
 </nav>
@@ -1132,6 +1249,7 @@ body.codex-open{
   <section id="view-new" class="hidden"></section>
   <section id="view-history" class="hidden"></section>
   <section id="view-watchlist" class="hidden"></section>
+  <section id="view-analyses" class="hidden"></section>
   <section id="view-stats" class="hidden"></section>
   <section id="view-settings" class="hidden"></section>
 </main>
@@ -1139,7 +1257,7 @@ body.codex-open{
 </section>
 
 <script>
-const APP_VERSION='0.16.5';
+const APP_VERSION='0.17.0';
 const KEY='aba_ipad_v01';
 const AUTH_KEY='aba_auth_v1';
 const BACKUP_KEY='aba_internal_backups_v1';
@@ -1227,6 +1345,7 @@ const defaultData={
   }]
 };
 if(!defaultData.consideredMatches){defaultData.consideredMatches=[]}
+if(!defaultData.analyses){defaultData.analyses=[]}
 let data=loadData();
 data.tickets.forEach(t=>{
   if(t.status==='Výherní' && Number(t.payout||0)<=0){
@@ -1241,6 +1360,7 @@ data.tickets.forEach(t=>{
 });
 saveData();
 if(!data.consideredMatches){data.consideredMatches=[]}
+if(!data.analyses){data.analyses=[]}
 data.tickets.forEach(t=>t.matches.forEach(m=>{
   if(m.country===undefined)m.country='';
   if(m.league===undefined)m.league='';
@@ -1257,6 +1377,8 @@ function migrateData(raw){
   if(d.settings.startingBankroll===undefined)d.settings.startingBankroll=200000;
   if(!Array.isArray(d.tickets))d.tickets=[];
   if(!Array.isArray(d.consideredMatches))d.consideredMatches=[];
+  if(!Array.isArray(d.analyses))d.analyses=[];
+  d.analyses=d.analyses.map(a=>({id:a.id||Date.now()+Math.random(),date:a.date||new Date().toISOString().slice(0,10),match:a.match||'',competition:a.competition||'',recommendation:a.recommendation||'',probability:Number(a.probability||0),confidence:Number(a.confidence||0),verdict:a.verdict||'Zvažovat',text:a.text||'',createdAt:a.createdAt||new Date().toISOString()}));
   d.tickets.forEach(t=>{
     if(!Array.isArray(t.matches))t.matches=[];
     if(t.payout===undefined)t.payout=0;
@@ -1274,7 +1396,7 @@ function migrateData(raw){
       if(!m.status)m.status='Čeká';
     });
   });
-  d.schemaVersion=12;
+  d.schemaVersion=13;
   return d;
 }
 function loadData(){
@@ -1301,7 +1423,7 @@ function createInternalBackup(snapshot){
   }catch(e){}
 }
 function saveData(){
-  data.schemaVersion=12;
+  data.schemaVersion=13;
   const previous=localStorage.getItem(KEY);
   if(previous){
     try{createInternalBackup(JSON.parse(previous))}catch(e){}
@@ -1394,7 +1516,7 @@ function showView(v){
   document.querySelectorAll('main>section').forEach(s=>s.classList.add('hidden'));
   document.getElementById('view-'+v).classList.remove('hidden');
   document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('active',b.dataset.view===v));
-  if(v==='dashboard')renderDashboard(); if(v==='history')renderHistory(); if(v==='watchlist')renderWatchlist(); if(v==='stats')renderStats(); if(v==='settings')renderSettings(); if(v==='new')startDraft();
+  if(v==='dashboard')renderDashboard(); if(v==='history')renderHistory(); if(v==='watchlist')renderWatchlist(); if(v==='analyses')renderAnalyses(); if(v==='stats')renderStats(); if(v==='settings')renderSettings(); if(v==='new')startDraft();
 }
 function summary(){
   let profit=0,wins=0,losses=0,settledStake=0,open=0;
@@ -1509,7 +1631,10 @@ function renderDashboard(){
  const mini=(l,v,i,c='')=>`<div class="dashboard-summary-item"><span class="dashboard-mini-icon">${DASH_ICONS[i]}</span><div class="dashboard-label">${l}</div><div class="dashboard-summary-value ${c}">${v}</div></div>`;
  const book=`<svg viewBox="0 0 24 24"><path d="M3 5.5A3.5 3.5 0 0 1 6.5 2H11v18H6.5A3.5 3.5 0 0 0 3 23z"/><path d="M21 5.5A3.5 3.5 0 0 0 17.5 2H13v18h4.5A3.5 3.5 0 0 1 21 23z"/><path d="M6 7h3M15 7h3M6 11h3M15 11h3"/></svg>`;
  el.innerHTML=`<div class="dashboard-shell">
- <div class="dashboard-title-wrap"><div><h2 class="dashboard-title">Dashboard</h2><div class="small" style="color:var(--teal)!important">Nejsem lovec sázek, jsem správce kapitálu.</div></div></div>
+ <div class="dashboard-title-wrap">
+ <div><h2 class="dashboard-title">Dashboard</h2><div class="small" style="color:var(--teal)!important">Nejsem lovec sázek, jsem správce kapitálu.</div></div>
+ <button class="dashboard-analysis-link" type="button" onclick="showView('analyses')"><svg viewBox="0 0 24 24"><path d="M4 4h16v16H4z"/><path d="M8 9h8M8 13h5M8 17h7"/><path d="m15 13 2 2 3-4"/></svg><span>Analýzy (${data.analyses.length})</span></button>
+ </div>
  <div class="dashboard-kpi-grid">${kpi('Bankroll',money(s.current),'wallet')}${kpi('Dnes',`${today>=0?'+':''}${money(today)}`,'calendar',today>=0?'pos':'neg')}${kpi('ROI',`${s.roi.toFixed(2)} %`,'roi',s.roi>=0?'pos':'neg')}</div>
  <div class="dashboard-main-grid">
    <div class="dashboard-main-left">
@@ -2166,6 +2291,135 @@ function renderStats(){
  <div class="analytics-section"><h2 style="font-size:18px">Vývoj bankrollu</h2>${bankrollChart()}</div>`;
  renderAnalyticsTables();
 }
+
+let editingAnalysisId=null;
+
+function analysisFormValue(id){
+  return document.getElementById(id)?.value?.trim()||'';
+}
+function resetAnalysisForm(){
+  editingAnalysisId=null;
+  const ids=['analysisMatch','analysisCompetition','analysisRecommendation','analysisProbability','analysisConfidence','analysisText'];
+  ids.forEach(id=>{const el=document.getElementById(id);if(el)el.value=''});
+  const date=document.getElementById('analysisDate');
+  if(date)date.value=new Date().toISOString().slice(0,10);
+  const verdict=document.getElementById('analysisVerdict');
+  if(verdict)verdict.value='Zvažovat';
+  const button=document.getElementById('saveAnalysisButton');
+  if(button)button.textContent='Uložit analýzu';
+}
+function saveAnalysisFromForm(){
+  const item={
+    id:editingAnalysisId||Date.now(),
+    date:analysisFormValue('analysisDate')||new Date().toISOString().slice(0,10),
+    match:analysisFormValue('analysisMatch'),
+    competition:analysisFormValue('analysisCompetition'),
+    recommendation:analysisFormValue('analysisRecommendation'),
+    probability:Number(analysisFormValue('analysisProbability')||0),
+    confidence:Number(analysisFormValue('analysisConfidence')||0),
+    verdict:analysisFormValue('analysisVerdict')||'Zvažovat',
+    text:analysisFormValue('analysisText'),
+    createdAt:new Date().toISOString()
+  };
+  if(!item.match){
+    alert('Doplň název zápasu.');
+    return;
+  }
+  if(!item.text){
+    alert('Doplň text analýzy.');
+    return;
+  }
+  const question=editingAnalysisId
+    ?'Uložit provedené změny této analýzy do ABA?'
+    :'Uložit tuto analýzu do ABA?';
+  if(!confirm(question))return;
+
+  if(editingAnalysisId){
+    const index=data.analyses.findIndex(a=>String(a.id)===String(editingAnalysisId));
+    if(index>=0)data.analyses[index]={...data.analyses[index],...item,id:editingAnalysisId};
+  }else{
+    data.analyses.unshift(item);
+  }
+  saveData();
+  resetAnalysisForm();
+  renderAnalyses();
+  renderDashboard();
+}
+function editAnalysis(id){
+  const a=data.analyses.find(x=>String(x.id)===String(id));
+  if(!a)return;
+  editingAnalysisId=a.id;
+  const values={
+    analysisDate:a.date,analysisMatch:a.match,analysisCompetition:a.competition,
+    analysisRecommendation:a.recommendation,analysisProbability:a.probability||'',
+    analysisConfidence:a.confidence||'',analysisVerdict:a.verdict,analysisText:a.text
+  };
+  Object.entries(values).forEach(([id,value])=>{const el=document.getElementById(id);if(el)el.value=value});
+  const button=document.getElementById('saveAnalysisButton');
+  if(button)button.textContent='Uložit změny';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function deleteAnalysis(id){
+  const a=data.analyses.find(x=>String(x.id)===String(id));
+  if(!a)return;
+  if(!confirm(`Opravdu odstranit analýzu zápasu ${a.match}?`))return;
+  data.analyses=data.analyses.filter(x=>String(x.id)!==String(id));
+  saveData();
+  renderAnalyses();
+  renderDashboard();
+}
+function renderAnalyses(){
+  const el=document.getElementById('view-analyses');
+  if(!el)return;
+  const rows=[...data.analyses].sort((a,b)=>String(b.date).localeCompare(String(a.date))||String(b.createdAt).localeCompare(String(a.createdAt)));
+  el.innerHTML=`<h2>Analýzy</h2>
+  <div class="analysis-layout">
+    <div class="analysis-form-card">
+      <h3 style="margin-top:0">${editingAnalysisId?'Upravit analýzu':'Nová analýza'}</h3>
+      <div class="analysis-form-grid">
+        ${field('Datum',`<input id="analysisDate" type="date" value="${new Date().toISOString().slice(0,10)}">`)}
+        ${field('Verdikt',`<select id="analysisVerdict"><option>Zvažovat</option><option>Vsadit</option><option>Nevsadit</option><option>Počkat na sestavy</option></select>`)}
+        <div class="full">${field('Zápas',`<input id="analysisMatch" placeholder="Např. Celtic – Dundee">`)}</div>
+        <div class="full">${field('Soutěž / země',`<input id="analysisCompetition" placeholder="Např. Skotsko – Premiership">`)}</div>
+        <div class="full">${field('Doporučený tip',`<input id="analysisRecommendation" placeholder="Např. Celtic vyhraje">`)}</div>
+        ${field('Pravděpodobnost (%)',`<input id="analysisProbability" type="number" min="0" max="100" step="1" placeholder="0–100">`)}
+        ${field('Moje důvěra (%)',`<input id="analysisConfidence" type="number" min="0" max="100" step="1" placeholder="0–100">`)}
+        <div class="full">${field('Analýza',`<textarea id="analysisText" rows="10" placeholder="Vlož kompletní slovní analýzu, argumenty pro a proti, sestavy, rizika a závěr."></textarea>`)}</div>
+      </div>
+      <div class="analysis-form-actions">
+        <button id="saveAnalysisButton" class="primary" type="button" onclick="saveAnalysisFromForm()">Uložit analýzu</button>
+        <button class="secondary" type="button" onclick="resetAnalysisForm()">Vymazat formulář</button>
+      </div>
+      <div class="small" style="margin-top:10px">Žádná analýza se neuloží bez tvého potvrzení.</div>
+    </div>
+    <div class="analysis-list-card">
+      <div class="analysis-toolbar">
+        <h3 style="margin:0">Archiv analýz</h3>
+        <div class="analysis-count">${rows.length} ${rows.length===1?'analýza':'analýz'}</div>
+      </div>
+      ${rows.length?rows.map(a=>`<article class="analysis-item">
+        <div class="analysis-item-head">
+          <div>
+            <div class="analysis-match">${esc(a.match)}</div>
+            <div class="analysis-meta">${esc(a.date)}${a.competition?' • '+esc(a.competition):''}</div>
+          </div>
+          <span class="analysis-badge">${esc(a.verdict)}</span>
+        </div>
+        <div class="analysis-badges">
+          ${a.recommendation?`<span class="analysis-badge">Tip: ${esc(a.recommendation)}</span>`:''}
+          ${a.probability?`<span class="analysis-badge">Odhad: ${a.probability}%</span>`:''}
+          ${a.confidence?`<span class="analysis-badge">Důvěra: ${a.confidence}%</span>`:''}
+        </div>
+        <div class="analysis-text">${esc(a.text)}</div>
+        <div class="analysis-item-actions">
+          <button class="secondary" type="button" onclick="editAnalysis('${a.id}')">Upravit</button>
+          <button class="danger" type="button" onclick="deleteAnalysis('${a.id}')">Odstranit</button>
+        </div>
+      </article>`).join(''):`<div class="analysis-empty">Zatím není uložená žádná analýza.</div>`}
+    </div>
+  </div>`;
+}
+
 function renderSettings(){
  const el=document.getElementById('view-settings');el.innerHTML=`<h2>Nastavení</h2><div class="card">
  ${field('Počáteční bankroll',`<input id="bankroll" inputmode="decimal" value="${data.settings.startingBankroll}">`)}
@@ -2179,7 +2433,7 @@ function renderSettings(){
 <button class="secondary" onclick="resetLogin()">Změnit přihlášení</button>
 <button class="danger" onclick="resetData()">Obnovit výchozí data</button>
 </div>
- <p class="small">Verze: ABA 0.16.5 · Data jsou uložená pouze v tomto prohlížeči na tomto zařízení.</p></div>`;
+ <p class="small">Verze: ABA 0.17.0 · Data jsou uložená pouze v tomto prohlížeči na tomto zařízení.</p></div>`;
 }
 function saveSettings(){data.settings.startingBankroll=Number(document.getElementById('bankroll').value.replace(',','.'))||200000;saveData();alert('Nastavení uloženo.');renderDashboard()}
 function exportData(){const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`ABA_zaloha_${new Date().toISOString().slice(0,10)}_v${APP_VERSION}.json`;a.click();URL.revokeObjectURL(a.href)}
@@ -2253,7 +2507,7 @@ function resetLogin(){
   logout();
 }
 function resetData(){if(confirm('Opravdu obnovit výchozí data?')){data=structuredClone(defaultData);saveData();renderAll();showView('dashboard')}}
-function renderAll(){renderDashboard();renderHistory();renderWatchlist();renderStats();renderSettings()}
+function renderAll(){renderDashboard();renderHistory();renderWatchlist();renderAnalyses();renderStats();renderSettings()}
 if ("serviceWorker" in navigator) {
   let refreshing=false;
   navigator.serviceWorker.addEventListener("controllerchange",()=>{

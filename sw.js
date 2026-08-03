@@ -1,4 +1,4 @@
-const CACHE='aba-pwa-v0-12-data-safety';
+const CACHE='aba-pwa-v0-13-monthly-stats';
 const ASSETS=[
   './',
   './index.html',

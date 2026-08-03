@@ -103,6 +103,30 @@ th{color:var(--muted);font-weight:600;background:#FAFBFC}
 #abaSplashSub{margin-top:8px;font-size:14px;letter-spacing:.12em;color:#1FD6E5}
 #abaSplashVersion{margin-top:12px;font-size:12px;color:#8AA0AE}
 
+
+#view-dashboard{
+  position:relative;
+  isolation:isolate;
+  overflow:hidden;
+}
+#view-dashboard::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background-image:url('icon-512.png?v=0121');
+  background-repeat:no-repeat;
+  background-position:center 42%;
+  background-size:min(65%,520px) auto;
+  opacity:0.045;
+  filter:grayscale(10%) brightness(1.08) blur(0.2px);
+  pointer-events:none;
+  z-index:-1;
+}
+#view-dashboard > *{
+  position:relative;
+  z-index:1;
+}
+
 </style>
 </head>
 <body>
@@ -112,7 +136,7 @@ th{color:var(--muted);font-weight:600;background:#FAFBFC}
     <img src="icon-512.png?v=0111" alt="ABA – Angel Bet Analytics">
     <div id="abaSplashTitle">ABA</div>
     <div id="abaSplashSub">ANGEL BET ANALYTICS</div>
-    <div id="abaSplashVersion">v0.12.0</div>
+    <div id="abaSplashVersion">v0.13.0</div>
   </div>
 </div>
 
@@ -152,7 +176,7 @@ th{color:var(--muted);font-weight:600;background:#FAFBFC}
 <section id="app" class="hidden">
 <header>
   <strong>ABA – Anděl Bet Analytics</strong>
-  <div style="display:flex;align-items:center;gap:10px"><span id="versionBadge" class="small">v0.12.0</span><span>Zobák</span><button class="secondary" onclick="logout()">Odhlásit</button></div>
+  <div style="display:flex;align-items:center;gap:10px"><span id="versionBadge" class="small">v0.13.0</span><span>Zobák</span><button class="secondary" onclick="logout()">Odhlásit</button></div>
 </header>
 <div class="layout">
 <nav>
@@ -175,43 +199,44 @@ th{color:var(--muted);font-weight:600;background:#FAFBFC}
 </section>
 
 <script>
-const APP_VERSION='0.12.0';
+const APP_VERSION='0.13.0';
 const KEY='aba_ipad_v01';
 const AUTH_KEY='aba_auth_v1';
 const BACKUP_KEY='aba_internal_backups_v1';
 const MAX_INTERNAL_BACKUPS=20;
 const COMPETITIONS = [
-  {country:'Anglie',league:'Premier League'},
-  {country:'Skotsko',league:'Premiership'},
-  {country:'Irsko',league:'Premier Division'},
-  {country:'Portugalsko',league:'Primeira Liga'},
-  {country:'Španělsko',league:'La Liga'},
-  {country:'Německo',league:'Bundesliga'},
-  {country:'Nizozemsko',league:'Eredivisie'},
-  {country:'Belgie',league:'Jupiler Pro League'},
-  {country:'Francie',league:'Ligue 1'},
-  {country:'Itálie',league:'Serie A'},
-  {country:'Česko',league:'Chance Liga'},
-  {country:'Slovensko',league:'Niké liga'},
-  {country:'Polsko',league:'Ekstraklasa'},
-  {country:'Rakousko',league:'Bundesliga'},
-  {country:'Švýcarsko',league:'Super League'},
-  {country:'Chorvatsko',league:'HNL'},
-  {country:'Srbsko',league:'SuperLiga'},
-  {country:'Rumunsko',league:'Liga I'},
-  {country:'Řecko',league:'Super League'},
-  {country:'Turecko',league:'Süper Lig'},
-  {country:'Bulharsko',league:'First League'},
-  {country:'Ukrajina',league:'Premier League'},
-  {country:'Slovinsko',league:'PrvaLiga'},
-  {country:'Dánsko',league:'Superliga'},
-  {country:'Švédsko',league:'Allsvenskan'},
-  {country:'Norsko',league:'Eliteserien'},
-  {country:'Finsko',league:'Veikkausliiga'},
-  {country:'Island',league:'Besta deild karla'},
-  {country:'Evropské poháry',league:'Liga mistrů'},
-  {country:'Evropské poháry',league:'Evropská liga'},
-  {country:'Evropské poháry',league:'Konferenční liga'}
+  {country:'Evropské poháry',league:'Liga mistrů',flag:'🏆'},
+  {country:'Evropské poháry',league:'Evropská liga',flag:'🏆'},
+  {country:'Evropské poháry',league:'Konferenční liga',flag:'🏆'},
+  {country:'Anglie',league:'Premier League',flag:'🏴'},
+  {country:'Belgie',league:'Jupiler Pro League',flag:'🇧🇪'},
+  {country:'Bulharsko',league:'First League',flag:'🇧🇬'},
+  {country:'Česko',league:'Chance Liga',flag:'🇨🇿'},
+  {country:'Dánsko',league:'Superliga',flag:'🇩🇰'},
+  {country:'Finsko',league:'Veikkausliiga',flag:'🇫🇮'},
+  {country:'Francie',league:'Ligue 1',flag:'🇫🇷'},
+  {country:'Chorvatsko',league:'HNL',flag:'🇭🇷'},
+  {country:'Irsko',league:'Premier Division',flag:'🇮🇪'},
+  {country:'Island',league:'Besta deild karla',flag:'🇮🇸'},
+  {country:'Itálie',league:'Serie A',flag:'🇮🇹'},
+  {country:'Nizozemsko',league:'Eredivisie',flag:'🇳🇱'},
+  {country:'Norsko',league:'Eliteserien',flag:'🇳🇴'},
+  {country:'Německo',league:'Bundesliga',flag:'🇩🇪'},
+  {country:'Polsko',league:'Ekstraklasa',flag:'🇵🇱'},
+  {country:'Portugalsko',league:'Primeira Liga',flag:'🇵🇹'},
+  {country:'Rakousko',league:'Bundesliga',flag:'🇦🇹'},
+  {country:'Rumunsko',league:'Liga I',flag:'🇷🇴'},
+  {country:'Saúdská Arábie',league:'Saudi Pro League',flag:'🇸🇦'},
+  {country:'Řecko',league:'Super League',flag:'🇬🇷'},
+  {country:'Skotsko',league:'Premiership',flag:'🏴'},
+  {country:'Slovensko',league:'Niké liga',flag:'🇸🇰'},
+  {country:'Slovinsko',league:'PrvaLiga',flag:'🇸🇮'},
+  {country:'Srbsko',league:'SuperLiga',flag:'🇷🇸'},
+  {country:'Španělsko',league:'La Liga',flag:'🇪🇸'},
+  {country:'Švédsko',league:'Allsvenskan',flag:'🇸🇪'},
+  {country:'Švýcarsko',league:'Super League',flag:'🇨🇭'},
+  {country:'Turecko',league:'Süper Lig',flag:'🇹🇷'},
+  {country:'Ukrajina',league:'Premier League',flag:'🇺🇦'}
 ];
 
 const BET_TYPES = [
@@ -309,7 +334,7 @@ function migrateData(raw){
       if(!m.status)m.status='Čeká';
     });
   });
-  d.schemaVersion=9;
+  d.schemaVersion=10;
   return d;
 }
 function loadData(){
@@ -336,7 +361,7 @@ function createInternalBackup(snapshot){
   }catch(e){}
 }
 function saveData(){
-  data.schemaVersion=9;
+  data.schemaVersion=10;
   const previous=localStorage.getItem(KEY);
   if(previous){
     try{createInternalBackup(JSON.parse(previous))}catch(e){}
@@ -508,11 +533,15 @@ function renderDraft(){
 function field(label,html){return `<div><label>${label}</label>${html}</div>`}
 function competitionOptions(selectedCountry='',selectedLeague=''){
  const groups={};
- COMPETITIONS.forEach(x=>{if(!groups[x.country])groups[x.country]=[];groups[x.country].push(x.league)});
- return `<option value="">Vyber soutěž</option>`+Object.entries(groups).map(([country,leagues])=>
-   `<optgroup label="${esc(country)}">${leagues.map(league=>{
+ COMPETITIONS.forEach(x=>{
+   if(!groups[x.country])groups[x.country]={flag:x.flag||'',leagues:[]};
+   groups[x.country].leagues.push(x.league);
+ });
+ return `<option value="">Vyber stát / soutěž</option>`+Object.entries(groups).map(([country,group])=>
+   `<optgroup label="${esc((group.flag?group.flag+' ':'')+country)}">${group.leagues.map(league=>{
       const value=country+'||'+league;
-      return `<option value="${esc(value)}" ${country===selectedCountry&&league===selectedLeague?'selected':''}>${esc(league)}</option>`;
+      const label=country==='Evropské poháry'?'🏆 '+league:country;
+      return `<option value="${esc(value)}" ${country===selectedCountry&&league===selectedLeague?'selected':''}>${esc(label)}</option>`;
    }).join('')}</optgroup>`).join('');
 }
 function euroIcon(value){
@@ -935,6 +964,50 @@ function aggregateByBetType(tickets){
    .sort((a,b)=>b.success-a.success||b.total-a.total);
 }
 
+
+function availableYears(){
+ const years=[...new Set(data.tickets.map(t=>Number(String(t.date||'').slice(0,4))).filter(y=>Number.isInteger(y)&&y>2000))];
+ if(!years.length)years.push(new Date().getFullYear());
+ return years.sort((a,b)=>b-a);
+}
+function selectedMonthYear(){
+ const select=document.getElementById('monthYearFilter');
+ return Number(select?.value||availableYears()[0]);
+}
+function monthStatsForYear(year){
+ const monthNames=['Leden','Únor','Březen','Duben','Květen','Červen','Červenec','Srpen','Září','Říjen','Listopad','Prosinec'];
+ const rows=monthNames.map((name,index)=>({name,index,tickets:0,wins:0,losses:0,stake:0,profit:0}));
+ data.tickets
+   .filter(t=>Number(String(t.date||'').slice(0,4))===year && ['Výherní','Proherní','Vrácený'].includes(t.status))
+   .forEach(t=>{
+      const month=Number(String(t.date).slice(5,7))-1;
+      if(month<0||month>11)return;
+      const x=rows[month];
+      x.tickets++;
+      x.stake+=Number(t.stake||0);
+      x.profit+=ticketProfit(t);
+      if(t.status==='Výherní')x.wins++;
+      if(t.status==='Proherní')x.losses++;
+   });
+ return rows.map(x=>({
+   ...x,
+   success:(x.wins+x.losses)?x.wins/(x.wins+x.losses)*100:0,
+   roi:x.stake?x.profit/x.stake*100:0
+ }));
+}
+function renderMonthAnalytics(){
+ const el=document.getElementById('monthAnalytics');
+ if(!el)return;
+ const year=selectedMonthYear();
+ const months=monthStatsForYear(year);
+ el.innerHTML=`<div class="table-wrap"><table class="analytics-table"><thead><tr>
+ <th>Měsíc</th><th>Tikety</th><th>Výhry</th><th>Prohry</th><th>Úspěšnost</th><th>ROI</th><th>Profit</th>
+ </tr></thead><tbody>${months.map(x=>{
+   const color=analyticsColor(x.success,x.wins+x.losses);
+   return `<tr><td><span class="status-dot status-${color}"></span>${x.name}</td><td>${x.tickets}</td><td>${x.wins}</td><td>${x.losses}</td><td>${x.tickets?x.success.toFixed(1)+' %':'—'}</td><td class="${x.roi>=0?'pos':'neg'}">${x.tickets?x.roi.toFixed(2)+' %':'—'}</td><td class="${x.profit>=0?'pos':'neg'}">${x.tickets?(x.profit>=0?'+':'')+money(x.profit):'—'}</td></tr>`;
+ }).join('')}</tbody></table></div>`;
+}
+
 function renderAnalyticsTables(){
  const tickets=filteredTickets();
  const settled=filteredSettledTickets();
@@ -976,6 +1049,7 @@ function renderAnalyticsTables(){
    return `<tr><td>${esc(x.category)}</td><td><span class="status-dot status-${color}"></span>${esc(x.name)}</td><td>${x.total}</td><td>${x.wins}</td><td>${x.losses}</td><td>${x.success.toFixed(1)} %</td><td class="${roiValue(fin)>=0?'pos':'neg'}">${roiValue(fin).toFixed(2)} %</td><td class="${fin.profit>=0?'pos':'neg'}">${fin.profit>=0?'+':''}${money(fin.profit)}</td></tr>`;
  }).join(''):`<tr><td colspan="8">Pro zvolené období zatím nejsou data.</td></tr>`}</tbody></table></div>
  <div class="small" style="margin-top:8px">* U kombinovaných tiketů je finanční výsledek orientačně přiřazen každému typu sázky zastoupenému na tiketu.</div>`;
+ renderMonthAnalytics();
 }
 function dayStatsForTickets(tickets){
  const names=['Neděle','Pondělí','Úterý','Středa','Čtvrtek','Pátek','Sobota'];
@@ -1024,7 +1098,15 @@ function renderStats(){
  <div class="analytics-section"><h2 style="font-size:18px">1. Analýza podle zemí</h2><div id="countryAnalytics"></div></div>
  <div class="analytics-section"><h2 style="font-size:18px">2. Analýza podle soutěží</h2><div id="leagueAnalytics"></div></div>
  <div class="analytics-section"><h2 style="font-size:18px">3. Analýza podle dnů</h2><div id="dayAnalytics"></div></div>
- <div class="analytics-section"><h2 style="font-size:18px">4. Analýza podle typu sázky</h2><div id="betTypeAnalytics"></div></div>
+ <div class="analytics-section"><h2 style="font-size:18px">4. Analýza podle měsíců</h2>
+   <div class="filter-panel" style="margin-bottom:10px">
+     <div class="filter-grid">
+       ${field('Rok',`<select id="monthYearFilter" onchange="renderMonthAnalytics()">${availableYears().map(y=>`<option value="${y}">${y}</option>`).join('')}</select>`)}
+     </div>
+   </div>
+   <div id="monthAnalytics"></div>
+ </div>
+ <div class="analytics-section"><h2 style="font-size:18px">5. Analýza podle typu sázky</h2><div id="betTypeAnalytics"></div></div>
  <div class="analytics-section"><h2 style="font-size:18px">Vývoj bankrollu</h2>${bankrollChart()}</div>`;
  renderAnalyticsTables();
 }
@@ -1041,7 +1123,7 @@ function renderSettings(){
 <button class="secondary" onclick="resetLogin()">Změnit přihlášení</button>
 <button class="danger" onclick="resetData()">Obnovit výchozí data</button>
 </div>
- <p class="small">Verze: ABA 0.12.0 · Data jsou uložená pouze v tomto prohlížeči na tomto zařízení.</p></div>`;
+ <p class="small">Verze: ABA 0.13.0 · Data jsou uložená pouze v tomto prohlížeči na tomto zařízení.</p></div>`;
 }
 function saveSettings(){data.settings.startingBankroll=Number(document.getElementById('bankroll').value.replace(',','.'))||200000;saveData();alert('Nastavení uloženo.');renderDashboard()}
 function exportData(){const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`ABA_zaloha_${new Date().toISOString().slice(0,10)}_v${APP_VERSION}.json`;a.click();URL.revokeObjectURL(a.href)}

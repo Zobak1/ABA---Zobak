@@ -1,4 +1,4 @@
-const CACHE='aba-pwa-v0-19-analysis-database';
+const CACHE='aba-pwa-v0-20-analysis-protocol';
 const ASSETS=[
   './',
   './index.html',

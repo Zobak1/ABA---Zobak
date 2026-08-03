@@ -1440,6 +1440,37 @@ body.codex-open{
   .dashboard-analysis-card button{width:100%}
 }
 
+
+/* ABA 0.20.0 — Analysis Protocol v1.0 */
+.analysis-id{
+  color:var(--teal);
+  font-size:11px;
+  font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  margin-top:4px;
+}
+.analysis-protocol-note{
+  border-left:3px solid var(--teal);
+  background:rgba(0,214,214,.06);
+  padding:10px 12px;
+  border-radius:0 10px 10px 0;
+  color:var(--muted);
+  font-size:12px;
+  line-height:1.5;
+  margin-bottom:12px;
+}
+.analysis-duplicate-warning{
+  color:#FFB454;
+  font-weight:700;
+  margin-top:10px;
+}
+.analysis-status-badge{
+  border:1px solid #38515F;
+  color:#B8C7D2;
+  border-radius:999px;
+  padding:4px 8px;
+  font-size:11px;
+}
+
 </style>
 </head>
 <body>
@@ -1457,7 +1488,7 @@ body.codex-open{
     <img src="icon-512.png?v=0111" alt="ABA – Angel Bet Analytics">
     <div id="abaSplashTitle">ABA</div>
     <div id="abaSplashSub">ANGEL BET ANALYTICS</div>
-    <div id="abaSplashVersion">v0.19.0</div>
+    <div id="abaSplashVersion">v0.20.0</div>
   </div>
 </div>
 
@@ -1529,7 +1560,7 @@ body.codex-open{
 
 <header>
   <strong>ABA – Anděl Bet Analytics</strong>
-  <div style="display:flex;align-items:center;gap:10px"><span id="versionBadge" class="small">v0.19.0</span><span>Zobák</span><button class="secondary" onclick="logout()">Odhlásit</button></div>
+  <div style="display:flex;align-items:center;gap:10px"><span id="versionBadge" class="small">v0.20.0</span><span>Zobák</span><button class="secondary" onclick="logout()">Odhlásit</button></div>
 </header>
 <div class="layout">
 <nav>
@@ -1555,7 +1586,7 @@ body.codex-open{
 </section>
 
 <script>
-const APP_VERSION='0.19.0';
+const APP_VERSION='0.20.0';
 const KEY='aba_ipad_v01';
 const AUTH_KEY='aba_auth_v1';
 const BACKUP_KEY='aba_internal_backups_v1';
@@ -1676,7 +1707,43 @@ function migrateData(raw){
   if(!Array.isArray(d.tickets))d.tickets=[];
   if(!Array.isArray(d.consideredMatches))d.consideredMatches=[];
   if(!Array.isArray(d.analyses))d.analyses=[];
-  d.analyses=d.analyses.map(a=>({id:a.id||Date.now()+Math.random(),date:a.date||new Date().toISOString().slice(0,10),match:a.match||'',competition:a.competition||'',recommendation:a.recommendation||'',probability:Number(a.probability||0),confidence:Number(a.confidence||0),verdict:a.verdict||'Zvažovat',text:a.text||'',createdAt:a.createdAt||new Date().toISOString()}));
+  d.analyses=d.analyses.map((a,index)=>{
+    const date=a.date||new Date().toISOString().slice(0,10);
+    const compactDate=String(date).replace(/-/g,'');
+    const fallbackId=`ABA-${compactDate}-${String(index+1).padStart(4,'0')}`;
+    return {
+      id:a.id||Date.now()+index,
+      abaId:a.abaId||a.ABA_ID||fallbackId,
+      protocolVersion:a.protocolVersion||'1.0',
+      date,
+      createdTime:a.createdTime||'',
+      homeTeam:a.homeTeam||'',
+      awayTeam:a.awayTeam||'',
+      match:a.match||[a.homeTeam,a.awayTeam].filter(Boolean).join(' - '),
+      country:a.country||'',
+      competition:a.competition||'',
+      round:a.round||'',
+      recommendation:a.recommendation||'',
+      market:a.market||'',
+      alternativeTips:Array.isArray(a.alternativeTips)?a.alternativeTips:[],
+      probability:Number(a.probability||0),
+      confidence:Number(a.confidence||0),
+      expectedScore:a.expectedScore||'',
+      expectedGoals:a.expectedGoals||'',
+      expectedCorners:a.expectedCorners||'',
+      expectedShots:a.expectedShots||'',
+      expectedShotsOnTarget:a.expectedShotsOnTarget||'',
+      expectedCards:a.expectedCards||'',
+      risks:a.risks||'',
+      verdict:a.verdict||'Zvažovat',
+      text:a.text||'',
+      linkedTicketId:a.linkedTicketId||null,
+      evaluation:a.evaluation||'Nehodnoceno',
+      actualScore:a.actualScore||'',
+      postMatchNotes:a.postMatchNotes||'',
+      createdAt:a.createdAt||new Date().toISOString()
+    };
+  });
   d.tickets.forEach(t=>{
     if(!Array.isArray(t.matches))t.matches=[];
     if(t.payout===undefined)t.payout=0;
@@ -1694,7 +1761,7 @@ function migrateData(raw){
       if(!m.status)m.status='Čeká';
     });
   });
-  d.schemaVersion=15;
+  d.schemaVersion=16;
   return d;
 }
 function loadData(){
@@ -1721,7 +1788,7 @@ function createInternalBackup(snapshot){
   }catch(e){}
 }
 function saveData(){
-  data.schemaVersion=15;
+  data.schemaVersion=16;
   const previous=localStorage.getItem(KEY);
   if(previous){
     try{createInternalBackup(JSON.parse(previous))}catch(e){}
@@ -2617,7 +2684,8 @@ function previewInlineAnalysisImport(){
   try{
     pendingImportedAnalysis=parseAnalysisBlock(document.getElementById('analysisImportTextInline')?.value);
     const a=pendingImportedAnalysis;
-    preview.innerHTML=`<div class="analysis-preview-grid">
+    const duplicate=findDuplicateAnalysis(a);
+    preview.innerHTML=`${duplicate?`<div class="analysis-duplicate-warning">⚠ Tato analýza už v databázi existuje (${esc(duplicate.abaId||'bez ABA ID')}).</div>`:''}<div class="analysis-preview-grid">
       <div class="analysis-preview-row"><div class="analysis-preview-label">Datum</div><div class="analysis-preview-value">${esc(a.date)}</div></div>
       <div class="analysis-preview-row"><div class="analysis-preview-label">Verdikt</div><div class="analysis-preview-value">${esc(a.verdict)}</div></div>
       <div class="analysis-preview-row full"><div class="analysis-preview-label">Zápas</div><div class="analysis-preview-value">${esc(a.match)}</div></div>
@@ -2636,8 +2704,24 @@ function previewInlineAnalysisImport(){
     if(error)error.textContent=err.message||'Import se nepodařilo zpracovat.';
   }
 }
+
+function findDuplicateAnalysis(candidate){
+  if(!candidate)return null;
+  return data.analyses.find(a=>{
+    if(candidate.abaId && a.abaId && String(a.abaId).toLowerCase()===String(candidate.abaId).toLowerCase())return true;
+    return String(a.date||'')===String(candidate.date||'')
+      && String(a.match||'').trim().toLowerCase()===String(candidate.match||'').trim().toLowerCase()
+      && String(a.recommendation||'').trim().toLowerCase()===String(candidate.recommendation||'').trim().toLowerCase();
+  })||null;
+}
+
 function saveInlineImportedAnalysis(){
   if(!pendingImportedAnalysis)return;
+  const duplicate=findDuplicateAnalysis(pendingImportedAnalysis);
+  if(duplicate){
+    alert(`Tato analýza už v ABA existuje.\n\nABA ID: ${duplicate.abaId||'—'}\nZápas: ${duplicate.match}`);
+    return;
+  }
   if(!confirm('Uložit tuto importovanou analýzu do ABA?'))return;
   data.analyses.unshift(pendingImportedAnalysis);
   saveData();
@@ -2693,55 +2777,85 @@ function normalizeImportedVerdict(value){
   return 'Zvažovat';
 }
 function parseAnalysisBlock(raw){
-  const text=String(raw||'').trim();
-  if(!text.includes('=== ABA_ANALYSIS ===') || !text.includes('=== END ===')){
+  const source=String(raw||'').trim();
+  if(!source.includes('=== ABA_ANALYSIS ===') || !source.includes('=== END ===')){
     throw new Error('Blok musí začínat === ABA_ANALYSIS === a končit === END ===.');
   }
-  const inner=text.split('=== ABA_ANALYSIS ===')[1].split('=== END ===')[0].trim();
+  const inner=source.split('=== ABA_ANALYSIS ===')[1].split('=== END ===')[0].trim();
   const lines=inner.split(/\r?\n/);
-  const dataObj={};
+  const fields={};
+  const multilineKeys=new Set(['TEXT','RISKS']);
   let currentKey=null;
-  let textLines=[];
-  for(const line of lines){
-    const keyMatch=line.match(/^([A-Z_]+)\s*=\s*(.*)$/);
-    if(keyMatch && keyMatch[1]!=='TEXT'){
-      if(currentKey==='TEXT')textLines.push(line);
-      else{
-        currentKey=keyMatch[1];
-        dataObj[currentKey]=keyMatch[2].trim();
-      }
+
+  for(const originalLine of lines){
+    const line=originalLine.replace(/\r$/,'');
+    const match=line.match(/^([A-Z][A-Z0-9_]*)\s*=\s*(.*)$/);
+    if(match){
+      currentKey=match[1];
+      fields[currentKey]=match[2]||'';
       continue;
     }
-    if(/^TEXT\s*=/.test(line)){
-      currentKey='TEXT';
-      textLines.push(line.replace(/^TEXT\s*=\s*/,''));
-      continue;
+    if(currentKey && multilineKeys.has(currentKey)){
+      fields[currentKey]+=(fields[currentKey]?'\n':'')+line;
     }
-    if(currentKey==='TEXT')textLines.push(line);
   }
-  dataObj.TEXT=textLines.join('\n').trim();
 
   const required=[];
-  if(!dataObj.MATCH)required.push('MATCH');
-  if(!dataObj.DATE)required.push('DATE');
-  if(!dataObj.TEXT)required.push('TEXT');
+  if(!fields.MATCH && !(fields.HOME_TEAM&&fields.AWAY_TEAM))required.push('MATCH');
+  if(!fields.DATE)required.push('DATE');
+  if(!fields.TEXT)required.push('TEXT');
   if(required.length)throw new Error('Chybí povinná pole: '+required.join(', '));
 
-  const probability=Number(String(dataObj.PROBABILITY||'').replace('%','').replace(',','.'))||0;
-  const confidence=Number(String(dataObj.CONFIDENCE||'').replace('%','').replace(',','.'))||0;
-  if(probability<0 || probability>100)throw new Error('Pravděpodobnost musí být mezi 0 a 100.');
-  if(confidence<0 || confidence>100)throw new Error('Důvěra musí být mezi 0 a 100.');
+  const number0to100=(value,label)=>{
+    const parsed=Number(String(value||'0').replace('%','').replace(',','.'));
+    const n=Number.isFinite(parsed)?parsed:0;
+    if(n<0||n>100)throw new Error(label+' musí být mezi 0 a 100.');
+    return n;
+  };
+
+  const date=fields.DATE.trim();
+  if(!/^\d{4}-\d{2}-\d{2}$/.test(date)){
+    throw new Error('Datum musí být ve formátu RRRR-MM-DD.');
+  }
+
+  const matchName=(fields.MATCH||[fields.HOME_TEAM,fields.AWAY_TEAM].filter(Boolean).join(' - ')).trim();
+  const compactDate=date.replace(/-/g,'');
+  const generatedId=`ABA-${compactDate}-${String(Date.now()).slice(-6)}`;
+  const abaId=(fields.ABA_ID||generatedId).trim();
+
+  const alternatives=[fields.ALTERNATIVE_TIP_1,fields.ALTERNATIVE_TIP_2,fields.ALTERNATIVE_TIP_3]
+    .filter(Boolean).map(x=>x.trim());
 
   return {
     id:Date.now(),
-    date:dataObj.DATE,
-    match:dataObj.MATCH,
-    competition:[dataObj.COUNTRY,dataObj.COMPETITION].filter(Boolean).join(' – ') || dataObj.COMPETITION || '',
-    recommendation:dataObj.TIP || '',
-    probability,
-    confidence,
-    verdict:normalizeImportedVerdict(dataObj.VERDICT),
-    text:dataObj.TEXT,
+    abaId,
+    protocolVersion:(fields.PROTOCOL_VERSION||'1.0').trim(),
+    date,
+    createdTime:(fields.CREATED_TIME||'').trim(),
+    homeTeam:(fields.HOME_TEAM||'').trim(),
+    awayTeam:(fields.AWAY_TEAM||'').trim(),
+    match:matchName,
+    country:(fields.COUNTRY||'').trim(),
+    competition:[fields.COUNTRY,fields.COMPETITION].filter(Boolean).join(' – ') || (fields.COMPETITION||'').trim(),
+    round:(fields.ROUND||'').trim(),
+    recommendation:(fields.TIP||'').trim(),
+    market:(fields.MARKET||'').trim(),
+    alternativeTips:alternatives,
+    probability:number0to100(fields.PROBABILITY,'Pravděpodobnost'),
+    confidence:number0to100(fields.CONFIDENCE,'Důvěra'),
+    expectedScore:(fields.EXPECTED_SCORE||'').trim(),
+    expectedGoals:(fields.EXPECTED_GOALS||'').trim(),
+    expectedCorners:(fields.EXPECTED_CORNERS||'').trim(),
+    expectedShots:(fields.EXPECTED_SHOTS||'').trim(),
+    expectedShotsOnTarget:(fields.EXPECTED_SHOTS_ON_TARGET||'').trim(),
+    expectedCards:(fields.EXPECTED_CARDS||'').trim(),
+    risks:(fields.RISKS||'').trim(),
+    verdict:normalizeImportedVerdict(fields.VERDICT),
+    text:(fields.TEXT||'').trim(),
+    linkedTicketId:null,
+    evaluation:'Nehodnoceno',
+    actualScore:'',
+    postMatchNotes:'',
     createdAt:new Date().toISOString()
   };
 }
@@ -2775,6 +2889,11 @@ function previewImportedAnalysis(){
 }
 function saveImportedAnalysis(){
   if(!pendingImportedAnalysis)return;
+  const duplicate=findDuplicateAnalysis(pendingImportedAnalysis);
+  if(duplicate){
+    alert(`Tato analýza už v ABA existuje.\n\nABA ID: ${duplicate.abaId||'—'}\nZápas: ${duplicate.match}`);
+    return;
+  }
   if(!confirm('Uložit tuto importovanou analýzu do ABA?'))return;
   data.analyses.unshift(pendingImportedAnalysis);
   saveData();
@@ -2884,8 +3003,8 @@ function deleteAnalysis(id){
 }
 function analysisSearchText(a){
   return [
-    a.match,a.competition,a.recommendation,a.verdict,a.text,a.date,
-    a.probability,a.confidence
+    a.abaId,a.match,a.homeTeam,a.awayTeam,a.country,a.competition,a.round,a.recommendation,a.market,a.verdict,a.text,a.risks,a.date,a.evaluation,
+    a.probability,a.confidence,(a.alternativeTips||[]).join(' ')
   ].join(' ').toLowerCase();
 }
 function openAnalysisDetail(id){
@@ -2894,10 +3013,15 @@ function openAnalysisDetail(id){
   document.getElementById('analysisDetailTitle').textContent=a.match||'Analýza';
   document.getElementById('analysisDetailMeta').textContent=[a.date,a.competition].filter(Boolean).join(' • ');
   document.getElementById('analysisDetailBody').innerHTML=`<div class="analysis-detail-grid">
+    <div><div class="analysis-db-field-label">ABA ID</div><div class="analysis-db-field-value">${esc(a.abaId||'—')}</div></div>
+    <div><div class="analysis-db-field-label">Stav vyhodnocení</div><div class="analysis-db-field-value">${esc(a.evaluation||'Nehodnoceno')}</div></div>
     <div><div class="analysis-db-field-label">Verdikt</div><div class="analysis-db-field-value">${esc(a.verdict||'—')}</div></div>
     <div><div class="analysis-db-field-label">Doporučený tip</div><div class="analysis-db-field-value">${esc(a.recommendation||'—')}</div></div>
     <div><div class="analysis-db-field-label">Pravděpodobnost</div><div class="analysis-db-field-value">${Number(a.probability||0)} %</div></div>
     <div><div class="analysis-db-field-label">Důvěra</div><div class="analysis-db-field-value">${Number(a.confidence||0)} %</div></div>
+    <div><div class="analysis-db-field-label">Očekávané skóre</div><div class="analysis-db-field-value">${esc(a.expectedScore||'—')}</div></div>
+    <div><div class="analysis-db-field-label">Trh</div><div class="analysis-db-field-value">${esc(a.market||'—')}</div></div>
+    ${a.risks?`<div class="full"><div class="analysis-db-field-label">Rizika</div><div class="analysis-db-field-value" style="white-space:pre-wrap">${esc(a.risks)}</div></div>`:''}
     <div class="full"><div class="analysis-db-field-label">Kompletní analýza</div></div>
   </div><div class="analysis-detail-text">${esc(a.text||'')}</div>`;
   const modal=document.getElementById('analysisDetailModal');
@@ -2928,6 +3052,7 @@ function renderAnalyses(){
   <div class="analysis-db-layout">
     <section class="analysis-import-panel">
       <h3>📥 Import analýzy</h3>
+      <div class="analysis-protocol-note"><strong>ABA Analysis Protocol v1.0</strong><br>Starší importní bloky zůstávají podporované. ABA ID chrání databázi před duplicitami.</div>
       <div class="analysis-import-steps">
         <strong>1.</strong> Po dokončení analýzy potvrď její uložení.<br>
         <strong>2.</strong> Zkopíruj celý blok ABA_ANALYSIS.<br>
@@ -2951,9 +3076,9 @@ function renderAnalyses(){
         <div class="analysis-db-card-head">
           <div>
             <div class="analysis-db-title">${esc(a.match)}</div>
-            <div class="analysis-db-meta">${esc(a.date)}${a.competition?' • '+esc(a.competition):''}</div>
+            <div class="analysis-db-meta">${esc(a.date)}${a.competition?' • '+esc(a.competition):''}</div><div class="analysis-id">${esc(a.abaId||'—')}</div>
           </div>
-          <span class="analysis-badge">${esc(a.verdict||'Zvažovat')}</span>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end"><span class="analysis-badge">${esc(a.verdict||'Zvažovat')}</span><span class="analysis-status-badge">${esc(a.evaluation||'Nehodnoceno')}</span></div>
         </div>
         <div class="analysis-db-main">
           <div><div class="analysis-db-field-label">Tip</div><div class="analysis-db-field-value">${esc(a.recommendation||'—')}</div></div>
@@ -2963,7 +3088,7 @@ function renderAnalyses(){
         </div>
         <div class="analysis-db-card-actions">
           <button class="primary" type="button" onclick="openAnalysisDetail('${a.id}')">Otevřít detail</button>
-          <button class="secondary" type="button" onclick="editAnalysis('${a.id}')">Upravit</button>
+          
           <button class="danger" type="button" onclick="deleteAnalysis('${a.id}')">Odstranit</button>
         </div>
       </article>`).join(''):`<div class="analysis-empty">${all.length?'Žádná analýza neodpovídá vyhledávání.':'Zatím není uložená žádná analýza.'}</div>`}
@@ -2984,7 +3109,7 @@ function renderSettings(){
 <button class="secondary" onclick="resetLogin()">Změnit přihlášení</button>
 <button class="danger" onclick="resetData()">Obnovit výchozí data</button>
 </div>
- <p class="small">Verze: ABA 0.19.0 · Data jsou uložená pouze v tomto prohlížeči na tomto zařízení.</p></div>`;
+ <p class="small">Verze: ABA 0.20.0 · Data jsou uložená pouze v tomto prohlížeči na tomto zařízení.</p></div>`;
 }
 function saveSettings(){data.settings.startingBankroll=Number(document.getElementById('bankroll').value.replace(',','.'))||200000;saveData();alert('Nastavení uloženo.');renderDashboard()}
 function exportData(){const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`ABA_zaloha_${new Date().toISOString().slice(0,10)}_v${APP_VERSION}.json`;a.click();URL.revokeObjectURL(a.href)}

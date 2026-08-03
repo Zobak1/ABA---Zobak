@@ -1,4 +1,4 @@
-const CACHE='aba-pwa-v0-16-4-scrollable-codex';
+const CACHE='aba-pwa-v0-16-5-ipad-polish';
 const ASSETS=[
   './',
   './index.html',

@@ -1,4 +1,4 @@
-const CACHE='aba-pwa-v0-21-3-history-link-and-title';
+const CACHE='aba-pwa-v0-21-4-link-persistence-fix';
 const ASSETS=[
   './',
   './index.html',

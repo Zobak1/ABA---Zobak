@@ -1521,6 +1521,14 @@ body.codex-open{
   margin-top:5px;
 }
 
+
+.analysis-link-confirmation{
+  margin-top:7px;
+  color:var(--pos);
+  font-size:12px;
+  font-weight:750;
+}
+
 </style>
 </head>
 <body>
@@ -1538,7 +1546,7 @@ body.codex-open{
     <img src="icon-512.png?v=0111" alt="ABA – Angel Bet Analytics">
     <div id="abaSplashTitle">ABA</div>
     <div id="abaSplashSub">ANGEL BET ANALYTICS</div>
-    <div id="abaSplashVersion">v0.21.3</div>
+    <div id="abaSplashVersion">v0.21.4</div>
   </div>
 </div>
 
@@ -1610,7 +1618,7 @@ body.codex-open{
 
 <header>
   <strong>ABA – Anděl Bet Analytics</strong>
-  <div style="display:flex;align-items:center;gap:10px"><span id="versionBadge" class="small">v0.21.3</span><span>Zobák</span><button class="secondary" onclick="logout()">Odhlásit</button></div>
+  <div style="display:flex;align-items:center;gap:10px"><span id="versionBadge" class="small">v0.21.4</span><span>Zobák</span><button class="secondary" onclick="logout()">Odhlásit</button></div>
 </header>
 <div class="layout">
 <nav>
@@ -1636,7 +1644,7 @@ body.codex-open{
 </section>
 
 <script>
-const APP_VERSION='0.21.3';
+const APP_VERSION='0.21.4';
 const KEY='aba_ipad_v01';
 const AUTH_KEY='aba_auth_v1';
 const BACKUP_KEY='aba_internal_backups_v1';
@@ -2278,7 +2286,7 @@ function suggestedTicketStatus(t){
   return 'Rozpracovaný';
 }
 function syncTicketFromMatches(id, showMessage=true){
-  const t=data.tickets.find(x=>x.id===id);
+  const t=data.tickets.find(x=>String(x.id)===String(id));
   if(!t)return;
   const suggested=suggestedTicketStatus(t);
   t.status=suggested;
@@ -2301,7 +2309,7 @@ function ticketStatusWarning(t){
 }
 
 function openTicket(id){
- const t=data.tickets.find(x=>x.id===id); if(!t)return;
+ const t=data.tickets.find(x=>String(x.id)===String(id)); if(!t)return;
  document.querySelectorAll('main>section').forEach(s=>s.classList.add('hidden'));
  const el=document.getElementById('view-history');el.classList.remove('hidden');
  el.innerHTML=`<h2>Tiket ${esc(t.id)}</h2>${ticketStatusWarning(t)}<div class="ticket-head">
@@ -2349,19 +2357,22 @@ function matchDetail(t,i){
    <div class="small">${matching.length
      ?`ABA našla ${matching.length} odpovídající ${matching.length===1?'analýzu':'analýzy'}.`
      :'Pro tento zápas zatím nebyla nalezena uložená analýza.'}</div>
+   <div id="analysis-link-confirmation-${t.id}-${i}" class="analysis-link-confirmation">
+     ${m.linkedAnalysisId?`✓ Propojeno s analýzou ${esc(m.linkedAnalysisId)}`:''}
+   </div>
  </div>
  </div>`;
 }
 function editBetType(id,i,value){
- const t=data.tickets.find(x=>x.id===id);
+ const t=data.tickets.find(x=>String(x.id)===String(id));
  const parts=value.split('||');
  t.matches[i].betCategory=parts[0]||'';
  t.matches[i].betType=parts[1]||'';
  saveData();
 }
-function editCompetition(id,i,value){const t=data.tickets.find(x=>x.id===id);const parts=value.split('||');t.matches[i].country=parts[0]||'';t.matches[i].league=parts[1]||'';saveData()}
+function editCompetition(id,i,value){const t=data.tickets.find(x=>String(x.id)===String(id));const parts=value.split('||');t.matches[i].country=parts[0]||'';t.matches[i].league=parts[1]||'';saveData()}
 function editTicket(id,k,v){
- const t=data.tickets.find(x=>x.id===id);
+ const t=data.tickets.find(x=>String(x.id)===String(id));
  t[k]=['stake','totalOdds','payout'].includes(k)?(Number(String(v).replace(',','.'))||0):v;
  if(k==='status'){
    if(v==='Výherní' && Number(t.payout||0)<=0){
@@ -2378,27 +2389,51 @@ function editTicket(id,k,v){
  renderDashboard();
 }
 function editMatch(id,i,k,v){
- const t=data.tickets.find(x=>x.id===id);
+ const t=data.tickets.find(x=>String(x.id)===String(id));
+ if(!t || !t.matches || !t.matches[i]){
+   alert('Tiket se nepodařilo najít. Obnov stránku a zkus změnu znovu.');
+   return;
+ }
  t.matches[i][k]=k==='odds'?(Number(String(v).replace(',','.'))||1):v;
+
  if(k==='linkedAnalysisId'){
+   // Remove previous reverse links for this ticket/match.
+   data.analyses.forEach(a=>{
+     if(String(a.linkedTicketId)===String(t.id) && a.linkedMatchName===t.matches[i].name){
+       a.linkedTicketId=null;
+       a.linkedMatchName='';
+     }
+   });
+
    const linked=analysisById(v);
    if(linked){
-     linked.linkedTicketId=id;
+     linked.linkedTicketId=t.id;
      linked.linkedMatchName=t.matches[i].name;
    }
+
+   saveData();
+   openTicket(t.id);
+   const confirmation=document.getElementById(`analysis-link-confirmation-${t.id}-${i}`);
+   if(confirmation){
+     confirmation.textContent=linked
+       ? `✓ Analýza ${linked.abaId||linked.id} je propojena s tímto zápasem.`
+       : 'Propojení analýzy bylo zrušeno.';
+   }
+   return;
  }
+
  syncLinkedAnalysisEvaluation(t,t.matches[i]);
  saveData();
+
  if(k==='status'){
    const suggested=suggestedTicketStatus(t);
    if(['Výherní','Proherní','Vrácený'].includes(suggested)){
-     syncTicketFromMatches(id,false);
+     syncTicketFromMatches(t.id,false);
      syncLinkedAnalysisEvaluation(t,t.matches[i]);
      saveData();
    }
  }
 }
-
 function renderWatchlist(){
  const el=document.getElementById('view-watchlist');
  el.innerHTML=`<h2>Zvažované zápasy</h2>
@@ -3289,7 +3324,7 @@ function renderSettings(){
 <button class="secondary" onclick="resetLogin()">Změnit přihlášení</button>
 <button class="danger" onclick="resetData()">Obnovit výchozí data</button>
 </div>
- <p class="small">Verze: ABA 0.21.3 · Data jsou uložená pouze v tomto prohlížeči na tomto zařízení.</p></div>`;
+ <p class="small">Verze: ABA 0.21.4 · Data jsou uložená pouze v tomto prohlížeči na tomto zařízení.</p></div>`;
 }
 function saveSettings(){data.settings.startingBankroll=Number(document.getElementById('bankroll').value.replace(',','.'))||200000;saveData();alert('Nastavení uloženo.');renderDashboard()}
 function exportData(){const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`ABA_zaloha_${new Date().toISOString().slice(0,10)}_v${APP_VERSION}.json`;a.click();URL.revokeObjectURL(a.href)}

@@ -545,14 +545,134 @@ table{color:var(--text)} th{background:#0A1620;color:#B8C7D2} td{border-color:va
 .chart-box svg text{fill:#B9CAD4!important}.chart-box svg line{stroke:#20313D!important}.chart-box svg polyline{stroke:var(--teal)!important}.chart-box svg circle{fill:var(--teal)!important}
 .chart-watermark{opacity:.065!important}
 .dashboard-title-wrap{display:flex;align-items:center;justify-content:space-between;gap:14px}
-.codex-card{display:flex;align-items:center;justify-content:space-between;gap:16px;background:linear-gradient(180deg,#0A1721,#0D1D28);border:1px solid #1D5560;border-radius:16px;padding:18px 20px;box-shadow:0 10px 28px rgba(0,0,0,.22)}
-.codex-card-title{font-size:18px;font-weight:750;color:#fff;margin-bottom:7px}.codex-card-quote{color:var(--teal);font-size:16px;line-height:1.45}
-.codex-card-button{border:1px solid var(--teal);color:var(--teal);background:transparent;border-radius:12px;padding:12px 16px}.codex-card-button:hover{background:rgba(0,214,214,.08)}
-.codex-modal{position:fixed;inset:0;z-index:10000;display:none;align-items:center;justify-content:center;padding:24px;background:rgba(0,0,0,.84);backdrop-filter:blur(5px)}
-.codex-modal.open{display:flex}.codex-modal-inner{position:relative;max-width:min(92vw,880px);max-height:92vh}
-.codex-modal img{display:block;max-width:100%;max-height:88vh;width:auto;height:auto;border-radius:10px;box-shadow:0 20px 60px rgba(0,0,0,.55)}
-.codex-close{position:absolute;right:-10px;top:-10px;width:42px;height:42px;border-radius:50%;border:1px solid #52616B;background:#0A1117;color:#fff;font-size:24px;line-height:1}
-@media(max-width:720px){.codex-card{align-items:flex-start;flex-direction:column}.codex-card-button{width:100%}}
+
+
+
+/* ABA 0.16.1 — Final dark dashboard */
+.dashboard-main-grid{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 220px;
+  gap:22px;
+  align-items:stretch;
+}
+.dashboard-main-left{
+  display:flex;
+  flex-direction:column;
+  gap:15px;
+  min-width:0;
+}
+.dashboard-codex-link{
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:flex-start;
+  gap:24px;
+  min-height:100%;
+  padding:26px 10px 26px 8px;
+  color:var(--teal);
+}
+.dashboard-codex-link .book-icon{
+  width:46px;
+  height:46px;
+  color:var(--teal);
+}
+.dashboard-codex-link .book-icon svg{
+  width:100%;
+  height:100%;
+  fill:none;
+  stroke:currentColor;
+  stroke-width:1.7;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+}
+.dashboard-codex-link .quote{
+  font-size:18px;
+  line-height:1.55;
+  color:var(--teal);
+}
+.dashboard-codex-link button{
+  border:0;
+  background:transparent;
+  color:var(--teal);
+  padding:0;
+  font-size:17px;
+  text-align:left;
+}
+.dashboard-codex-link button:hover{text-decoration:underline}
+
+.dashboard-chart-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:14px;
+  margin-bottom:8px;
+}
+.dashboard-chart-head h3{margin:0}
+.chart-range{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+}
+.chart-range button{
+  min-width:43px;
+  padding:7px 10px;
+  border-radius:8px;
+  border:1px solid var(--line);
+  background:#08131C;
+  color:#E7EEF3;
+  font-size:13px;
+}
+.chart-range button.active{
+  border-color:#0CBCC5;
+  background:linear-gradient(135deg,#087F88,#10B9C1);
+  color:#fff;
+  box-shadow:0 5px 15px rgba(0,214,214,.18);
+}
+.dashboard-chart .chart-box{
+  min-height:360px;
+}
+.dashboard-chart .chart-box svg{
+  width:100%;
+  height:auto;
+  min-height:340px;
+}
+.dashboard-chart .chart-box svg .bankroll-area{
+  fill:url(#bankrollAreaGradient);
+}
+.dashboard-chart .chart-box svg .bankroll-grid{
+  stroke:#20313D !important;
+  stroke-dasharray:3 4;
+}
+.dashboard-chart .chart-box svg .bankroll-line{
+  stroke:var(--teal) !important;
+  stroke-width:2.4;
+  fill:none;
+}
+.dashboard-chart .chart-box svg .bankroll-point{
+  fill:var(--teal) !important;
+}
+.dashboard-summary-grid{
+  grid-template-columns:repeat(6,minmax(0,1fr));
+}
+.dashboard-summary-value{
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+@media(max-width:1050px){
+  .dashboard-main-grid{grid-template-columns:minmax(0,1fr) 185px;gap:15px}
+  .dashboard-codex-link .quote{font-size:16px}
+}
+@media(max-width:820px){
+  .dashboard-main-grid{grid-template-columns:1fr}
+  .dashboard-codex-link{
+    min-height:auto;
+    flex-direction:row;
+    align-items:center;
+    justify-content:space-between;
+    padding:14px 4px;
+  }
+  .dashboard-codex-link .quote{flex:1}
+}
 
 </style>
 </head>
@@ -571,7 +691,7 @@ table{color:var(--text)} th{background:#0A1620;color:#B8C7D2} td{border-color:va
     <img src="icon-512.png?v=0111" alt="ABA – Angel Bet Analytics">
     <div id="abaSplashTitle">ABA</div>
     <div id="abaSplashSub">ANGEL BET ANALYTICS</div>
-    <div id="abaSplashVersion">v0.16.0</div>
+    <div id="abaSplashVersion">v0.16.1</div>
   </div>
 </div>
 
@@ -611,7 +731,7 @@ table{color:var(--text)} th{background:#0A1620;color:#B8C7D2} td{border-color:va
 <section id="app" class="hidden">
 <header>
   <strong>ABA – Anděl Bet Analytics</strong>
-  <div style="display:flex;align-items:center;gap:10px"><span id="versionBadge" class="small">v0.16.0</span><span>Zobák</span><button class="secondary" onclick="logout()">Odhlásit</button></div>
+  <div style="display:flex;align-items:center;gap:10px"><span id="versionBadge" class="small">v0.16.1</span><span>Zobák</span><button class="secondary" onclick="logout()">Odhlásit</button></div>
 </header>
 <div class="layout">
 <nav>
@@ -635,7 +755,7 @@ table{color:var(--text)} th{background:#0A1620;color:#B8C7D2} td{border-color:va
 </section>
 
 <script>
-const APP_VERSION='0.16.0';
+const APP_VERSION='0.16.1';
 const KEY='aba_ipad_v01';
 const AUTH_KEY='aba_auth_v1';
 const BACKUP_KEY='aba_internal_backups_v1';
@@ -952,18 +1072,42 @@ function dashboardCounts(){
  };
 }
 
+
+let dashboardChartRange='1R';
+function setDashboardChartRange(range){
+  dashboardChartRange=range;
+  renderDashboard();
+}
+function dashboardRangeButtons(){
+  return ['7D','30D','90D','1R','VŠE'].map(r=>
+    `<button type="button" class="${dashboardChartRange===r?'active':''}" onclick="setDashboardChartRange('${r}')">${r}</button>`
+  ).join('');
+}
+
 function renderDashboard(){
  const s=summary(),today=todayProfit(),bm=bankrollMetrics(),avg=dashboardAverageOdds(),counts=dashboardCounts(),el=document.getElementById('view-dashboard');
  const kpi=(l,v,i,c='')=>`<div class="dashboard-kpi"><div class="dashboard-label">${l}</div><div class="dashboard-value ${c}">${v}</div><span class="dashboard-icon">${DASH_ICONS[i]}</span></div>`;
  const detail=(l,v,i,c='')=>`<div class="dashboard-detail-card"><div class="dashboard-label">${l}</div><div class="dashboard-detail-value ${c}">${v}</div><span class="dashboard-detail-icon">${DASH_ICONS[i]}</span></div>`;
  const mini=(l,v,i,c='')=>`<div class="dashboard-summary-item"><span class="dashboard-mini-icon">${DASH_ICONS[i]}</span><div class="dashboard-label">${l}</div><div class="dashboard-summary-value ${c}">${v}</div></div>`;
+ const book=`<svg viewBox="0 0 24 24"><path d="M3 5.5A3.5 3.5 0 0 1 6.5 2H11v18H6.5A3.5 3.5 0 0 0 3 23z"/><path d="M21 5.5A3.5 3.5 0 0 0 17.5 2H13v18h4.5A3.5 3.5 0 0 1 21 23z"/><path d="M6 7h3M15 7h3M6 11h3M15 11h3"/></svg>`;
  el.innerHTML=`<div class="dashboard-shell">
  <div class="dashboard-title-wrap"><div><h2 class="dashboard-title">Dashboard</h2><div class="small" style="color:var(--teal)!important">Nejsem lovec sázek, jsem správce kapitálu.</div></div></div>
  <div class="dashboard-kpi-grid">${kpi('Bankroll',money(s.current),'wallet')}${kpi('Dnes',`${today>=0?'+':''}${money(today)}`,'calendar',today>=0?'pos':'neg')}${kpi('ROI',`${s.roi.toFixed(2)} %`,'roi',s.roi>=0?'pos':'neg')}</div>
- <div class="dashboard-chart"><h3>Vývoj bankrollu</h3>${bankrollChart()}</div>
- <div class="dashboard-detail-grid">${detail('Nejvyšší bankroll',money(bm.maximum),'high')}${detail('Aktuální stav',money(bm.current),'pulse')}${detail('Rozdíl od maxima',`${bm.drawdown>=0?'+':''}${money(bm.drawdown)}`,'trophy',bm.drawdown>=0?'pos':'neg')}${detail('Průměrný kurz',avg?avg.toFixed(2):'—','bars')}</div>
- <div class="dashboard-summary-grid">${mini('Počet tiketů',counts.total,'ticket')}${mini('Výhry',counts.wins,'check','pos')}${mini('Prohry',counts.losses,'cross','neg')}${mini('Úspěšnost',`${s.success.toFixed(2)} %`,'target')}${mini('Průměrný kurz',avg?avg.toFixed(2):'—','bars')}${mini('Profit',`${s.profit>=0?'+':''}${money(s.profit)}`,'coins',s.profit>=0?'pos':'neg')}</div>
- <div class="codex-card"><div><div class="codex-card-title">📜 Kodex správce kapitálu</div><div class="codex-card-quote">„Nejsem lovec výher. Jsem správce kapitálu.“</div></div><button type="button" class="codex-card-button" onclick="openCodex()">Zobrazit Kodex →</button></div>
+ <div class="dashboard-main-grid">
+   <div class="dashboard-main-left">
+     <div class="dashboard-chart">
+       <div class="dashboard-chart-head"><h3>Vývoj bankrollu</h3><div class="chart-range">${dashboardRangeButtons()}</div></div>
+       ${bankrollChart()}
+     </div>
+     <div class="dashboard-detail-grid">${detail('Nejvyšší bankroll',money(bm.maximum),'high')}${detail('Aktuální stav',money(bm.current),'pulse')}${detail('Rozdíl od maxima',`${bm.drawdown>=0?'+':''}${money(bm.drawdown)}`,'trophy',bm.drawdown>=0?'pos':'neg')}${detail('Průměrný kurz',avg?avg.toFixed(2):'—','bars')}</div>
+     <div class="dashboard-summary-grid">${mini('Počet tiketů',counts.total,'ticket')}${mini('Výhry',counts.wins,'check','pos')}${mini('Prohry',counts.losses,'cross','neg')}${mini('Úspěšnost',`${s.success.toFixed(2)} %`,'target')}${mini('Průměrný kurz',avg?avg.toFixed(2):'—','bars')}${mini('Profit',`${s.profit>=0?'+':''}${money(s.profit)}`,'coins',s.profit>=0?'pos':'neg')}</div>
+   </div>
+   <aside class="dashboard-codex-link">
+     <span class="book-icon">${book}</span>
+     <div class="quote">„Nejsem lovec výher.<br>Jsem správce kapitálu.“</div>
+     <button type="button" onclick="openCodex()">Zobrazit Kodex →</button>
+   </aside>
+ </div>
  </div>`;
 }
 function card(k,v,c=''){return `<div class="card"><div class="k">${k}</div><div class="v ${c}">${v}</div></div>`}
@@ -1266,23 +1410,52 @@ function bankrollSeries(){
  return rows;
 }
 function bankrollChart(){
- const pts=bankrollSeries(), w=760,h=240,pad=34;
- const vals=pts.map(p=>p.value), min=Math.min(...vals),max=Math.max(...vals);
- const span=Math.max(1,max-min);
- const coords=pts.map((p,i)=>({
-   ...p,x:pad+(pts.length===1?0:(i/(pts.length-1))*(w-pad*2)),
-   y:h-pad-((p.value-min)/span)*(h-pad*2)
- }));
- const poly=coords.map(p=>`${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' ');
+ const all=bankrollSeries();
+ const now=new Date();
+ const day=86400000;
+ const limits={ '7D':7*day,'30D':30*day,'90D':90*day,'1R':365*day };
+ let pts=all;
+ if(dashboardChartRange!=='VŠE' && limits[dashboardChartRange]){
+   const cutoff=now.getTime()-limits[dashboardChartRange];
+   const filtered=all.filter(p=>new Date(p.date).getTime()>=cutoff);
+   if(filtered.length>=2)pts=filtered;
+ }
+ const w=960,h=350,padL=62,padR=18,padT=24,padB=42;
+ const values=pts.map(p=>Number(p.value||0));
+ const min0=Math.min(...values),max0=Math.max(...values);
+ const spread=Math.max(1,max0-min0);
+ const min=Math.max(0,min0-spread*.12),max=max0+spread*.12;
+ const x=i=>padL+(pts.length<=1?0:i*(w-padL-padR)/(pts.length-1));
+ const y=v=>padT+(max-v)*(h-padT-padB)/(max-min||1);
+ const line=pts.map((p,i)=>`${x(i)},${y(Number(p.value||0))}`).join(' ');
+ const area=`${padL},${h-padB} ${line} ${x(pts.length-1)},${h-padB}`;
+ const yTicks=5;
+ const gridY=Array.from({length:yTicks},(_,i)=>{
+   const val=max-i*(max-min)/(yTicks-1);
+   const yy=y(val);
+   return `<line class="bankroll-grid" x1="${padL}" y1="${yy}" x2="${w-padR}" y2="${yy}"/><text x="${padL-10}" y="${yy+4}" text-anchor="end">${money(val)}</text>`;
+ }).join('');
+ const maxLabels=7;
+ const step=Math.max(1,Math.ceil(pts.length/maxLabels));
+ const labels=pts.map((p,i)=>{
+   if(i%step!==0 && i!==pts.length-1)return '';
+   const d=new Date(p.date);
+   return `<text x="${x(i)}" y="${h-12}" text-anchor="middle">${d.toLocaleDateString('cs-CZ',{day:'numeric',month:'numeric'})}</text>`;
+ }).join('');
  return `<div class="chart-box">
- <img class="chart-watermark" src="aba-watermark.png?v=0143" alt="">
- <svg viewBox="0 0 ${w} ${h}" role="img" aria-label="Vývoj bankrollu" style="width:100%;height:auto">
-   <line x1="${pad}" y1="${h-pad}" x2="${w-pad}" y2="${h-pad}" stroke="#CFD8DC"/>
-   <line x1="${pad}" y1="${pad}" x2="${pad}" y2="${h-pad}" stroke="#CFD8DC"/>
-   <polyline points="${poly}" fill="none" stroke="#0799A3" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/>
-   ${coords.map(p=>`<circle cx="${p.x}" cy="${p.y}" r="5" fill="#0799A3"><title>${esc(p.label)}: ${money(p.value)}</title></circle>`).join('')}
-   <text x="${pad}" y="18" font-size="12" fill="#0799A3">${money(max)}</text>
-   <text x="${pad}" y="${h-8}" font-size="12" fill="#0799A3">${money(min)}</text>
+ <img class="chart-watermark" src="aba-watermark.png?v=0161" alt="">
+ <svg viewBox="0 0 ${w} ${h}" role="img" aria-label="Vývoj bankrollu">
+   <defs>
+     <linearGradient id="bankrollAreaGradient" x1="0" y1="0" x2="0" y2="1">
+       <stop offset="0%" stop-color="#00D6D6" stop-opacity=".46"/>
+       <stop offset="100%" stop-color="#00D6D6" stop-opacity=".05"/>
+     </linearGradient>
+   </defs>
+   ${gridY}
+   <polygon class="bankroll-area" points="${area}"/>
+   <polyline class="bankroll-line" points="${line}"/>
+   ${pts.map((p,i)=>`<circle class="bankroll-point" cx="${x(i)}" cy="${y(Number(p.value||0))}" r="${pts.length<20?3:1.6}"/>`).join('')}
+   ${labels}
  </svg>
  </div>`;
 }
@@ -1588,7 +1761,7 @@ function renderSettings(){
 <button class="secondary" onclick="resetLogin()">Změnit přihlášení</button>
 <button class="danger" onclick="resetData()">Obnovit výchozí data</button>
 </div>
- <p class="small">Verze: ABA 0.16.0 · Data jsou uložená pouze v tomto prohlížeči na tomto zařízení.</p></div>`;
+ <p class="small">Verze: ABA 0.16.1 · Data jsou uložená pouze v tomto prohlížeči na tomto zařízení.</p></div>`;
 }
 function saveSettings(){data.settings.startingBankroll=Number(document.getElementById('bankroll').value.replace(',','.'))||200000;saveData();alert('Nastavení uloženo.');renderDashboard()}
 function exportData(){const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`ABA_zaloha_${new Date().toISOString().slice(0,10)}_v${APP_VERSION}.json`;a.click();URL.revokeObjectURL(a.href)}

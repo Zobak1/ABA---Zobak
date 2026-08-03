@@ -1,4 +1,4 @@
-const CACHE='aba-pwa-v0-16-3-compact-dashboard';
+const CACHE='aba-pwa-v0-16-4-scrollable-codex';
 const ASSETS=[
   './',
   './index.html',

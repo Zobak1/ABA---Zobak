@@ -1529,6 +1529,23 @@ body.codex-open{
   font-weight:750;
 }
 
+
+.ticket-delete-zone{
+  display:flex;
+  justify-content:flex-end;
+  margin-top:16px;
+  padding-top:14px;
+  border-top:1px solid var(--line);
+}
+.ticket-delete-button{
+  background:transparent;
+  color:var(--neg);
+  border:1px solid rgba(255,77,87,.55);
+}
+.ticket-delete-button:hover{
+  background:rgba(255,77,87,.08);
+}
+
 </style>
 </head>
 <body>
@@ -1546,7 +1563,7 @@ body.codex-open{
     <img src="icon-512.png?v=0111" alt="ABA – Angel Bet Analytics">
     <div id="abaSplashTitle">ABA</div>
     <div id="abaSplashSub">ANGEL BET ANALYTICS</div>
-    <div id="abaSplashVersion">v0.21.4</div>
+    <div id="abaSplashVersion">v0.21.5</div>
   </div>
 </div>
 
@@ -1618,7 +1635,7 @@ body.codex-open{
 
 <header>
   <strong>ABA – Anděl Bet Analytics</strong>
-  <div style="display:flex;align-items:center;gap:10px"><span id="versionBadge" class="small">v0.21.4</span><span>Zobák</span><button class="secondary" onclick="logout()">Odhlásit</button></div>
+  <div style="display:flex;align-items:center;gap:10px"><span id="versionBadge" class="small">v0.21.5</span><span>Zobák</span><button class="secondary" onclick="logout()">Odhlásit</button></div>
 </header>
 <div class="layout">
 <nav>
@@ -1644,7 +1661,7 @@ body.codex-open{
 </section>
 
 <script>
-const APP_VERSION='0.21.4';
+const APP_VERSION='0.21.5';
 const KEY='aba_ipad_v01';
 const AUTH_KEY='aba_auth_v1';
 const BACKUP_KEY='aba_internal_backups_v1';
@@ -2308,6 +2325,28 @@ function ticketStatusWarning(t){
   </div>`;
 }
 
+
+function deleteTicket(id){
+  const ticket=data.tickets.find(t=>String(t.id)===String(id));
+  if(!ticket)return;
+
+  const label=ticket.matches?.map(m=>m.name).filter(Boolean).join(', ')||'tento tiket';
+  if(!confirm(`Opravdu smazat tiket?\n\n${label}\n\nTuto akci nelze vrátit zpět.`))return;
+
+  // Remove reverse links from analyses.
+  data.analyses.forEach(a=>{
+    if(String(a.linkedTicketId)===String(ticket.id)){
+      a.linkedTicketId=null;
+      a.linkedMatchName='';
+    }
+  });
+
+  data.tickets=data.tickets.filter(t=>String(t.id)!==String(id));
+  saveData();
+  renderAll();
+  showView('history');
+}
+
 function openTicket(id){
  const t=data.tickets.find(x=>String(x.id)===String(id)); if(!t)return;
  document.querySelectorAll('main>section').forEach(s=>s.classList.add('hidden'));
@@ -2361,7 +2400,10 @@ function matchDetail(t,i){
      ${m.linkedAnalysisId?`✓ Propojeno s analýzou ${esc(m.linkedAnalysisId)}`:''}
    </div>
  </div>
- </div>`;
+ <div class="ticket-delete-zone">
+  <button type="button" class="ticket-delete-button" onclick="deleteTicket('${t.id}')">🗑️ Smazat tiket</button>
+</div>
+</div>`;
 }
 function editBetType(id,i,value){
  const t=data.tickets.find(x=>String(x.id)===String(id));
@@ -3324,7 +3366,7 @@ function renderSettings(){
 <button class="secondary" onclick="resetLogin()">Změnit přihlášení</button>
 <button class="danger" onclick="resetData()">Obnovit výchozí data</button>
 </div>
- <p class="small">Verze: ABA 0.21.4 · Data jsou uložená pouze v tomto prohlížeči na tomto zařízení.</p></div>`;
+ <p class="small">Verze: ABA 0.21.5 · Data jsou uložená pouze v tomto prohlížeči na tomto zařízení.</p></div>`;
 }
 function saveSettings(){data.settings.startingBankroll=Number(document.getElementById('bankroll').value.replace(',','.'))||200000;saveData();alert('Nastavení uloženo.');renderDashboard()}
 function exportData(){const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`ABA_zaloha_${new Date().toISOString().slice(0,10)}_v${APP_VERSION}.json`;a.click();URL.revokeObjectURL(a.href)}

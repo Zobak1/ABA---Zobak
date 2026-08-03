@@ -674,11 +674,14 @@ table{color:var(--text)} th{background:#0A1620;color:#B8C7D2} td{border-color:va
   .dashboard-codex-link .quote{flex:1}
 }
 
+
+.codex-modal[hidden]{display:none!important}
+
 </style>
 </head>
 <body>
 
-<div id="codexModal" class="codex-modal" aria-hidden="true" onclick="if(event.target===this)closeCodex()">
+<div id="codexModal" class="codex-modal" aria-hidden="true" hidden onclick="if(event.target===this)closeCodex()">
   <div class="codex-modal-inner">
     <button class="codex-close" type="button" aria-label="Zavřít" onclick="closeCodex()">×</button>
     <img src="kodex-spravce-kapitalu.png?v=0160" alt="Kodex správce kapitálu">
@@ -691,7 +694,7 @@ table{color:var(--text)} th{background:#0A1620;color:#B8C7D2} td{border-color:va
     <img src="icon-512.png?v=0111" alt="ABA – Angel Bet Analytics">
     <div id="abaSplashTitle">ABA</div>
     <div id="abaSplashSub">ANGEL BET ANALYTICS</div>
-    <div id="abaSplashVersion">v0.16.1</div>
+    <div id="abaSplashVersion">v0.16.2</div>
   </div>
 </div>
 
@@ -731,7 +734,7 @@ table{color:var(--text)} th{background:#0A1620;color:#B8C7D2} td{border-color:va
 <section id="app" class="hidden">
 <header>
   <strong>ABA – Anděl Bet Analytics</strong>
-  <div style="display:flex;align-items:center;gap:10px"><span id="versionBadge" class="small">v0.16.1</span><span>Zobák</span><button class="secondary" onclick="logout()">Odhlásit</button></div>
+  <div style="display:flex;align-items:center;gap:10px"><span id="versionBadge" class="small">v0.16.2</span><span>Zobák</span><button class="secondary" onclick="logout()">Odhlásit</button></div>
 </header>
 <div class="layout">
 <nav>
@@ -755,7 +758,7 @@ table{color:var(--text)} th{background:#0A1620;color:#B8C7D2} td{border-color:va
 </section>
 
 <script>
-const APP_VERSION='0.16.1';
+const APP_VERSION='0.16.2';
 const KEY='aba_ipad_v01';
 const AUTH_KEY='aba_auth_v1';
 const BACKUP_KEY='aba_internal_backups_v1';
@@ -1055,8 +1058,32 @@ const DASH_ICONS={
 };
 
 
-function openCodex(){const m=document.getElementById('codexModal');if(!m)return;m.classList.add('open');m.setAttribute('aria-hidden','false');document.body.style.overflow='hidden'}
-function closeCodex(){const m=document.getElementById('codexModal');if(!m)return;m.classList.remove('open');m.setAttribute('aria-hidden','true');document.body.style.overflow=''}
+
+document.addEventListener('DOMContentLoaded',()=>{
+  const m=document.getElementById('codexModal');
+  if(m){
+    m.hidden=true;
+    m.classList.remove('open');
+    m.setAttribute('aria-hidden','true');
+  }
+});
+
+function openCodex(){
+  const m=document.getElementById('codexModal');
+  if(!m)return;
+  m.hidden=false;
+  m.classList.add('open');
+  m.setAttribute('aria-hidden','false');
+  document.body.style.overflow='hidden';
+}
+function closeCodex(){
+  const m=document.getElementById('codexModal');
+  if(!m)return;
+  m.classList.remove('open');
+  m.setAttribute('aria-hidden','true');
+  m.hidden=true;
+  document.body.style.overflow='';
+}
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeCodex()});
 
 function dashboardAverageOdds(){
@@ -1761,7 +1788,7 @@ function renderSettings(){
 <button class="secondary" onclick="resetLogin()">Změnit přihlášení</button>
 <button class="danger" onclick="resetData()">Obnovit výchozí data</button>
 </div>
- <p class="small">Verze: ABA 0.16.1 · Data jsou uložená pouze v tomto prohlížeči na tomto zařízení.</p></div>`;
+ <p class="small">Verze: ABA 0.16.2 · Data jsou uložená pouze v tomto prohlížeči na tomto zařízení.</p></div>`;
 }
 function saveSettings(){data.settings.startingBankroll=Number(document.getElementById('bankroll').value.replace(',','.'))||200000;saveData();alert('Nastavení uloženo.');renderDashboard()}
 function exportData(){const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`ABA_zaloha_${new Date().toISOString().slice(0,10)}_v${APP_VERSION}.json`;a.click();URL.revokeObjectURL(a.href)}

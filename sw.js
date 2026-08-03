@@ -1,4 +1,4 @@
-const CACHE='aba-pwa-v0-16-1-final-dark-layout';
+const CACHE='aba-pwa-v0-16-2-codex-login-fix';
 const ASSETS=[
   './',
   './index.html',

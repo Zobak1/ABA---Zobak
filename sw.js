@@ -1,4 +1,4 @@
-const CACHE='aba-pwa-v0-13-monthly-stats';
+const CACHE='aba-pwa-v0-13-1-chart-watermark';
 const ASSETS=[
   './',
   './index.html',

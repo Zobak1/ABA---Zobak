@@ -1,4 +1,4 @@
-const CACHE='aba-pwa-v0-14-dashboard-redesign';
+const CACHE='aba-pwa-v0-14-1-dashboard-fixed-layout';
 const ASSETS=[
   './',
   './index.html',

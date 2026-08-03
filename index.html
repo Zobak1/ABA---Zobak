@@ -1514,7 +1514,7 @@ body.codex-open{
     <img src="icon-512.png?v=0111" alt="ABA – Angel Bet Analytics">
     <div id="abaSplashTitle">ABA</div>
     <div id="abaSplashSub">ANGEL BET ANALYTICS</div>
-    <div id="abaSplashVersion">v0.21.0</div>
+    <div id="abaSplashVersion">v0.21.2</div>
   </div>
 </div>
 
@@ -1586,7 +1586,7 @@ body.codex-open{
 
 <header>
   <strong>ABA – Anděl Bet Analytics</strong>
-  <div style="display:flex;align-items:center;gap:10px"><span id="versionBadge" class="small">v0.21.0</span><span>Zobák</span><button class="secondary" onclick="logout()">Odhlásit</button></div>
+  <div style="display:flex;align-items:center;gap:10px"><span id="versionBadge" class="small">v0.21.2</span><span>Zobák</span><button class="secondary" onclick="logout()">Odhlásit</button></div>
 </header>
 <div class="layout">
 <nav>
@@ -1612,7 +1612,7 @@ body.codex-open{
 </section>
 
 <script>
-const APP_VERSION='0.21.0';
+const APP_VERSION='0.21.2';
 const KEY='aba_ipad_v01';
 const AUTH_KEY='aba_auth_v1';
 const BACKUP_KEY='aba_internal_backups_v1';
@@ -2143,6 +2143,24 @@ function analysisLinkOptions(matchName,selected){
    return `<option value="${esc(id)}" ${String(selected||'')===String(id)?'selected':''}>${esc(a.abaId||'')} • ${esc(a.recommendation||a.match)}</option>`;
  }).join('');
 }
+
+function updateLinkedAnalysisAfterName(i){
+  const match=draft.matches[i];
+  if(!match)return;
+  const previous=match.linkedAnalysisId;
+  const rows=matchingAnalyses(match.name);
+  const valid=rows.some(a=>String(a.abaId||a.id)===String(previous));
+  if(!valid)match.linkedAnalysisId=null;
+  const select=document.getElementById(`linked-analysis-${i}`);
+  const note=document.getElementById(`linked-analysis-note-${i}`);
+  if(select)select.innerHTML=analysisLinkOptions(match.name,match.linkedAnalysisId);
+  if(note){
+    note.textContent=rows.length
+      ? `ABA našla ${rows.length} odpovídající ${rows.length===1?'analýzu':'analýzy'}.`
+      : 'Pro tento název zápasu zatím nebyla nalezena analýza.';
+  }
+}
+
 function setLinkedAnalysis(i,value){
  draft.matches[i].linkedAnalysisId=value||null;
 }
@@ -2178,7 +2196,7 @@ function syncLinkedAnalysisEvaluation(ticket,match){
 function matchEditor(m,i){
  return `<div class="match-card"><strong>Zápas ${i+1} ${euroIcon(m.euroLoad)?`<span class="icon-badge">${euroIcon(m.euroLoad)}</span>`:''}</strong>
  <div class="grid3">
- ${field('Název zápasu',`<input value="${esc(m.name)}" oninput="setMatch(${i},'name',this.value)">`)}
+ ${field('Název zápasu',`<input value="${esc(m.name)}" oninput="setMatch(${i},'name',this.value)" onblur="updateLinkedAnalysisAfterName(${i})">`)}
  ${field('Tip',`<input value="${esc(m.pick)}" oninput="setMatch(${i},'pick',this.value)">`)}
  ${field('Kurz',`<input inputmode="decimal" value="${m.odds}" oninput="setMatch(${i},'odds',this.value)">`)}
  </div>
@@ -2195,21 +2213,14 @@ function matchEditor(m,i){
  ${field('Poznámka',`<textarea oninput="setMatch(${i},'note',this.value)">${esc(m.note)}</textarea>`)}
  <div class="analysis-ticket-link">
    <label>Propojená analýza</label>
-   <select onchange="setLinkedAnalysis(${i},this.value)">${analysisLinkOptions(m.name,m.linkedAnalysisId)}</select>
-   ${matchingAnalyses(m.name).length?`<div class="small" style="margin-top:5px">ABA našla ${matchingAnalyses(m.name).length} odpovídající analýzu.</div>`:`<div class="small" style="margin-top:5px">Po zadání názvu zápasu ABA nabídne odpovídající analýzu.</div>`}
+   <select id="linked-analysis-${i}" onchange="setLinkedAnalysis(${i},this.value)">${analysisLinkOptions(m.name,m.linkedAnalysisId)}</select>
+   <div id="linked-analysis-note-${i}" class="small" style="margin-top:5px">${matchingAnalyses(m.name).length?`ABA našla ${matchingAnalyses(m.name).length} odpovídající ${matchingAnalyses(m.name).length===1?'analýzu':'analýzy'}.`:'Po zadání názvu zápasu ABA nabídne odpovídající analýzu.'}</div>
  </div>
  ${draft.matches.length>1?`<button class="danger" onclick="removeMatch(${i})">Odebrat zápas</button>`:''}</div>`;
 }
 function setMatch(i,k,v){
  draft.matches[i][k]=k==='odds'?(Number(String(v).replace(',','.'))||1):v;
  if(k==='odds')updateDraftTotals();
- if(k==='name'){
-   const previous=draft.matches[i].linkedAnalysisId;
-   const valid=matchingAnalyses(v).some(a=>String(a.abaId||a.id)===String(previous));
-   if(!valid)draft.matches[i].linkedAnalysisId=null;
-   renderDraft();
-   const inputs=document.querySelectorAll('#matches .match-card input');
- }
 }
 function calcDraft(){return draft.matches.reduce((p,m)=>p*(Number(m.odds)||1),1)}
 function updateDraftTotals(){const t=calcDraft();document.getElementById('d-total').textContent=t.toFixed(2);document.getElementById('d-possible').textContent=money(t*Number(draft.stake||0))}
@@ -3235,7 +3246,7 @@ function renderSettings(){
 <button class="secondary" onclick="resetLogin()">Změnit přihlášení</button>
 <button class="danger" onclick="resetData()">Obnovit výchozí data</button>
 </div>
- <p class="small">Verze: ABA 0.21.0 · Data jsou uložená pouze v tomto prohlížeči na tomto zařízení.</p></div>`;
+ <p class="small">Verze: ABA 0.21.2 · Data jsou uložená pouze v tomto prohlížeči na tomto zařízení.</p></div>`;
 }
 function saveSettings(){data.settings.startingBankroll=Number(document.getElementById('bankroll').value.replace(',','.'))||200000;saveData();alert('Nastavení uloženo.');renderDashboard()}
 function exportData(){const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`ABA_zaloha_${new Date().toISOString().slice(0,10)}_v${APP_VERSION}.json`;a.click();URL.revokeObjectURL(a.href)}

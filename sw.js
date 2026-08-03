@@ -1,4 +1,4 @@
-const CACHE='aba-pwa-v0-21-1-name-input-fix';
+const CACHE='aba-pwa-v0-21-2-input-focus-fix';
 const ASSETS=[
   './',
   './index.html',

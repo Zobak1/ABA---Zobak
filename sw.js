@@ -1,4 +1,4 @@
-const CACHE='aba-pwa-v0-14-3-branding-assets';
+const CACHE='aba-pwa-v0-15-dashboard-rebuild';
 const ASSETS=[
   './',
   './index.html',

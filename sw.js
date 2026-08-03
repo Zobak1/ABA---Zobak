@@ -1,4 +1,4 @@
-const CACHE='aba-pwa-v0-15-dashboard-rebuild';
+const CACHE='aba-pwa-v0-16-dark-professional';
 const ASSETS=[
   './',
   './index.html',
@@ -8,7 +8,8 @@ const ASSETS=[
   './apple-touch-icon.png',
   './favicon-32.png',
   './aba-sidebar-logo.png',
-  './aba-watermark.png'
+  './aba-watermark.png',
+  './kodex-spravce-kapitalu.png'
 ];
 
 self.addEventListener('install',event=>{

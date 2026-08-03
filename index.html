@@ -522,16 +522,56 @@ nav button{
   .dashboard-value{font-size:25px}
 }
 
+
+:root{--nav:#06131D;--nav2:#0A1D2A;--bg:#071018;--card:#0B1721;--card2:#0E1B26;--text:#F3F7FA;--muted:#9FB0BE;--line:#20313D;--pos:#16C784;--neg:#FF4D57;--teal:#00D6D6}
+html,body{background:var(--bg);color:var(--text)}
+body{background:linear-gradient(180deg,#061018,#08131C)}
+header{background:#050D13;border-bottom:1px solid var(--line);color:var(--text);box-shadow:0 5px 18px rgba(0,0,0,.28)}
+header strong,h1,h2,h3{color:var(--text)}
+.layout,main{background:transparent}
+nav{background:linear-gradient(180deg,#061521,#07131D);border-right:1px solid var(--line)}
+nav button{color:#D6E1E8} nav button:hover{background:#0D2633}
+nav button.active{background:linear-gradient(135deg,#087B84,#0DB4BC);color:#fff;box-shadow:0 8px 22px rgba(0,214,214,.16)}
+.card,.analytics-section,.filter-panel,.table-wrap,.chart-box,.dashboard-kpi,.dashboard-chart,.dashboard-detail-card,.dashboard-summary-grid{background:linear-gradient(180deg,var(--card),var(--card2))!important;border-color:var(--line)!important;box-shadow:0 10px 28px rgba(0,0,0,.2)!important}
+.card .k,.dashboard-label,.small,.muted{color:var(--muted)!important}
+.card .v,.dashboard-value,.dashboard-detail-value,.dashboard-summary-value{color:var(--teal)}
+.dashboard-value.pos,.dashboard-detail-value.pos,.dashboard-summary-value.pos,.pos{color:var(--pos)!important}
+.dashboard-value.neg,.dashboard-detail-value.neg,.dashboard-summary-value.neg,.neg{color:var(--neg)!important}
+.dashboard-icon{background:#0B2C34;color:var(--teal)}
+.dashboard-detail-icon,.dashboard-mini-icon{color:var(--teal)}
+input,textarea,select,button.secondary{background:#0A1620;color:var(--text);border-color:#2A3B48}
+button.primary{background:linear-gradient(135deg,#07848D,#0EC6CE);color:#fff}
+table{color:var(--text)} th{background:#0A1620;color:#B8C7D2} td{border-color:var(--line)} tr:hover td{background:#0C1B26}
+.chart-box svg text{fill:#B9CAD4!important}.chart-box svg line{stroke:#20313D!important}.chart-box svg polyline{stroke:var(--teal)!important}.chart-box svg circle{fill:var(--teal)!important}
+.chart-watermark{opacity:.065!important}
+.dashboard-title-wrap{display:flex;align-items:center;justify-content:space-between;gap:14px}
+.codex-card{display:flex;align-items:center;justify-content:space-between;gap:16px;background:linear-gradient(180deg,#0A1721,#0D1D28);border:1px solid #1D5560;border-radius:16px;padding:18px 20px;box-shadow:0 10px 28px rgba(0,0,0,.22)}
+.codex-card-title{font-size:18px;font-weight:750;color:#fff;margin-bottom:7px}.codex-card-quote{color:var(--teal);font-size:16px;line-height:1.45}
+.codex-card-button{border:1px solid var(--teal);color:var(--teal);background:transparent;border-radius:12px;padding:12px 16px}.codex-card-button:hover{background:rgba(0,214,214,.08)}
+.codex-modal{position:fixed;inset:0;z-index:10000;display:none;align-items:center;justify-content:center;padding:24px;background:rgba(0,0,0,.84);backdrop-filter:blur(5px)}
+.codex-modal.open{display:flex}.codex-modal-inner{position:relative;max-width:min(92vw,880px);max-height:92vh}
+.codex-modal img{display:block;max-width:100%;max-height:88vh;width:auto;height:auto;border-radius:10px;box-shadow:0 20px 60px rgba(0,0,0,.55)}
+.codex-close{position:absolute;right:-10px;top:-10px;width:42px;height:42px;border-radius:50%;border:1px solid #52616B;background:#0A1117;color:#fff;font-size:24px;line-height:1}
+@media(max-width:720px){.codex-card{align-items:flex-start;flex-direction:column}.codex-card-button{width:100%}}
+
 </style>
 </head>
 <body>
+
+<div id="codexModal" class="codex-modal" aria-hidden="true" onclick="if(event.target===this)closeCodex()">
+  <div class="codex-modal-inner">
+    <button class="codex-close" type="button" aria-label="Zavřít" onclick="closeCodex()">×</button>
+    <img src="kodex-spravce-kapitalu.png?v=0160" alt="Kodex správce kapitálu">
+  </div>
+</div>
+
 
 <div id="abaSplash" aria-label="Spouštění ABA">
   <div id="abaSplashInner">
     <img src="icon-512.png?v=0111" alt="ABA – Angel Bet Analytics">
     <div id="abaSplashTitle">ABA</div>
     <div id="abaSplashSub">ANGEL BET ANALYTICS</div>
-    <div id="abaSplashVersion">v0.15.0</div>
+    <div id="abaSplashVersion">v0.16.0</div>
   </div>
 </div>
 
@@ -571,7 +611,7 @@ nav button{
 <section id="app" class="hidden">
 <header>
   <strong>ABA – Anděl Bet Analytics</strong>
-  <div style="display:flex;align-items:center;gap:10px"><span id="versionBadge" class="small">v0.15.0</span><span>Zobák</span><button class="secondary" onclick="logout()">Odhlásit</button></div>
+  <div style="display:flex;align-items:center;gap:10px"><span id="versionBadge" class="small">v0.16.0</span><span>Zobák</span><button class="secondary" onclick="logout()">Odhlásit</button></div>
 </header>
 <div class="layout">
 <nav>
@@ -595,7 +635,7 @@ nav button{
 </section>
 
 <script>
-const APP_VERSION='0.15.0';
+const APP_VERSION='0.16.0';
 const KEY='aba_ipad_v01';
 const AUTH_KEY='aba_auth_v1';
 const BACKUP_KEY='aba_internal_backups_v1';
@@ -730,7 +770,7 @@ function migrateData(raw){
       if(!m.status)m.status='Čeká';
     });
   });
-  d.schemaVersion=11;
+  d.schemaVersion=12;
   return d;
 }
 function loadData(){
@@ -757,7 +797,7 @@ function createInternalBackup(snapshot){
   }catch(e){}
 }
 function saveData(){
-  data.schemaVersion=11;
+  data.schemaVersion=12;
   const previous=localStorage.getItem(KEY);
   if(previous){
     try{createInternalBackup(JSON.parse(previous))}catch(e){}
@@ -894,6 +934,11 @@ const DASH_ICONS={
  coins:`<svg viewBox="0 0 24 24"><ellipse cx="9" cy="6" rx="5" ry="2.5"/><path d="M4 6v4c0 1.4 2.2 2.5 5 2.5s5-1.1 5-2.5V6"/><path d="M4 10v4c0 1.4 2.2 2.5 5 2.5 1.1 0 2.1-.2 3-.5"/><ellipse cx="16" cy="15" rx="4" ry="2"/><path d="M12 15v3c0 1.1 1.8 2 4 2s4-.9 4-2v-3"/></svg>`
 };
 
+
+function openCodex(){const m=document.getElementById('codexModal');if(!m)return;m.classList.add('open');m.setAttribute('aria-hidden','false');document.body.style.overflow='hidden'}
+function closeCodex(){const m=document.getElementById('codexModal');if(!m)return;m.classList.remove('open');m.setAttribute('aria-hidden','true');document.body.style.overflow=''}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeCodex()});
+
 function dashboardAverageOdds(){
  const rows=settledTickets().filter(t=>Number(t.totalOdds)>0);
  return rows.length?rows.reduce((s,t)=>s+Number(t.totalOdds),0)/rows.length:0;
@@ -908,61 +953,18 @@ function dashboardCounts(){
 }
 
 function renderDashboard(){
-  const s=summary(), today=todayProfit(), bm=bankrollMetrics();
-  const avg=dashboardAverageOdds(), counts=dashboardCounts();
-  const el=document.getElementById('view-dashboard');
-
-  const kpi=(label,value,icon,cls='')=>`
-    <div class="dashboard-kpi">
-      <div class="dashboard-label">${label}</div>
-      <div class="dashboard-value ${cls}">${value}</div>
-      <span class="dashboard-icon">${DASH_ICONS[icon]}</span>
-    </div>`;
-
-  const detail=(label,value,icon,cls='')=>`
-    <div class="dashboard-detail-card">
-      <div class="dashboard-label">${label}</div>
-      <div class="dashboard-detail-value ${cls}">${value}</div>
-      <span class="dashboard-detail-icon">${DASH_ICONS[icon]}</span>
-    </div>`;
-
-  const mini=(label,value,icon,cls='')=>`
-    <div class="dashboard-summary-item">
-      <span class="dashboard-mini-icon">${DASH_ICONS[icon]}</span>
-      <div class="dashboard-label">${label}</div>
-      <div class="dashboard-summary-value ${cls}">${value}</div>
-    </div>`;
-
-  el.innerHTML=`<div class="dashboard-shell">
-    <h2 class="dashboard-title">Dashboard</h2>
-
-    <div class="dashboard-kpi-grid">
-      ${kpi('Bankroll',money(s.current),'wallet')}
-      ${kpi('Dnes',`${today>=0?'+':''}${money(today)}`,'calendar',today>=0?'pos':'neg')}
-      ${kpi('ROI',`${s.roi.toFixed(2)} %`,'roi',s.roi>=0?'pos':'neg')}
-    </div>
-
-    <div class="dashboard-chart">
-      <h3>Vývoj bankrollu</h3>
-      ${bankrollChart()}
-    </div>
-
-    <div class="dashboard-detail-grid">
-      ${detail('Nejvyšší bankroll',money(bm.maximum),'high')}
-      ${detail('Aktuální stav',money(bm.current),'pulse')}
-      ${detail('Rozdíl od maxima',`${bm.drawdown>=0?'+':''}${money(bm.drawdown)}`,'trophy',bm.drawdown>=0?'pos':'neg')}
-      ${detail('Průměrný kurz',avg?avg.toFixed(2):'—','bars')}
-    </div>
-
-    <div class="dashboard-summary-grid">
-      ${mini('Počet tiketů',counts.total,'ticket')}
-      ${mini('Výhry',counts.wins,'check','pos')}
-      ${mini('Prohry',counts.losses,'cross','neg')}
-      ${mini('Úspěšnost',`${s.success.toFixed(2)} %`,'target')}
-      ${mini('Průměrný kurz',avg?avg.toFixed(2):'—','bars')}
-      ${mini('Profit',`${s.profit>=0?'+':''}${money(s.profit)}`,'coins',s.profit>=0?'pos':'neg')}
-    </div>
-  </div>`;
+ const s=summary(),today=todayProfit(),bm=bankrollMetrics(),avg=dashboardAverageOdds(),counts=dashboardCounts(),el=document.getElementById('view-dashboard');
+ const kpi=(l,v,i,c='')=>`<div class="dashboard-kpi"><div class="dashboard-label">${l}</div><div class="dashboard-value ${c}">${v}</div><span class="dashboard-icon">${DASH_ICONS[i]}</span></div>`;
+ const detail=(l,v,i,c='')=>`<div class="dashboard-detail-card"><div class="dashboard-label">${l}</div><div class="dashboard-detail-value ${c}">${v}</div><span class="dashboard-detail-icon">${DASH_ICONS[i]}</span></div>`;
+ const mini=(l,v,i,c='')=>`<div class="dashboard-summary-item"><span class="dashboard-mini-icon">${DASH_ICONS[i]}</span><div class="dashboard-label">${l}</div><div class="dashboard-summary-value ${c}">${v}</div></div>`;
+ el.innerHTML=`<div class="dashboard-shell">
+ <div class="dashboard-title-wrap"><div><h2 class="dashboard-title">Dashboard</h2><div class="small" style="color:var(--teal)!important">Nejsem lovec sázek, jsem správce kapitálu.</div></div></div>
+ <div class="dashboard-kpi-grid">${kpi('Bankroll',money(s.current),'wallet')}${kpi('Dnes',`${today>=0?'+':''}${money(today)}`,'calendar',today>=0?'pos':'neg')}${kpi('ROI',`${s.roi.toFixed(2)} %`,'roi',s.roi>=0?'pos':'neg')}</div>
+ <div class="dashboard-chart"><h3>Vývoj bankrollu</h3>${bankrollChart()}</div>
+ <div class="dashboard-detail-grid">${detail('Nejvyšší bankroll',money(bm.maximum),'high')}${detail('Aktuální stav',money(bm.current),'pulse')}${detail('Rozdíl od maxima',`${bm.drawdown>=0?'+':''}${money(bm.drawdown)}`,'trophy',bm.drawdown>=0?'pos':'neg')}${detail('Průměrný kurz',avg?avg.toFixed(2):'—','bars')}</div>
+ <div class="dashboard-summary-grid">${mini('Počet tiketů',counts.total,'ticket')}${mini('Výhry',counts.wins,'check','pos')}${mini('Prohry',counts.losses,'cross','neg')}${mini('Úspěšnost',`${s.success.toFixed(2)} %`,'target')}${mini('Průměrný kurz',avg?avg.toFixed(2):'—','bars')}${mini('Profit',`${s.profit>=0?'+':''}${money(s.profit)}`,'coins',s.profit>=0?'pos':'neg')}</div>
+ <div class="codex-card"><div><div class="codex-card-title">📜 Kodex správce kapitálu</div><div class="codex-card-quote">„Nejsem lovec výher. Jsem správce kapitálu.“</div></div><button type="button" class="codex-card-button" onclick="openCodex()">Zobrazit Kodex →</button></div>
+ </div>`;
 }
 function card(k,v,c=''){return `<div class="card"><div class="k">${k}</div><div class="v ${c}">${v}</div></div>`}
 function ticketTable(list){
@@ -1586,7 +1588,7 @@ function renderSettings(){
 <button class="secondary" onclick="resetLogin()">Změnit přihlášení</button>
 <button class="danger" onclick="resetData()">Obnovit výchozí data</button>
 </div>
- <p class="small">Verze: ABA 0.15.0 · Data jsou uložená pouze v tomto prohlížeči na tomto zařízení.</p></div>`;
+ <p class="small">Verze: ABA 0.16.0 · Data jsou uložená pouze v tomto prohlížeči na tomto zařízení.</p></div>`;
 }
 function saveSettings(){data.settings.startingBankroll=Number(document.getElementById('bankroll').value.replace(',','.'))||200000;saveData();alert('Nastavení uloženo.');renderDashboard()}
 function exportData(){const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`ABA_zaloha_${new Date().toISOString().slice(0,10)}_v${APP_VERSION}.json`;a.click();URL.revokeObjectURL(a.href)}

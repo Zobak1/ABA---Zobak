@@ -1,4 +1,4 @@
-const CACHE='aba-pwa-v0-17-analysis-archive';
+const CACHE='aba-pwa-v0-18-analysis-import';
 const ASSETS=[
   './',
   './index.html',

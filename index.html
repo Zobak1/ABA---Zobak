@@ -1497,6 +1497,30 @@ body.codex-open{
  .analysis-evaluation-grid .full{grid-column:auto}
 }
 
+
+/* ABA 0.21.3 — History ticket analysis linking */
+.match-card-title{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  margin-bottom:12px;
+  color:#FFFFFF !important;
+  font-size:19px;
+  font-weight:800;
+  line-height:1.35;
+  text-shadow:0 1px 2px rgba(0,0,0,.35);
+}
+.history-analysis-link{
+  margin-top:10px;
+  padding:11px 12px;
+  border:1px solid #28535D;
+  border-radius:11px;
+  background:rgba(0,214,214,.055);
+}
+.history-analysis-link .small{
+  margin-top:5px;
+}
+
 </style>
 </head>
 <body>
@@ -1514,7 +1538,7 @@ body.codex-open{
     <img src="icon-512.png?v=0111" alt="ABA – Angel Bet Analytics">
     <div id="abaSplashTitle">ABA</div>
     <div id="abaSplashSub">ANGEL BET ANALYTICS</div>
-    <div id="abaSplashVersion">v0.21.2</div>
+    <div id="abaSplashVersion">v0.21.3</div>
   </div>
 </div>
 
@@ -1586,7 +1610,7 @@ body.codex-open{
 
 <header>
   <strong>ABA – Anděl Bet Analytics</strong>
-  <div style="display:flex;align-items:center;gap:10px"><span id="versionBadge" class="small">v0.21.2</span><span>Zobák</span><button class="secondary" onclick="logout()">Odhlásit</button></div>
+  <div style="display:flex;align-items:center;gap:10px"><span id="versionBadge" class="small">v0.21.3</span><span>Zobák</span><button class="secondary" onclick="logout()">Odhlásit</button></div>
 </header>
 <div class="layout">
 <nav>
@@ -1612,7 +1636,7 @@ body.codex-open{
 </section>
 
 <script>
-const APP_VERSION='0.21.2';
+const APP_VERSION='0.21.3';
 const KEY='aba_ipad_v01';
 const AUTH_KEY='aba_auth_v1';
 const BACKUP_KEY='aba_internal_backups_v1';
@@ -2296,8 +2320,11 @@ function openTicket(id){
  <div style="margin-top:16px">${t.matches.map((m,i)=>matchDetail(t,i)).join('')}</div>
  <button class="secondary" onclick="renderHistory()">← Zpět do historie</button>`;
 }
-function matchDetail(t,i){const m=t.matches[i];return `<div class="match-card">
- <strong>${esc(m.name)} ${euroIcon(m.euroLoad)?`<span class="icon-badge">${euroIcon(m.euroLoad)}</span>`:''}</strong>
+function matchDetail(t,i){
+ const m=t.matches[i];
+ const matching=matchingAnalyses(m.name);
+ return `<div class="match-card">
+ <div class="match-card-title">${esc(m.name)} ${euroIcon(m.euroLoad)?`<span class="icon-badge">${euroIcon(m.euroLoad)}</span>`:''}</div>
  <div class="grid3">
  ${field('Tip',`<input value="${esc(m.pick)}" onchange="editMatch('${t.id}',${i},'pick',this.value)">`)}
  ${field('Kurz',`<input inputmode="decimal" value="${m.odds}" onchange="editMatch('${t.id}',${i},'odds',this.value)">`)}
@@ -2315,7 +2342,16 @@ function matchDetail(t,i){const m=t.matches[i];return `<div class="match-card">
  ${field('Stav zápasu',`<select onchange="editMatch('${t.id}',${i},'status',this.value)">${['Čeká','Vyšla','Nevyšla','Vrácena'].map(s=>`<option ${s===m.status?'selected':''}>${s}</option>`).join('')}</select>`)}
  </div>
  ${field('Poznámka',`<textarea onchange="editMatch('${t.id}',${i},'note',this.value)">${esc(m.note)}</textarea>`)}
- </div>`}
+ <div class="history-analysis-link">
+   ${field('Propojená analýza',`<select onchange="editMatch('${t.id}',${i},'linkedAnalysisId',this.value)">
+     ${analysisLinkOptions(m.name,m.linkedAnalysisId)}
+   </select>`)}
+   <div class="small">${matching.length
+     ?`ABA našla ${matching.length} odpovídající ${matching.length===1?'analýzu':'analýzy'}.`
+     :'Pro tento zápas zatím nebyla nalezena uložená analýza.'}</div>
+ </div>
+ </div>`;
+}
 function editBetType(id,i,value){
  const t=data.tickets.find(x=>x.id===id);
  const parts=value.split('||');
@@ -2344,6 +2380,13 @@ function editTicket(id,k,v){
 function editMatch(id,i,k,v){
  const t=data.tickets.find(x=>x.id===id);
  t.matches[i][k]=k==='odds'?(Number(String(v).replace(',','.'))||1):v;
+ if(k==='linkedAnalysisId'){
+   const linked=analysisById(v);
+   if(linked){
+     linked.linkedTicketId=id;
+     linked.linkedMatchName=t.matches[i].name;
+   }
+ }
  syncLinkedAnalysisEvaluation(t,t.matches[i]);
  saveData();
  if(k==='status'){
@@ -3246,7 +3289,7 @@ function renderSettings(){
 <button class="secondary" onclick="resetLogin()">Změnit přihlášení</button>
 <button class="danger" onclick="resetData()">Obnovit výchozí data</button>
 </div>
- <p class="small">Verze: ABA 0.21.2 · Data jsou uložená pouze v tomto prohlížeči na tomto zařízení.</p></div>`;
+ <p class="small">Verze: ABA 0.21.3 · Data jsou uložená pouze v tomto prohlížeči na tomto zařízení.</p></div>`;
 }
 function saveSettings(){data.settings.startingBankroll=Number(document.getElementById('bankroll').value.replace(',','.'))||200000;saveData();alert('Nastavení uloženo.');renderDashboard()}
 function exportData(){const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`ABA_zaloha_${new Date().toISOString().slice(0,10)}_v${APP_VERSION}.json`;a.click();URL.revokeObjectURL(a.href)}

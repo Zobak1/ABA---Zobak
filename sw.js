@@ -1,4 +1,4 @@
-const CACHE='aba-pwa-v0-11-1-icon-fix';
+const CACHE='aba-pwa-v0-12-data-safety';
 const ASSETS=[
   './',
   './index.html',

@@ -112,7 +112,7 @@ th{color:var(--muted);font-weight:600;background:#FAFBFC}
     <img src="icon-512.png?v=0111" alt="ABA – Angel Bet Analytics">
     <div id="abaSplashTitle">ABA</div>
     <div id="abaSplashSub">ANGEL BET ANALYTICS</div>
-    <div id="abaSplashVersion">v0.11.1</div>
+    <div id="abaSplashVersion">v0.12.0</div>
   </div>
 </div>
 
@@ -152,7 +152,7 @@ th{color:var(--muted);font-weight:600;background:#FAFBFC}
 <section id="app" class="hidden">
 <header>
   <strong>ABA – Anděl Bet Analytics</strong>
-  <div style="display:flex;align-items:center;gap:10px"><span id="versionBadge" class="small">v0.11.1</span><span>Zobák</span><button class="secondary" onclick="logout()">Odhlásit</button></div>
+  <div style="display:flex;align-items:center;gap:10px"><span id="versionBadge" class="small">v0.12.0</span><span>Zobák</span><button class="secondary" onclick="logout()">Odhlásit</button></div>
 </header>
 <div class="layout">
 <nav>
@@ -175,29 +175,40 @@ th{color:var(--muted);font-weight:600;background:#FAFBFC}
 </section>
 
 <script>
-const APP_VERSION='0.11.1';
+const APP_VERSION='0.12.0';
 const KEY='aba_ipad_v01';
 const AUTH_KEY='aba_auth_v1';
+const BACKUP_KEY='aba_internal_backups_v1';
+const MAX_INTERNAL_BACKUPS=20;
 const COMPETITIONS = [
   {country:'Anglie',league:'Premier League'},
+  {country:'Skotsko',league:'Premiership'},
+  {country:'Irsko',league:'Premier Division'},
   {country:'Portugalsko',league:'Primeira Liga'},
   {country:'Španělsko',league:'La Liga'},
   {country:'Německo',league:'Bundesliga'},
   {country:'Nizozemsko',league:'Eredivisie'},
   {country:'Belgie',league:'Jupiler Pro League'},
   {country:'Francie',league:'Ligue 1'},
+  {country:'Itálie',league:'Serie A'},
   {country:'Česko',league:'Chance Liga'},
-  {country:'Rakousko',league:'Bundesliga'},
-  {country:'Švýcarsko',league:'Super League'},
   {country:'Slovensko',league:'Niké liga'},
   {country:'Polsko',league:'Ekstraklasa'},
+  {country:'Rakousko',league:'Bundesliga'},
+  {country:'Švýcarsko',league:'Super League'},
+  {country:'Chorvatsko',league:'HNL'},
+  {country:'Srbsko',league:'SuperLiga'},
+  {country:'Rumunsko',league:'Liga I'},
+  {country:'Řecko',league:'Super League'},
+  {country:'Turecko',league:'Süper Lig'},
+  {country:'Bulharsko',league:'First League'},
+  {country:'Ukrajina',league:'Premier League'},
+  {country:'Slovinsko',league:'PrvaLiga'},
+  {country:'Dánsko',league:'Superliga'},
   {country:'Švédsko',league:'Allsvenskan'},
   {country:'Norsko',league:'Eliteserien'},
-  {country:'Dánsko',league:'Superliga'},
   {country:'Finsko',league:'Veikkausliiga'},
   {country:'Island',league:'Besta deild karla'},
-  {country:'Itálie',league:'Serie A'},
-  {country:'Turecko',league:'Süper Lig'},
   {country:'Evropské poháry',league:'Liga mistrů'},
   {country:'Evropské poháry',league:'Evropská liga'},
   {country:'Evropské poháry',league:'Konferenční liga'}
@@ -222,6 +233,20 @@ const BET_TYPES = [
   {category:'Handicap',type:'Handicap hosté'},
   {category:'Postup',type:'Postup domácího týmu'},
   {category:'Postup',type:'Postup hostujícího týmu'},
+  {category:'Rohy',type:'Počet rohů – Over'},
+  {category:'Rohy',type:'Počet rohů – Under'},
+  {category:'Rohy',type:'Více rohů domácí'},
+  {category:'Rohy',type:'Více rohů hosté'},
+  {category:'Rohy',type:'Rohy domácích'},
+  {category:'Rohy',type:'Rohy hostů'},
+  {category:'Střely',type:'Počet střel – Over'},
+  {category:'Střely',type:'Počet střel – Under'},
+  {category:'Střely',type:'Více střel domácí'},
+  {category:'Střely',type:'Více střel hosté'},
+  {category:'Střely na branku',type:'Střely na branku – Over'},
+  {category:'Střely na branku',type:'Střely na branku – Under'},
+  {category:'Střely na branku',type:'Více střel na branku domácí'},
+  {category:'Střely na branku',type:'Více střel na branku hosté'},
   {category:'Jiné',type:'Jiný typ'}
 ];
 const defaultData={
@@ -284,7 +309,7 @@ function migrateData(raw){
       if(!m.status)m.status='Čeká';
     });
   });
-  d.schemaVersion=8;
+  d.schemaVersion=9;
   return d;
 }
 function loadData(){
@@ -294,7 +319,30 @@ function loadData(){
   }catch(e){}
   return migrateData(structuredClone(defaultData));
 }
-function saveData(){data.schemaVersion=8;localStorage.setItem(KEY,JSON.stringify(data))}
+function loadInternalBackups(){
+  try{
+    const value=JSON.parse(localStorage.getItem(BACKUP_KEY));
+    return Array.isArray(value)?value:[];
+  }catch(e){return []}
+}
+function createInternalBackup(snapshot){
+  try{
+    const backups=loadInternalBackups();
+    const serialized=JSON.stringify(snapshot);
+    const last=backups[0];
+    if(last && last.data===serialized)return;
+    backups.unshift({id:Date.now(),createdAt:new Date().toISOString(),data:serialized});
+    localStorage.setItem(BACKUP_KEY,JSON.stringify(backups.slice(0,MAX_INTERNAL_BACKUPS)));
+  }catch(e){}
+}
+function saveData(){
+  data.schemaVersion=9;
+  const previous=localStorage.getItem(KEY);
+  if(previous){
+    try{createInternalBackup(JSON.parse(previous))}catch(e){}
+  }
+  localStorage.setItem(KEY,JSON.stringify(data));
+}
 function money(n){return new Intl.NumberFormat('cs-CZ',{maximumFractionDigits:0}).format(Number(n)||0)+' Kč'}
 function esc(s){return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
 function bytesToB64(bytes){
@@ -985,17 +1033,47 @@ function renderSettings(){
  ${field('Počáteční bankroll',`<input id="bankroll" inputmode="decimal" value="${data.settings.startingBankroll}">`)}
  <div class="row-actions" style="flex-wrap:wrap">
 <button class="primary" onclick="saveSettings()">Uložit</button>
-<button class="secondary" onclick="exportData()">Exportovat zálohu</button>
-<button class="secondary" onclick="document.getElementById('importBackup').click()">Obnovit ze zálohy</button>
+<button class="secondary" onclick="exportData()">Exportovat kompletní zálohu</button>
+<button class="secondary" onclick="document.getElementById('importBackup').click()">Obnovit ze souboru</button>
+<button class="secondary" onclick="openInternalBackups()">Obnovit automatickou zálohu</button>
 <input id="importBackup" type="file" accept=".json,application/json" style="display:none" onchange="importData(this.files[0])">
 <button class="secondary" onclick="checkForUpdate()">Zkontrolovat aktualizaci</button>
 <button class="secondary" onclick="resetLogin()">Změnit přihlášení</button>
 <button class="danger" onclick="resetData()">Obnovit výchozí data</button>
 </div>
- <p class="small">Verze: ABA 0.11.1 · Data jsou uložená pouze v tomto prohlížeči na tomto zařízení.</p></div>`;
+ <p class="small">Verze: ABA 0.12.0 · Data jsou uložená pouze v tomto prohlížeči na tomto zařízení.</p></div>`;
 }
 function saveSettings(){data.settings.startingBankroll=Number(document.getElementById('bankroll').value.replace(',','.'))||200000;saveData();alert('Nastavení uloženo.');renderDashboard()}
 function exportData(){const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`ABA_zaloha_${new Date().toISOString().slice(0,10)}_v${APP_VERSION}.json`;a.click();URL.revokeObjectURL(a.href)}
+function formatBackupDate(iso){
+  try{return new Date(iso).toLocaleString('cs-CZ')}catch(e){return iso}
+}
+function openInternalBackups(){
+  const backups=loadInternalBackups();
+  if(!backups.length){
+    alert('Zatím není k dispozici žádná automatická záloha.');
+    return;
+  }
+  const choice=prompt('Zadej číslo zálohy, kterou chceš obnovit:\n\n'+backups.map((b,i)=>`${i+1}. ${formatBackupDate(b.createdAt)}`).join('\n'));
+  if(!choice)return;
+  const index=Number(choice)-1;
+  if(!Number.isInteger(index)||index<0||index>=backups.length){
+    alert('Neplatná volba.');
+    return;
+  }
+  if(!confirm(`Obnovit zálohu z ${formatBackupDate(backups[index].createdAt)}? Současná data budou nejprve automaticky zazálohována.`))return;
+  createInternalBackup(data);
+  try{
+    data=migrateData(JSON.parse(backups[index].data));
+    saveData();
+    renderAll();
+    showView('dashboard');
+    alert('Automatická záloha byla obnovena.');
+  }catch(e){
+    alert('Zálohu se nepodařilo obnovit.');
+  }
+}
+
 function importData(file){
   if(!file)return;
   const reader=new FileReader();

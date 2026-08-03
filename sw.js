@@ -1,4 +1,4 @@
-const CACHE='aba-pwa-v0-14-1-dashboard-fixed-layout';
+const CACHE='aba-pwa-v0-14-2-exact-dashboard-fix';
 const ASSETS=[
   './',
   './index.html',
@@ -6,7 +6,8 @@ const ASSETS=[
   './icon-192.png',
   './icon-512.png',
   './apple-touch-icon.png',
-  './favicon-32.png'
+  './favicon-32.png',
+  './aba-logo-transparent.png'
 ];
 
 self.addEventListener('install',event=>{

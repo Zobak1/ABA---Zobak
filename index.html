@@ -677,6 +677,165 @@ table{color:var(--text)} th{background:#0A1620;color:#B8C7D2} td{border-color:va
 
 .codex-modal[hidden]{display:none!important}
 
+
+/* ABA 0.16.3 — Compact no-scroll dashboard */
+#view-dashboard{
+  height:calc(100vh - 74px);
+  overflow:hidden;
+}
+#view-dashboard .dashboard-shell{
+  height:100%;
+  gap:10px;
+}
+#view-dashboard .dashboard-title-wrap{
+  min-height:44px;
+}
+#view-dashboard .dashboard-title{
+  font-size:22px;
+  margin:0;
+}
+#view-dashboard .dashboard-title-wrap .small{
+  font-size:12px;
+}
+#view-dashboard .dashboard-kpi-grid{
+  gap:12px;
+}
+#view-dashboard .dashboard-kpi{
+  min-height:78px;
+  padding:13px 64px 13px 16px;
+  border-radius:14px;
+}
+#view-dashboard .dashboard-label{
+  font-size:12px;
+  margin-bottom:5px;
+}
+#view-dashboard .dashboard-value{
+  font-size:23px;
+}
+#view-dashboard .dashboard-icon{
+  width:42px;
+  height:42px;
+  right:15px;
+}
+#view-dashboard .dashboard-main-grid{
+  grid-template-columns:minmax(0,1fr) 205px;
+  gap:16px;
+  min-height:0;
+  flex:1;
+}
+#view-dashboard .dashboard-main-left{
+  gap:10px;
+  min-height:0;
+}
+#view-dashboard .dashboard-chart{
+  padding:13px 15px 10px;
+  min-height:0;
+  flex:1;
+}
+#view-dashboard .dashboard-chart-head{
+  margin-bottom:3px;
+}
+#view-dashboard .dashboard-chart-head h3{
+  font-size:17px;
+}
+#view-dashboard .chart-range{
+  gap:6px;
+}
+#view-dashboard .chart-range button{
+  min-width:39px;
+  padding:5px 8px;
+  font-size:12px;
+}
+#view-dashboard .dashboard-chart .chart-box{
+  min-height:0;
+  height:calc(100% - 35px);
+}
+#view-dashboard .dashboard-chart .chart-box svg{
+  min-height:0;
+  height:100%;
+  max-height:100%;
+}
+#view-dashboard .chart-watermark{
+  width:min(54%,460px);
+  opacity:.06!important;
+}
+#view-dashboard .dashboard-detail-grid{
+  gap:10px;
+}
+#view-dashboard .dashboard-detail-card{
+  min-height:72px;
+  padding:11px 48px 11px 14px;
+  border-radius:13px;
+}
+#view-dashboard .dashboard-detail-value{
+  font-size:19px;
+}
+#view-dashboard .dashboard-detail-icon{
+  right:12px;
+}
+#view-dashboard .dashboard-detail-icon svg{
+  width:21px;
+  height:21px;
+}
+#view-dashboard .dashboard-summary-grid{
+  border-radius:13px;
+}
+#view-dashboard .dashboard-summary-item{
+  padding:10px 8px 9px 39px;
+}
+#view-dashboard .dashboard-summary-item .dashboard-label{
+  font-size:11px;
+}
+#view-dashboard .dashboard-summary-value{
+  font-size:17px;
+}
+#view-dashboard .dashboard-mini-icon{
+  left:10px;
+}
+#view-dashboard .dashboard-mini-icon svg{
+  width:19px;
+  height:19px;
+}
+#view-dashboard .dashboard-codex-link{
+  padding:18px 6px 18px 4px;
+  gap:18px;
+  justify-content:center;
+}
+#view-dashboard .dashboard-codex-link .book-icon{
+  width:40px;
+  height:40px;
+}
+#view-dashboard .dashboard-codex-link .quote{
+  font-size:16px;
+  line-height:1.45;
+}
+#view-dashboard .dashboard-codex-link button{
+  font-size:15px;
+}
+@media(max-height:850px){
+  #view-dashboard .dashboard-title-wrap{min-height:38px}
+  #view-dashboard .dashboard-kpi{min-height:70px;padding-top:10px;padding-bottom:10px}
+  #view-dashboard .dashboard-value{font-size:21px}
+  #view-dashboard .dashboard-detail-card{min-height:64px}
+  #view-dashboard .dashboard-summary-item{padding-top:8px;padding-bottom:7px}
+  #view-dashboard .dashboard-chart{padding-top:10px}
+}
+@media(max-width:900px){
+  #view-dashboard{
+    height:auto;
+    overflow:visible;
+  }
+  #view-dashboard .dashboard-main-grid{
+    grid-template-columns:1fr;
+  }
+  #view-dashboard .dashboard-chart .chart-box{
+    height:auto;
+  }
+  #view-dashboard .dashboard-chart .chart-box svg{
+    height:auto;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -694,7 +853,7 @@ table{color:var(--text)} th{background:#0A1620;color:#B8C7D2} td{border-color:va
     <img src="icon-512.png?v=0111" alt="ABA – Angel Bet Analytics">
     <div id="abaSplashTitle">ABA</div>
     <div id="abaSplashSub">ANGEL BET ANALYTICS</div>
-    <div id="abaSplashVersion">v0.16.2</div>
+    <div id="abaSplashVersion">v0.16.3</div>
   </div>
 </div>
 
@@ -734,7 +893,7 @@ table{color:var(--text)} th{background:#0A1620;color:#B8C7D2} td{border-color:va
 <section id="app" class="hidden">
 <header>
   <strong>ABA – Anděl Bet Analytics</strong>
-  <div style="display:flex;align-items:center;gap:10px"><span id="versionBadge" class="small">v0.16.2</span><span>Zobák</span><button class="secondary" onclick="logout()">Odhlásit</button></div>
+  <div style="display:flex;align-items:center;gap:10px"><span id="versionBadge" class="small">v0.16.3</span><span>Zobák</span><button class="secondary" onclick="logout()">Odhlásit</button></div>
 </header>
 <div class="layout">
 <nav>
@@ -758,7 +917,7 @@ table{color:var(--text)} th{background:#0A1620;color:#B8C7D2} td{border-color:va
 </section>
 
 <script>
-const APP_VERSION='0.16.2';
+const APP_VERSION='0.16.3';
 const KEY='aba_ipad_v01';
 const AUTH_KEY='aba_auth_v1';
 const BACKUP_KEY='aba_internal_backups_v1';
@@ -1099,6 +1258,15 @@ function dashboardCounts(){
  };
 }
 
+
+
+function safeChartDate(value){
+  if(!value)return null;
+  const s=String(value);
+  const iso=s.length>=10?s.slice(0,10):s;
+  const d=new Date(iso+'T12:00:00');
+  return Number.isNaN(d.getTime())?null:d;
+}
 
 let dashboardChartRange='1R';
 function setDashboardChartRange(range){
@@ -1444,7 +1612,7 @@ function bankrollChart(){
  let pts=all;
  if(dashboardChartRange!=='VŠE' && limits[dashboardChartRange]){
    const cutoff=now.getTime()-limits[dashboardChartRange];
-   const filtered=all.filter(p=>new Date(p.date).getTime()>=cutoff);
+   const filtered=all.filter(p=>(safeChartDate(p.date)?.getTime()||0)>=cutoff);
    if(filtered.length>=2)pts=filtered;
  }
  const w=960,h=350,padL=62,padR=18,padT=24,padB=42;
@@ -1466,8 +1634,8 @@ function bankrollChart(){
  const step=Math.max(1,Math.ceil(pts.length/maxLabels));
  const labels=pts.map((p,i)=>{
    if(i%step!==0 && i!==pts.length-1)return '';
-   const d=new Date(p.date);
-   return `<text x="${x(i)}" y="${h-12}" text-anchor="middle">${d.toLocaleDateString('cs-CZ',{day:'numeric',month:'numeric'})}</text>`;
+   const d=safeChartDate(p.date);
+   return d?`<text x="${x(i)}" y="${h-12}" text-anchor="middle">${d.toLocaleDateString('cs-CZ',{day:'numeric',month:'numeric'})}</text>`:'';
  }).join('');
  return `<div class="chart-box">
  <img class="chart-watermark" src="aba-watermark.png?v=0161" alt="">
@@ -1788,7 +1956,7 @@ function renderSettings(){
 <button class="secondary" onclick="resetLogin()">Změnit přihlášení</button>
 <button class="danger" onclick="resetData()">Obnovit výchozí data</button>
 </div>
- <p class="small">Verze: ABA 0.16.2 · Data jsou uložená pouze v tomto prohlížeči na tomto zařízení.</p></div>`;
+ <p class="small">Verze: ABA 0.16.3 · Data jsou uložená pouze v tomto prohlížeči na tomto zařízení.</p></div>`;
 }
 function saveSettings(){data.settings.startingBankroll=Number(document.getElementById('bankroll').value.replace(',','.'))||200000;saveData();alert('Nastavení uloženo.');renderDashboard()}
 function exportData(){const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`ABA_zaloha_${new Date().toISOString().slice(0,10)}_v${APP_VERSION}.json`;a.click();URL.revokeObjectURL(a.href)}

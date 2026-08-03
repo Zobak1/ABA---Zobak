@@ -1,4 +1,4 @@
-const CACHE='aba-pwa-v0-16-2-codex-login-fix';
+const CACHE='aba-pwa-v0-16-3-compact-dashboard';
 const ASSETS=[
   './',
   './index.html',

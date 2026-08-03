@@ -1,4 +1,4 @@
-const CACHE='aba-pwa-v0-13-1-chart-watermark';
+const CACHE='aba-pwa-v0-13-2-chart-watermark-fix';
 const ASSETS=[
   './',
   './index.html',

@@ -107,25 +107,26 @@ th{color:var(--muted);font-weight:600;background:#FAFBFC}
 
 
 
-.bankroll-chart-card{
+
+
+
+.chart-box{
   position:relative;
   overflow:hidden;
-  isolation:isolate;
 }
-.bankroll-chart-card::before{
-  content:"";
+.chart-watermark{
   position:absolute;
-  inset:0;
-  background-image:url('icon-512.png?v=0131');
-  background-repeat:no-repeat;
-  background-position:center center;
-  background-size:88% auto;
-  opacity:0.028;
-  filter:grayscale(5%) brightness(1.08);
+  left:50%;
+  top:47%;
+  width:min(78%,680px);
+  height:auto;
+  transform:translate(-50%,-50%);
+  opacity:0.075;
   pointer-events:none;
   z-index:0;
 }
-.bankroll-chart-card > *{
+.chart-box svg,
+.chart-box .small{
   position:relative;
   z-index:1;
 }
@@ -139,7 +140,7 @@ th{color:var(--muted);font-weight:600;background:#FAFBFC}
     <img src="icon-512.png?v=0111" alt="ABA – Angel Bet Analytics">
     <div id="abaSplashTitle">ABA</div>
     <div id="abaSplashSub">ANGEL BET ANALYTICS</div>
-    <div id="abaSplashVersion">v0.13.1</div>
+    <div id="abaSplashVersion">v0.13.2</div>
   </div>
 </div>
 
@@ -179,7 +180,7 @@ th{color:var(--muted);font-weight:600;background:#FAFBFC}
 <section id="app" class="hidden">
 <header>
   <strong>ABA – Anděl Bet Analytics</strong>
-  <div style="display:flex;align-items:center;gap:10px"><span id="versionBadge" class="small">v0.13.1</span><span>Zobák</span><button class="secondary" onclick="logout()">Odhlásit</button></div>
+  <div style="display:flex;align-items:center;gap:10px"><span id="versionBadge" class="small">v0.13.2</span><span>Zobák</span><button class="secondary" onclick="logout()">Odhlásit</button></div>
 </header>
 <div class="layout">
 <nav>
@@ -202,7 +203,7 @@ th{color:var(--muted);font-weight:600;background:#FAFBFC}
 </section>
 
 <script>
-const APP_VERSION='0.13.1';
+const APP_VERSION='0.13.2';
 const KEY='aba_ipad_v01';
 const AUTH_KEY='aba_auth_v1';
 const BACKUP_KEY='aba_internal_backups_v1';
@@ -497,7 +498,7 @@ function renderDashboard(){
 
   <div class="analytics-section">
     <h2 style="font-size:18px">Vývoj bankrollu</h2>
-    <div class="bankroll-chart-card">${bankrollChart()}</div>
+    ${bankrollChart()}
     <div class="cards" style="margin-top:14px">
       ${card('Nejvyšší bankroll',money(bm.maximum))}
       ${card('Aktuální stav',money(bm.current))}
@@ -814,6 +815,7 @@ function bankrollChart(){
  }));
  const poly=coords.map(p=>`${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' ');
  return `<div class="chart-box">
+ <img class="chart-watermark" src="icon-512.png?v=0132" alt="">
  <svg viewBox="0 0 ${w} ${h}" role="img" aria-label="Vývoj bankrollu" style="width:100%;height:auto">
    <line x1="${pad}" y1="${h-pad}" x2="${w-pad}" y2="${h-pad}" stroke="#CFD8DC"/>
    <line x1="${pad}" y1="${pad}" x2="${pad}" y2="${h-pad}" stroke="#CFD8DC"/>
@@ -1126,7 +1128,7 @@ function renderSettings(){
 <button class="secondary" onclick="resetLogin()">Změnit přihlášení</button>
 <button class="danger" onclick="resetData()">Obnovit výchozí data</button>
 </div>
- <p class="small">Verze: ABA 0.13.1 · Data jsou uložená pouze v tomto prohlížeči na tomto zařízení.</p></div>`;
+ <p class="small">Verze: ABA 0.13.2 · Data jsou uložená pouze v tomto prohlížeči na tomto zařízení.</p></div>`;
 }
 function saveSettings(){data.settings.startingBankroll=Number(document.getElementById('bankroll').value.replace(',','.'))||200000;saveData();alert('Nastavení uloženo.');renderDashboard()}
 function exportData(){const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`ABA_zaloha_${new Date().toISOString().slice(0,10)}_v${APP_VERSION}.json`;a.click();URL.revokeObjectURL(a.href)}

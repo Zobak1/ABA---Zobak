@@ -1265,6 +1265,181 @@ body.codex-open{
   .analysis-preview-row.full{grid-column:auto}
 }
 
+
+/* ABA 0.19.0 — Databáze analýz */
+.analysis-db-layout{
+  display:grid;
+  grid-template-columns:minmax(320px,440px) minmax(0,1fr);
+  gap:16px;
+  align-items:start;
+}
+.analysis-import-panel,
+.analysis-database-panel{
+  background:linear-gradient(180deg,var(--card),var(--card2));
+  border:1px solid var(--line);
+  border-radius:16px;
+  padding:18px;
+  box-shadow:0 10px 28px rgba(0,0,0,.2);
+}
+.analysis-import-panel h3,
+.analysis-database-panel h3{
+  margin-top:0;
+}
+.analysis-import-steps{
+  color:var(--muted);
+  line-height:1.6;
+  margin-bottom:13px;
+}
+.analysis-import-steps strong{color:#fff}
+.analysis-direct-textarea{
+  width:100%;
+  min-height:280px;
+  resize:vertical;
+  font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+.analysis-direct-actions{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-top:12px;
+}
+.analysis-search-row{
+  display:flex;
+  gap:10px;
+  align-items:center;
+  margin-bottom:14px;
+}
+.analysis-search-row input{
+  flex:1;
+}
+.analysis-db-count{
+  color:var(--teal);
+  font-weight:750;
+  white-space:nowrap;
+}
+.analysis-db-card{
+  border:1px solid var(--line);
+  border-radius:14px;
+  background:#091720;
+  padding:14px;
+  margin-bottom:10px;
+}
+.analysis-db-card:last-child{margin-bottom:0}
+.analysis-db-card-head{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:12px;
+}
+.analysis-db-title{
+  font-size:17px;
+  font-weight:760;
+  color:#fff;
+}
+.analysis-db-meta{
+  color:var(--muted);
+  font-size:12px;
+  margin-top:4px;
+}
+.analysis-db-main{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px 16px;
+  margin-top:12px;
+}
+.analysis-db-field-label{
+  color:var(--muted);
+  font-size:11px;
+  margin-bottom:2px;
+}
+.analysis-db-field-value{
+  color:#E7EEF3;
+}
+.analysis-db-card-actions{
+  display:flex;
+  gap:8px;
+  margin-top:12px;
+  flex-wrap:wrap;
+}
+.analysis-detail-modal{
+  position:fixed;
+  inset:0;
+  z-index:11500;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:18px;
+  background:rgba(0,0,0,.87);
+  backdrop-filter:blur(5px);
+}
+.analysis-detail-modal.open{display:flex}
+.analysis-detail-dialog{
+  width:min(94vw,820px);
+  max-height:92vh;
+  overflow:auto;
+  -webkit-overflow-scrolling:touch;
+  background:linear-gradient(180deg,var(--card),var(--card2));
+  border:1px solid var(--line);
+  border-radius:16px;
+  padding:18px;
+  box-shadow:0 24px 70px rgba(0,0,0,.52);
+}
+.analysis-detail-head{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:14px;
+}
+.analysis-detail-close{
+  width:38px;height:38px;border-radius:50%;
+  border:1px solid var(--line);
+  background:#0A1620;color:#fff;font-size:22px;
+}
+.analysis-detail-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px 16px;
+  margin-bottom:16px;
+}
+.analysis-detail-grid .full{grid-column:1/-1}
+.analysis-detail-text{
+  white-space:pre-wrap;
+  line-height:1.55;
+  color:#D9E4EA;
+  border-top:1px solid var(--line);
+  padding-top:14px;
+}
+.dashboard-analysis-card{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:14px;
+  border:1px solid #1D5560;
+  border-radius:14px;
+  padding:13px 15px;
+  background:linear-gradient(180deg,#0A1721,#0D1D28);
+}
+.dashboard-analysis-card strong{color:#fff}
+.dashboard-analysis-card .small{margin-top:3px}
+.dashboard-analysis-card button{
+  border:1px solid var(--teal);
+  color:var(--teal);
+  background:transparent;
+  border-radius:10px;
+  padding:9px 12px;
+  white-space:nowrap;
+}
+@media(max-width:900px){
+  .analysis-db-layout{grid-template-columns:1fr}
+}
+@media(max-width:620px){
+  .analysis-db-main,.analysis-detail-grid{grid-template-columns:1fr}
+  .analysis-detail-grid .full{grid-column:auto}
+  .dashboard-analysis-card{align-items:flex-start;flex-direction:column}
+  .dashboard-analysis-card button{width:100%}
+}
+
 </style>
 </head>
 <body>
@@ -1282,7 +1457,7 @@ body.codex-open{
     <img src="icon-512.png?v=0111" alt="ABA – Angel Bet Analytics">
     <div id="abaSplashTitle">ABA</div>
     <div id="abaSplashSub">ANGEL BET ANALYTICS</div>
-    <div id="abaSplashVersion">v0.18.0</div>
+    <div id="abaSplashVersion">v0.19.0</div>
   </div>
 </div>
 
@@ -1338,9 +1513,23 @@ body.codex-open{
   </div>
 </div>
 
+
+<div id="analysisDetailModal" class="analysis-detail-modal" aria-hidden="true" onclick="if(event.target===this)closeAnalysisDetail()">
+  <div class="analysis-detail-dialog">
+    <div class="analysis-detail-head">
+      <div>
+        <h3 id="analysisDetailTitle" style="margin:0"></h3>
+        <div id="analysisDetailMeta" class="small"></div>
+      </div>
+      <button class="analysis-detail-close" type="button" onclick="closeAnalysisDetail()">×</button>
+    </div>
+    <div id="analysisDetailBody"></div>
+  </div>
+</div>
+
 <header>
   <strong>ABA – Anděl Bet Analytics</strong>
-  <div style="display:flex;align-items:center;gap:10px"><span id="versionBadge" class="small">v0.18.0</span><span>Zobák</span><button class="secondary" onclick="logout()">Odhlásit</button></div>
+  <div style="display:flex;align-items:center;gap:10px"><span id="versionBadge" class="small">v0.19.0</span><span>Zobák</span><button class="secondary" onclick="logout()">Odhlásit</button></div>
 </header>
 <div class="layout">
 <nav>
@@ -1366,7 +1555,7 @@ body.codex-open{
 </section>
 
 <script>
-const APP_VERSION='0.18.0';
+const APP_VERSION='0.19.0';
 const KEY='aba_ipad_v01';
 const AUTH_KEY='aba_auth_v1';
 const BACKUP_KEY='aba_internal_backups_v1';
@@ -1505,7 +1694,7 @@ function migrateData(raw){
       if(!m.status)m.status='Čeká';
     });
   });
-  d.schemaVersion=14;
+  d.schemaVersion=15;
   return d;
 }
 function loadData(){
@@ -1532,7 +1721,7 @@ function createInternalBackup(snapshot){
   }catch(e){}
 }
 function saveData(){
-  data.schemaVersion=14;
+  data.schemaVersion=15;
   const previous=localStorage.getItem(KEY);
   if(previous){
     try{createInternalBackup(JSON.parse(previous))}catch(e){}
@@ -1759,6 +1948,14 @@ function renderDashboard(){
      <div class="quote">„Nejsem lovec výher.<br>Jsem správce kapitálu.“</div>
      <button type="button" onclick="openCodex()">Zobrazit Kodex →</button>
    </aside>
+ </div>
+
+ <div class="dashboard-analysis-card">
+   <div>
+     <strong>📚 Databáze analýz</strong>
+     <div class="small">${data.analyses.length} uložených analýz${data.analyses[0]?` • Poslední: ${esc(data.analyses[0].match)}`:''}</div>
+   </div>
+   <button type="button" onclick="showView('analyses')">Otevřít databázi →</button>
  </div>
  </div>`;
 }
@@ -2402,6 +2599,66 @@ function renderStats(){
 }
 
 
+
+function clearInlineAnalysisImport(){
+  pendingImportedAnalysis=null;
+  const t=document.getElementById('analysisImportTextInline');
+  const e=document.getElementById('analysisImportErrorInline');
+  const p=document.getElementById('analysisImportPreviewInline');
+  if(t)t.value='';
+  if(e)e.textContent='';
+  if(p){p.innerHTML='';p.classList.add('hidden')}
+}
+function previewInlineAnalysisImport(){
+  const error=document.getElementById('analysisImportErrorInline');
+  const preview=document.getElementById('analysisImportPreviewInline');
+  if(error)error.textContent='';
+  if(preview){preview.innerHTML='';preview.classList.add('hidden')}
+  try{
+    pendingImportedAnalysis=parseAnalysisBlock(document.getElementById('analysisImportTextInline')?.value);
+    const a=pendingImportedAnalysis;
+    preview.innerHTML=`<div class="analysis-preview-grid">
+      <div class="analysis-preview-row"><div class="analysis-preview-label">Datum</div><div class="analysis-preview-value">${esc(a.date)}</div></div>
+      <div class="analysis-preview-row"><div class="analysis-preview-label">Verdikt</div><div class="analysis-preview-value">${esc(a.verdict)}</div></div>
+      <div class="analysis-preview-row full"><div class="analysis-preview-label">Zápas</div><div class="analysis-preview-value">${esc(a.match)}</div></div>
+      <div class="analysis-preview-row full"><div class="analysis-preview-label">Soutěž / země</div><div class="analysis-preview-value">${esc(a.competition||'—')}</div></div>
+      <div class="analysis-preview-row full"><div class="analysis-preview-label">Tip</div><div class="analysis-preview-value">${esc(a.recommendation||'—')}</div></div>
+      <div class="analysis-preview-row"><div class="analysis-preview-label">Pravděpodobnost</div><div class="analysis-preview-value">${a.probability||0} %</div></div>
+      <div class="analysis-preview-row"><div class="analysis-preview-label">Důvěra</div><div class="analysis-preview-value">${a.confidence||0} %</div></div>
+    </div>
+    <div class="analysis-import-actions">
+      <button class="primary" type="button" onclick="saveInlineImportedAnalysis()">Uložit do ABA</button>
+      <button class="secondary" type="button" onclick="loadInlineImportedAnalysisIntoForm()">Upravit před uložením</button>
+    </div>`;
+    preview.classList.remove('hidden');
+  }catch(err){
+    pendingImportedAnalysis=null;
+    if(error)error.textContent=err.message||'Import se nepodařilo zpracovat.';
+  }
+}
+function saveInlineImportedAnalysis(){
+  if(!pendingImportedAnalysis)return;
+  if(!confirm('Uložit tuto importovanou analýzu do ABA?'))return;
+  data.analyses.unshift(pendingImportedAnalysis);
+  saveData();
+  pendingImportedAnalysis=null;
+  renderAnalyses();
+  renderDashboard();
+}
+function loadInlineImportedAnalysisIntoForm(){
+  if(!pendingImportedAnalysis)return;
+  const a=pendingImportedAnalysis;
+  editingAnalysisId=null;
+  renderAnalyses();
+  const values={
+    analysisDate:a.date,analysisMatch:a.match,analysisCompetition:a.competition,
+    analysisRecommendation:a.recommendation,analysisProbability:a.probability||'',
+    analysisConfidence:a.confidence||'',analysisVerdict:a.verdict,analysisText:a.text
+  };
+  Object.entries(values).forEach(([id,value])=>{const el=document.getElementById(id);if(el)el.value=value});
+  alert('Analýza byla načtena k úpravě. Ruční formulář už není součástí této verze, proto použij tlačítko Upravit až po uložení.');
+}
+
 let pendingImportedAnalysis=null;
 
 function openAnalysisImport(){
@@ -2625,58 +2882,92 @@ function deleteAnalysis(id){
   renderAnalyses();
   renderDashboard();
 }
+function analysisSearchText(a){
+  return [
+    a.match,a.competition,a.recommendation,a.verdict,a.text,a.date,
+    a.probability,a.confidence
+  ].join(' ').toLowerCase();
+}
+function openAnalysisDetail(id){
+  const a=data.analyses.find(x=>String(x.id)===String(id));
+  if(!a)return;
+  document.getElementById('analysisDetailTitle').textContent=a.match||'Analýza';
+  document.getElementById('analysisDetailMeta').textContent=[a.date,a.competition].filter(Boolean).join(' • ');
+  document.getElementById('analysisDetailBody').innerHTML=`<div class="analysis-detail-grid">
+    <div><div class="analysis-db-field-label">Verdikt</div><div class="analysis-db-field-value">${esc(a.verdict||'—')}</div></div>
+    <div><div class="analysis-db-field-label">Doporučený tip</div><div class="analysis-db-field-value">${esc(a.recommendation||'—')}</div></div>
+    <div><div class="analysis-db-field-label">Pravděpodobnost</div><div class="analysis-db-field-value">${Number(a.probability||0)} %</div></div>
+    <div><div class="analysis-db-field-label">Důvěra</div><div class="analysis-db-field-value">${Number(a.confidence||0)} %</div></div>
+    <div class="full"><div class="analysis-db-field-label">Kompletní analýza</div></div>
+  </div><div class="analysis-detail-text">${esc(a.text||'')}</div>`;
+  const modal=document.getElementById('analysisDetailModal');
+  modal.classList.add('open');
+  modal.setAttribute('aria-hidden','false');
+  document.body.classList.add('codex-open');
+}
+function closeAnalysisDetail(){
+  const modal=document.getElementById('analysisDetailModal');
+  if(!modal)return;
+  modal.classList.remove('open');
+  modal.setAttribute('aria-hidden','true');
+  document.body.classList.remove('codex-open');
+}
 function renderAnalyses(){
   const el=document.getElementById('view-analyses');
   if(!el)return;
-  const rows=[...data.analyses].sort((a,b)=>String(b.date).localeCompare(String(a.date))||String(b.createdAt).localeCompare(String(a.createdAt)));
+  const query=(document.getElementById('analysisDbSearch')?.value||'').trim().toLowerCase();
+  const all=[...data.analyses].sort((a,b)=>String(b.date).localeCompare(String(a.date))||String(b.createdAt).localeCompare(String(a.createdAt)));
+  const rows=query?all.filter(a=>analysisSearchText(a).includes(query)):all;
+
   el.innerHTML=`<div class="dashboard-title-wrap">
-      <h2>Analýzy</h2>
-      <button class="primary analysis-import-button" type="button" onclick="openAnalysisImport()">📥 Import analýzy</button>
+    <div>
+      <h2 style="margin-bottom:4px">Databáze analýz</h2>
+      <div class="small">Analýzy vznikají v chatu a ukládají se do ABA importem.</div>
     </div>
-  <div class="analysis-layout">
-    <div class="analysis-form-card">
-      <h3 style="margin-top:0">${editingAnalysisId?'Upravit analýzu':'Nová analýza'}</h3>
-      <div class="analysis-form-grid">
-        ${field('Datum',`<input id="analysisDate" type="date" value="${new Date().toISOString().slice(0,10)}">`)}
-        ${field('Verdikt',`<select id="analysisVerdict"><option>Zvažovat</option><option>Vsadit</option><option>Nevsadit</option><option>Počkat na sestavy</option></select>`)}
-        <div class="full">${field('Zápas',`<input id="analysisMatch" placeholder="Např. Celtic – Dundee">`)}</div>
-        <div class="full">${field('Soutěž / země',`<input id="analysisCompetition" placeholder="Např. Skotsko – Premiership">`)}</div>
-        <div class="full">${field('Doporučený tip',`<input id="analysisRecommendation" placeholder="Např. Celtic vyhraje">`)}</div>
-        ${field('Pravděpodobnost (%)',`<input id="analysisProbability" type="number" min="0" max="100" step="1" placeholder="0–100">`)}
-        ${field('Moje důvěra (%)',`<input id="analysisConfidence" type="number" min="0" max="100" step="1" placeholder="0–100">`)}
-        <div class="full">${field('Analýza',`<textarea id="analysisText" rows="10" placeholder="Vlož kompletní slovní analýzu, argumenty pro a proti, sestavy, rizika a závěr."></textarea>`)}</div>
+  </div>
+  <div class="analysis-db-layout">
+    <section class="analysis-import-panel">
+      <h3>📥 Import analýzy</h3>
+      <div class="analysis-import-steps">
+        <strong>1.</strong> Po dokončení analýzy potvrď její uložení.<br>
+        <strong>2.</strong> Zkopíruj celý blok ABA_ANALYSIS.<br>
+        <strong>3.</strong> Vlož jej do pole níže.<br>
+        <strong>4.</strong> Zkontroluj náhled a potvrď uložení.
       </div>
-      <div class="analysis-form-actions">
-        <button id="saveAnalysisButton" class="primary" type="button" onclick="saveAnalysisFromForm()">Uložit analýzu</button>
-        <button class="secondary" type="button" onclick="resetAnalysisForm()">Vymazat formulář</button>
+      <textarea id="analysisImportTextInline" class="analysis-direct-textarea" placeholder="Sem vlož celý blok od === ABA_ANALYSIS === po === END ==="></textarea>
+      <div id="analysisImportErrorInline" class="analysis-import-error"></div>
+      <div class="analysis-direct-actions">
+        <button class="primary" type="button" onclick="previewInlineAnalysisImport()">Importovat</button>
+        <button class="secondary" type="button" onclick="clearInlineAnalysisImport()">Vymazat</button>
       </div>
-      <div class="small" style="margin-top:10px">Žádná analýza se neuloží bez tvého potvrzení.</div>
-    </div>
-    <div class="analysis-list-card">
-      <div class="analysis-toolbar">
-        <h3 style="margin:0">Archiv analýz</h3>
-        <div class="analysis-count">${rows.length} ${rows.length===1?'analýza':'analýz'}</div>
+      <div id="analysisImportPreviewInline" class="analysis-preview hidden"></div>
+    </section>
+    <section class="analysis-database-panel">
+      <div class="analysis-search-row">
+        <input id="analysisDbSearch" placeholder="Hledat tým, soutěž, tip nebo verdikt…" value="${esc(query)}" oninput="renderAnalyses()">
+        <div class="analysis-db-count">${rows.length}/${all.length}</div>
       </div>
-      ${rows.length?rows.map(a=>`<article class="analysis-item">
-        <div class="analysis-item-head">
+      ${rows.length?rows.map(a=>`<article class="analysis-db-card">
+        <div class="analysis-db-card-head">
           <div>
-            <div class="analysis-match">${esc(a.match)}</div>
-            <div class="analysis-meta">${esc(a.date)}${a.competition?' • '+esc(a.competition):''}</div>
+            <div class="analysis-db-title">${esc(a.match)}</div>
+            <div class="analysis-db-meta">${esc(a.date)}${a.competition?' • '+esc(a.competition):''}</div>
           </div>
-          <span class="analysis-badge">${esc(a.verdict)}</span>
+          <span class="analysis-badge">${esc(a.verdict||'Zvažovat')}</span>
         </div>
-        <div class="analysis-badges">
-          ${a.recommendation?`<span class="analysis-badge">Tip: ${esc(a.recommendation)}</span>`:''}
-          ${a.probability?`<span class="analysis-badge">Odhad: ${a.probability}%</span>`:''}
-          ${a.confidence?`<span class="analysis-badge">Důvěra: ${a.confidence}%</span>`:''}
+        <div class="analysis-db-main">
+          <div><div class="analysis-db-field-label">Tip</div><div class="analysis-db-field-value">${esc(a.recommendation||'—')}</div></div>
+          <div><div class="analysis-db-field-label">Pravděpodobnost</div><div class="analysis-db-field-value">${Number(a.probability||0)} %</div></div>
+          <div><div class="analysis-db-field-label">Důvěra</div><div class="analysis-db-field-value">${Number(a.confidence||0)} %</div></div>
+          <div><div class="analysis-db-field-label">Datum</div><div class="analysis-db-field-value">${esc(a.date||'—')}</div></div>
         </div>
-        <div class="analysis-text">${esc(a.text)}</div>
-        <div class="analysis-item-actions">
+        <div class="analysis-db-card-actions">
+          <button class="primary" type="button" onclick="openAnalysisDetail('${a.id}')">Otevřít detail</button>
           <button class="secondary" type="button" onclick="editAnalysis('${a.id}')">Upravit</button>
           <button class="danger" type="button" onclick="deleteAnalysis('${a.id}')">Odstranit</button>
         </div>
-      </article>`).join(''):`<div class="analysis-empty">Zatím není uložená žádná analýza.</div>`}
-    </div>
+      </article>`).join(''):`<div class="analysis-empty">${all.length?'Žádná analýza neodpovídá vyhledávání.':'Zatím není uložená žádná analýza.'}</div>`}
+    </section>
   </div>`;
 }
 
@@ -2693,7 +2984,7 @@ function renderSettings(){
 <button class="secondary" onclick="resetLogin()">Změnit přihlášení</button>
 <button class="danger" onclick="resetData()">Obnovit výchozí data</button>
 </div>
- <p class="small">Verze: ABA 0.18.0 · Data jsou uložená pouze v tomto prohlížeči na tomto zařízení.</p></div>`;
+ <p class="small">Verze: ABA 0.19.0 · Data jsou uložená pouze v tomto prohlížeči na tomto zařízení.</p></div>`;
 }
 function saveSettings(){data.settings.startingBankroll=Number(document.getElementById('bankroll').value.replace(',','.'))||200000;saveData();alert('Nastavení uloženo.');renderDashboard()}
 function exportData(){const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`ABA_zaloha_${new Date().toISOString().slice(0,10)}_v${APP_VERSION}.json`;a.click();URL.revokeObjectURL(a.href)}

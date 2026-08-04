@@ -1563,7 +1563,7 @@ body.codex-open{
     <img src="icon-512.png?v=0111" alt="ABA – Angel Bet Analytics">
     <div id="abaSplashTitle">ABA</div>
     <div id="abaSplashSub">ANGEL BET ANALYTICS</div>
-    <div id="abaSplashVersion">v0.21.5</div>
+    <div id="abaSplashVersion">v0.21.6</div>
   </div>
 </div>
 
@@ -1635,7 +1635,7 @@ body.codex-open{
 
 <header>
   <strong>ABA – Anděl Bet Analytics</strong>
-  <div style="display:flex;align-items:center;gap:10px"><span id="versionBadge" class="small">v0.21.5</span><span>Zobák</span><button class="secondary" onclick="logout()">Odhlásit</button></div>
+  <div style="display:flex;align-items:center;gap:10px"><span id="versionBadge" class="small">v0.21.6</span><span>Zobák</span><button class="secondary" onclick="logout()">Odhlásit</button></div>
 </header>
 <div class="layout">
 <nav>
@@ -1661,7 +1661,7 @@ body.codex-open{
 </section>
 
 <script>
-const APP_VERSION='0.21.5';
+const APP_VERSION='0.21.6';
 const KEY='aba_ipad_v01';
 const AUTH_KEY='aba_auth_v1';
 const BACKUP_KEY='aba_internal_backups_v1';
@@ -1737,7 +1737,7 @@ const BET_TYPES = [
   {category:'Jiné',type:'Jiný typ'}
 ];
 const defaultData={
-  settings:{startingBankroll:200000},
+  settings:{startingBankroll:100000},
   tickets:[{
     id:'2026 - 000001', date:'2026-08-02', stake:0, totalOdds:1, payout:0, status:'Rozpracovaný', note:'Předvyplněné dnešní zápasy.',
     matches:[
@@ -1777,8 +1777,13 @@ let draft=null;
 
 function migrateData(raw){
   const d=raw&&typeof raw==='object'?raw:structuredClone(defaultData);
-  if(!d.settings)d.settings={startingBankroll:200000};
-  if(d.settings.startingBankroll===undefined)d.settings.startingBankroll=200000;
+  if(!d.settings)d.settings={startingBankroll:100000};
+  if(d.settings.startingBankroll===undefined)d.settings.startingBankroll=100000;
+  // v0.21.6: sjednocení počátečního bankrollu projektu k 1. 8. 2026
+  if(!d.settings.bankrollBaseline20260801){
+    d.settings.startingBankroll=100000;
+    d.settings.bankrollBaseline20260801=true;
+  }
   if(!Array.isArray(d.tickets))d.tickets=[];
   if(!Array.isArray(d.consideredMatches))d.consideredMatches=[];
   if(!Array.isArray(d.analyses))d.analyses=[];
@@ -2550,47 +2555,79 @@ function ticketProfit(t){
  if(t.status==='Proherní')return -Number(t.stake||0);
  return 0;
 }
+const BANKROLL_BASELINE_DATE='2026-08-01';
+const BANKROLL_BASELINE_VALUE=100000;
+const BANKROLL_Y_STEP=20000;
+
 function bankrollSeries(){
- let bank=Number(data.settings.startingBankroll||200000);
- const rows=[{label:'Start',value:bank}];
- settledTickets().forEach(t=>{bank+=ticketProfit(t);rows.push({label:t.date,value:bank,id:t.id})});
+ let bank=BANKROLL_BASELINE_VALUE;
+ const rows=[{label:'1. 8.',date:BANKROLL_BASELINE_DATE,value:bank,isBaseline:true}];
+ settledTickets()
+   .filter(t=>String(t.date||'')>=BANKROLL_BASELINE_DATE)
+   .forEach(t=>{
+     bank+=ticketProfit(t);
+     rows.push({label:t.date,date:t.date,value:bank,id:t.id});
+   });
  return rows;
 }
 function bankrollChart(){
  const all=bankrollSeries();
- const now=new Date();
+ const todayIso=new Date().toISOString().slice(0,10);
  const day=86400000;
- const limits={ '7D':7*day,'30D':30*day,'90D':90*day,'1R':365*day };
- let pts=all;
+ const limits={ '7D':7,'30D':30,'90D':90,'1R':365 };
+ let pts=all.slice();
+
  if(dashboardChartRange!=='VŠE' && limits[dashboardChartRange]){
-   const cutoff=now.getTime()-limits[dashboardChartRange];
-   const filtered=all.filter(p=>(safeChartDate(p.date)?.getTime()||0)>=cutoff);
-   if(filtered.length>=2)pts=filtered;
+   const now=safeChartDate(todayIso);
+   const start=safeChartDate(BANKROLL_BASELINE_DATE);
+   const cutoffDate=new Date(now.getTime()-(limits[dashboardChartRange]-1)*day);
+   const effectiveCutoff=cutoffDate<start?start:cutoffDate;
+   const cutoffIso=effectiveCutoff.toISOString().slice(0,10);
+
+   // Hodnota na začátku období zachovává návaznost bankrollu.
+   let anchorValue=BANKROLL_BASELINE_VALUE;
+   all.forEach(p=>{ if(p.date<cutoffIso)anchorValue=Number(p.value||anchorValue); });
+   const inRange=all.filter(p=>p.date>=cutoffIso);
+   pts=[{label:cutoffIso,date:cutoffIso,value:anchorValue,isRangeAnchor:true},...inRange.filter(p=>p.date!==cutoffIso || Number(p.value)!==anchorValue)];
  }
- const w=960,h=350,padL=62,padR=18,padT=24,padB=42;
+
+ // Graf musí mít šířku i v období bez nového tiketu.
+ if(pts.length===1 && pts[0].date!==todayIso){
+   pts.push({label:todayIso,date:todayIso,value:pts[0].value,isToday:true});
+ }
+
+ const w=960,h=350,padL=92,padR=34,padT=30,padB=46;
  const values=pts.map(p=>Number(p.value||0));
  const min0=Math.min(...values),max0=Math.max(...values);
- const spread=Math.max(1,max0-min0);
- const min=Math.max(0,min0-spread*.12),max=max0+spread*.12;
+ let min=Math.floor(min0/BANKROLL_Y_STEP)*BANKROLL_Y_STEP;
+ let max=Math.ceil(max0/BANKROLL_Y_STEP)*BANKROLL_Y_STEP;
+ if(min===max){min=Math.max(0,min-BANKROLL_Y_STEP);max+=BANKROLL_Y_STEP;}
+
  const x=i=>padL+(pts.length<=1?0:i*(w-padL-padR)/(pts.length-1));
  const y=v=>padT+(max-v)*(h-padT-padB)/(max-min||1);
  const line=pts.map((p,i)=>`${x(i)},${y(Number(p.value||0))}`).join(' ');
  const area=`${padL},${h-padB} ${line} ${x(pts.length-1)},${h-padB}`;
- const yTicks=5;
- const gridY=Array.from({length:yTicks},(_,i)=>{
-   const val=max-i*(max-min)/(yTicks-1);
+
+ const yValues=[];
+ for(let val=max;val>=min;val-=BANKROLL_Y_STEP)yValues.push(val);
+ const gridY=yValues.map(val=>{
    const yy=y(val);
-   return `<line class="bankroll-grid" x1="${padL}" y1="${yy}" x2="${w-padR}" y2="${yy}"/><text x="${padL-10}" y="${yy+4}" text-anchor="end">${money(val)}</text>`;
+   return `<line class="bankroll-grid" x1="${padL}" y1="${yy}" x2="${w-padR}" y2="${yy}"/><text x="${padL-12}" y="${yy+4}" text-anchor="end">${money(val)}</text>`;
  }).join('');
+
  const maxLabels=7;
- const step=Math.max(1,Math.ceil(pts.length/maxLabels));
+ const labelStep=Math.max(1,Math.ceil(pts.length/maxLabels));
  const labels=pts.map((p,i)=>{
-   if(i%step!==0 && i!==pts.length-1)return '';
+   if(i%labelStep!==0 && i!==pts.length-1)return '';
    const d=safeChartDate(p.date);
-   return d?`<text x="${x(i)}" y="${h-12}" text-anchor="middle">${d.toLocaleDateString('cs-CZ',{day:'numeric',month:'numeric'})}</text>`:'';
+   return d?`<text x="${x(i)}" y="${h-13}" text-anchor="middle">${d.toLocaleDateString('cs-CZ',{day:'numeric',month:'numeric'})}</text>`:'';
  }).join('');
+
+ const todayX=w-padR;
+ const todayMarker=`<line x1="${todayX}" y1="${padT}" x2="${todayX}" y2="${h-padB}" stroke="#00D6D6" stroke-width="1" stroke-dasharray="5 5" opacity=".72"/><text x="${todayX-5}" y="${padT-8}" text-anchor="end" font-size="11">DNES</text>`;
+
  return `<div class="chart-box">
- <img class="chart-watermark" src="aba-watermark.png?v=0161" alt="">
+ <img class="chart-watermark" src="aba-watermark.png?v=0216" alt="">
  <svg viewBox="0 0 ${w} ${h}" role="img" aria-label="Vývoj bankrollu">
    <defs>
      <linearGradient id="bankrollAreaGradient" x1="0" y1="0" x2="0" y2="1">
@@ -2603,6 +2640,7 @@ function bankrollChart(){
    <polyline class="bankroll-line" points="${line}"/>
    ${pts.map((p,i)=>`<circle class="bankroll-point" cx="${x(i)}" cy="${y(Number(p.value||0))}" r="${pts.length<20?3:1.6}"/>`).join('')}
    ${labels}
+   ${todayMarker}
  </svg>
  </div>`;
 }
@@ -3366,7 +3404,7 @@ function renderSettings(){
 <button class="secondary" onclick="resetLogin()">Změnit přihlášení</button>
 <button class="danger" onclick="resetData()">Obnovit výchozí data</button>
 </div>
- <p class="small">Verze: ABA 0.21.5 · Data jsou uložená pouze v tomto prohlížeči na tomto zařízení.</p></div>`;
+ <p class="small">Verze: ABA 0.21.6 · Data jsou uložená pouze v tomto prohlížeči na tomto zařízení.</p></div>`;
 }
 function saveSettings(){data.settings.startingBankroll=Number(document.getElementById('bankroll').value.replace(',','.'))||200000;saveData();alert('Nastavení uloženo.');renderDashboard()}
 function exportData(){const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`ABA_zaloha_${new Date().toISOString().slice(0,10)}_v${APP_VERSION}.json`;a.click();URL.revokeObjectURL(a.href)}

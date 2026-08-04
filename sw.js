@@ -1,4 +1,4 @@
-const CACHE='aba-pwa-v0-21-5-ticket-delete';
+const CACHE='aba-pwa-v0-21-6-bankroll-chart';
 const ASSETS=[
   './',
   './index.html',

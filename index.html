@@ -1563,7 +1563,7 @@ body.codex-open{
     <img src="icon-512.png?v=0111" alt="ABA – Angel Bet Analytics">
     <div id="abaSplashTitle">ABA</div>
     <div id="abaSplashSub">ANGEL BET ANALYTICS</div>
-    <div id="abaSplashVersion">v0.21.6</div>
+    <div id="abaSplashVersion">v0.21.7</div>
   </div>
 </div>
 
@@ -1635,7 +1635,7 @@ body.codex-open{
 
 <header>
   <strong>ABA – Anděl Bet Analytics</strong>
-  <div style="display:flex;align-items:center;gap:10px"><span id="versionBadge" class="small">v0.21.6</span><span>Zobák</span><button class="secondary" onclick="logout()">Odhlásit</button></div>
+  <div style="display:flex;align-items:center;gap:10px"><span id="versionBadge" class="small">v0.21.7</span><span>Zobák</span><button class="secondary" onclick="logout()">Odhlásit</button></div>
 </header>
 <div class="layout">
 <nav>
@@ -1661,7 +1661,7 @@ body.codex-open{
 </section>
 
 <script>
-const APP_VERSION='0.21.6';
+const APP_VERSION='0.21.7';
 const KEY='aba_ipad_v01';
 const AUTH_KEY='aba_auth_v1';
 const BACKUP_KEY='aba_internal_backups_v1';
@@ -1779,7 +1779,7 @@ function migrateData(raw){
   const d=raw&&typeof raw==='object'?raw:structuredClone(defaultData);
   if(!d.settings)d.settings={startingBankroll:100000};
   if(d.settings.startingBankroll===undefined)d.settings.startingBankroll=100000;
-  // v0.21.6: sjednocení počátečního bankrollu projektu k 1. 8. 2026
+  // v0.21.7: sjednocení počátečního bankrollu projektu k 1. 8. 2026
   if(!d.settings.bankrollBaseline20260801){
     d.settings.startingBankroll=100000;
     d.settings.bankrollBaseline20260801=true;
@@ -2177,25 +2177,54 @@ function setBetType(i,value){
 }
 
 
-function normalizedMatch(value){
- return String(value||'').toLowerCase().replace(/[–—]/g,'-').replace(/\s+/g,' ').trim();
+function normalizeTeamName(value){
+ return String(value||'')
+   .normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+   .toLowerCase()
+   .replace(/[–—]/g,'-')
+   .replace(/\b(fc|fk|sk|ac|cf|sc|afc|rc|nk|ifk|bk|cd|ud|club|fotbal|football)\b/g,' ')
+   .replace(/[^a-z0-9]+/g,' ')
+   .replace(/\s+/g,' ')
+   .trim();
+}
+function splitMatchTeams(value){
+ const raw=String(value||'').replace(/[–—]/g,'-');
+ const parts=raw.split(/\s+-\s+/).map(x=>x.trim()).filter(Boolean);
+ return parts.length>=2?[parts[0],parts.slice(1).join(' - ')]:[raw.trim(),''];
+}
+function teamTokens(value){
+ return normalizeTeamName(value).split(' ').filter(x=>x.length>1 && !['the','de','la','el'].includes(x));
+}
+function teamNamesMatch(a,b){
+ const na=normalizeTeamName(a), nb=normalizeTeamName(b);
+ if(!na||!nb)return false;
+ if(na===nb || na.includes(nb) || nb.includes(na))return true;
+ const ta=teamTokens(a), tb=teamTokens(b);
+ const common=ta.filter(x=>tb.includes(x));
+ return common.length>=1 && (common.join('').length>=4 || common.length>=2);
 }
 function matchingAnalyses(name){
- const n=normalizedMatch(name);
- if(!n)return [];
+ const [ticketHome,ticketAway]=splitMatchTeams(name);
+ if(!ticketHome)return [];
  return data.analyses.filter(a=>{
-   const full=normalizedMatch(a.match);
-   if(full===n)return true;
-   const home=normalizedMatch(a.homeTeam),away=normalizedMatch(a.awayTeam);
-   return home&&away&&n.includes(home)&&n.includes(away);
+   const [analysisHomeFromMatch,analysisAwayFromMatch]=splitMatchTeams(a.match||'');
+   const home=a.homeTeam||analysisHomeFromMatch;
+   const away=a.awayTeam||analysisAwayFromMatch;
+   return teamNamesMatch(ticketHome,home) && teamNamesMatch(ticketAway,away);
  });
 }
+function analysisOption(a,selected){
+ const id=a.abaId||a.id;
+ return `<option value="${esc(id)}" ${String(selected||'')===String(id)?'selected':''}>${esc(a.abaId||'')} • ${esc(a.match||'Analýza')} • ${esc(a.recommendation||'')}</option>`;
+}
 function analysisLinkOptions(matchName,selected){
- const rows=matchingAnalyses(matchName);
- return `<option value="">Bez propojení</option>`+rows.map(a=>{
-   const id=a.abaId||a.id;
-   return `<option value="${esc(id)}" ${String(selected||'')===String(id)?'selected':''}>${esc(a.abaId||'')} • ${esc(a.recommendation||a.match)}</option>`;
- }).join('');
+ const matches=matchingAnalyses(matchName);
+ const matchIds=new Set(matches.map(a=>String(a.abaId||a.id)));
+ const others=(data.analyses||[]).filter(a=>!matchIds.has(String(a.abaId||a.id)));
+ let html='<option value="">Bez propojení</option>';
+ if(matches.length)html+=`<optgroup label="Odpovídající analýzy">${matches.map(a=>analysisOption(a,selected)).join('')}</optgroup>`;
+ if(others.length)html+=`<optgroup label="Všechny ostatní analýzy">${others.map(a=>analysisOption(a,selected)).join('')}</optgroup>`;
+ return html;
 }
 
 function updateLinkedAnalysisAfterName(i){
@@ -3404,7 +3433,7 @@ function renderSettings(){
 <button class="secondary" onclick="resetLogin()">Změnit přihlášení</button>
 <button class="danger" onclick="resetData()">Obnovit výchozí data</button>
 </div>
- <p class="small">Verze: ABA 0.21.6 · Data jsou uložená pouze v tomto prohlížeči na tomto zařízení.</p></div>`;
+ <p class="small">Verze: ABA 0.21.7 · Data jsou uložená pouze v tomto prohlížeči na tomto zařízení.</p></div>`;
 }
 function saveSettings(){data.settings.startingBankroll=Number(document.getElementById('bankroll').value.replace(',','.'))||200000;saveData();alert('Nastavení uloženo.');renderDashboard()}
 function exportData(){const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`ABA_zaloha_${new Date().toISOString().slice(0,10)}_v${APP_VERSION}.json`;a.click();URL.revokeObjectURL(a.href)}

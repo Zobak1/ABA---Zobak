@@ -1,4 +1,4 @@
-const CACHE='aba-pwa-v0-21-6-bankroll-chart';
+const CACHE='aba-pwa-v0-21-8-analysis-picker';
 const ASSETS=[
   './',
   './index.html',

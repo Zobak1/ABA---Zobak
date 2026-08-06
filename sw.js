@@ -1,4 +1,4 @@
-const CACHE='aba-pwa-v0-21-8-analysis-picker';
+const CACHE='aba-pwa-v0-21-9-analysis-link-over05';
 const ASSETS=[
   './',
   './index.html',

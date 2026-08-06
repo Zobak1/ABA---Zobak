@@ -1478,18 +1478,6 @@ body.codex-open{
 }
 .analysis-ticket-link label{color:var(--teal);font-size:12px}
 .analysis-ticket-link select{margin-top:5px}
-.analysis-picker-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:6px}
-.analysis-picker-button{flex:0 0 auto;background:#0A8F93!important;color:#fff!important;border:none!important;padding:10px 14px!important;border-radius:10px!important;font-weight:800!important;cursor:pointer!important}
-.analysis-picker-current{flex:1;min-width:180px;border:1px solid #28535d;border-radius:10px;padding:10px 12px;background:#0A1620;color:#dce8ee;line-height:1.35}
-.analysis-picker-overlay{position:fixed;inset:0;background:rgba(0,0,0,.68);z-index:99999;display:flex;align-items:center;justify-content:center;padding:18px}
-.analysis-picker-dialog{width:min(760px,100%);max-height:86vh;overflow:auto;background:#10222d;border:1px solid #315a67;border-radius:16px;padding:16px;box-shadow:0 20px 70px rgba(0,0,0,.45)}
-.analysis-picker-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px}
-.analysis-picker-list{display:grid;gap:8px}
-.analysis-picker-item{display:block;width:100%;text-align:left;background:#0a1821!important;color:#fff!important;border:1px solid #294c57!important;border-radius:11px!important;padding:12px!important;cursor:pointer!important}
-.analysis-picker-item strong{display:block;color:#00d6d6;margin-bottom:4px}
-.analysis-picker-item.matching{border-color:#00aeb3!important;background:rgba(0,174,179,.12)!important}
-.analysis-picker-empty{padding:14px;border:1px dashed #34515d;border-radius:10px;color:#9fb1bc}
-
 .ticket-linked-analysis{margin-top:5px;color:var(--teal);font-size:12px}
 .analysis-evaluation-box{
   margin-top:16px;padding-top:15px;border-top:1px solid var(--line)
@@ -1510,7 +1498,7 @@ body.codex-open{
 }
 
 
-/* ABA 0.21.8 — Reliable analysis picker for iPad/Safari */
+/* ABA 0.21.3 — History ticket analysis linking */
 .match-card-title{
   display:flex;
   align-items:center;
@@ -1558,6 +1546,21 @@ body.codex-open{
   background:rgba(255,77,87,.08);
 }
 
+
+/* ABA 0.21.9 — spolehlivý výběr propojené analýzy pro Safari/iPad */
+.analysis-picker-button{width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;text-align:left;background:#071924;border:1px solid #24465a;color:#eef9ff;border-radius:12px;padding:15px 16px;font:inherit;cursor:pointer}
+.analysis-picker-button:hover,.analysis-picker-button:focus{border-color:var(--teal);outline:none;box-shadow:0 0 0 3px rgba(13,180,188,.15)}
+.analysis-picker-overlay{position:fixed;inset:0;z-index:9999;background:rgba(0,8,14,.78);display:flex;align-items:center;justify-content:center;padding:22px}
+.analysis-picker-overlay[hidden]{display:none!important}
+.analysis-picker-dialog{width:min(760px,100%);max-height:82vh;overflow:auto;background:#081923;border:1px solid #2a5367;border-radius:18px;padding:18px;box-shadow:0 24px 80px rgba(0,0,0,.48)}
+.analysis-picker-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
+.analysis-picker-list{display:grid;gap:9px}
+.analysis-picker-item{width:100%;text-align:left;background:#0c2230;border:1px solid #284b5d;color:#eef9ff;border-radius:12px;padding:13px 14px;cursor:pointer}
+.analysis-picker-item:hover,.analysis-picker-item:focus{border-color:var(--teal);outline:none;background:#103040}
+.analysis-picker-item strong{display:block;margin-bottom:4px}
+.analysis-picker-match{border-color:rgba(13,180,188,.8);background:rgba(13,180,188,.11)}
+.analysis-picker-section{margin:14px 0 7px;color:var(--teal);font-weight:700}
+
 </style>
 </head>
 <body>
@@ -1575,7 +1578,7 @@ body.codex-open{
     <img src="icon-512.png?v=0111" alt="ABA – Angel Bet Analytics">
     <div id="abaSplashTitle">ABA</div>
     <div id="abaSplashSub">ANGEL BET ANALYTICS</div>
-    <div id="abaSplashVersion">v0.21.8</div>
+    <div id="abaSplashVersion">v0.21.9</div>
   </div>
 </div>
 
@@ -1647,7 +1650,7 @@ body.codex-open{
 
 <header>
   <strong>ABA – Anděl Bet Analytics</strong>
-  <div style="display:flex;align-items:center;gap:10px"><span id="versionBadge" class="small">v0.21.8</span><span>Zobák</span><button class="secondary" onclick="logout()">Odhlásit</button></div>
+  <div style="display:flex;align-items:center;gap:10px"><span id="versionBadge" class="small">v0.21.9</span><span>Zobák</span><button class="secondary" onclick="logout()">Odhlásit</button></div>
 </header>
 <div class="layout">
 <nav>
@@ -1673,7 +1676,7 @@ body.codex-open{
 </section>
 
 <script>
-const APP_VERSION='0.21.8';
+const APP_VERSION='0.21.9';
 const KEY='aba_ipad_v01';
 const AUTH_KEY='aba_auth_v1';
 const BACKUP_KEY='aba_internal_backups_v1';
@@ -1720,6 +1723,7 @@ const BET_TYPES = [
   {category:'Dvojitá šance',type:'1X'},
   {category:'Dvojitá šance',type:'X2'},
   {category:'Dvojitá šance',type:'12'},
+  {category:'Góly',type:'Over 0,5'},
   {category:'Góly',type:'Over 1,5'},
   {category:'Góly',type:'Over 2,5'},
   {category:'Góly',type:'Over 3,5'},
@@ -1791,7 +1795,7 @@ function migrateData(raw){
   const d=raw&&typeof raw==='object'?raw:structuredClone(defaultData);
   if(!d.settings)d.settings={startingBankroll:100000};
   if(d.settings.startingBankroll===undefined)d.settings.startingBankroll=100000;
-  // v0.21.8: sjednocení počátečního bankrollu projektu k 1. 8. 2026
+  // v0.21.9: sjednocení počátečního bankrollu projektu k 1. 8. 2026
   if(!d.settings.bankrollBaseline20260801){
     d.settings.startingBankroll=100000;
     d.settings.bankrollBaseline20260801=true;
@@ -2239,44 +2243,6 @@ function analysisLinkOptions(matchName,selected){
  return html;
 }
 
-function selectedAnalysisLabel(id){
- const a=analysisById(id);
- return a?`${a.abaId||a.id} • ${a.match||'Analýza'} • ${a.recommendation||''}`:'Bez propojení';
-}
-function analysisPickerControl(matchName,selected,contextType,contextA,contextB=''){
- const label=selectedAnalysisLabel(selected);
- const safeName=encodeURIComponent(String(matchName||''));
- return `<div class="analysis-picker-row"><div class="analysis-picker-current">${esc(label)}</div><button type="button" class="analysis-picker-button" onclick="openAnalysisPicker('${contextType}','${esc(String(contextA))}','${esc(String(contextB))}',decodeURIComponent('${safeName}'))">Vybrat analýzu</button></div>`;
-}
-function closeAnalysisPicker(){
- const el=document.getElementById('analysis-picker-overlay');
- if(el)el.remove();
-}
-function openAnalysisPicker(contextType,contextA,contextB,matchName){
- closeAnalysisPicker();
- const matches=matchingAnalyses(matchName);
- const matchIds=new Set(matches.map(a=>String(a.abaId||a.id)));
- const others=(data.analyses||[]).filter(a=>!matchIds.has(String(a.abaId||a.id)));
- const item=(a,isMatching)=>`<button type="button" class="analysis-picker-item ${isMatching?'matching':''}" onclick="chooseAnalysisFromPicker('${contextType}','${esc(String(contextA))}','${esc(String(contextB))}','${esc(String(a.abaId||a.id))}')"><strong>${esc(a.abaId||a.id)}</strong>${esc(a.match||'Analýza')}<br><span class="small">${esc(a.recommendation||'')}</span></button>`;
- const overlay=document.createElement('div');
- overlay.id='analysis-picker-overlay';
- overlay.className='analysis-picker-overlay';
- overlay.innerHTML=`<div class="analysis-picker-dialog" role="dialog" aria-modal="true"><div class="analysis-picker-head"><div><h3 style="margin:0">Vybrat propojenou analýzu</h3><div class="small">${esc(matchName||'Zápas')}</div></div><button type="button" class="secondary" onclick="closeAnalysisPicker()">Zavřít</button></div><div class="analysis-picker-list"><button type="button" class="analysis-picker-item" onclick="chooseAnalysisFromPicker('${contextType}','${esc(String(contextA))}','${esc(String(contextB))}','')"><strong>Bez propojení</strong>Odstranit propojení analýzy</button>${matches.length?`<div class="small" style="margin-top:6px;color:#00d6d6">Odpovídající analýzy</div>${matches.map(a=>item(a,true)).join('')}`:''}${others.length?`<div class="small" style="margin-top:8px">Všechny ostatní analýzy</div>${others.map(a=>item(a,false)).join('')}`:''}${!matches.length&&!others.length?'<div class="analysis-picker-empty">Nejsou uloženy žádné analýzy.</div>':''}</div></div>`;
- overlay.addEventListener('click',e=>{if(e.target===overlay)closeAnalysisPicker()});
- document.body.appendChild(overlay);
-}
-function chooseAnalysisFromPicker(contextType,contextA,contextB,analysisId){
- if(contextType==='draft'){
-   const i=Number(contextA);
-   if(draft&&draft.matches&&draft.matches[i])draft.matches[i].linkedAnalysisId=analysisId||null;
-   closeAnalysisPicker();renderDraft();return;
- }
- if(contextType==='ticket'){
-   closeAnalysisPicker();editMatch(contextA,Number(contextB),'linkedAnalysisId',analysisId||'');return;
- }
- closeAnalysisPicker();
-}
-
 function updateLinkedAnalysisAfterName(i){
   const match=draft.matches[i];
   if(!match)return;
@@ -2297,6 +2263,53 @@ function updateLinkedAnalysisAfterName(i){
 function setLinkedAnalysis(i,value){
  draft.matches[i].linkedAnalysisId=value||null;
 }
+
+let analysisPickerContext=null;
+function linkedAnalysisLabel(id){
+ const a=analysisById(id);
+ return a?`${a.match||'Analýza'} — ${a.recommendation||''}`:'Bez propojení';
+}
+function analysisPickerButton(matchName,selected,contextType,ticketId,index){
+ const label=linkedAnalysisLabel(selected);
+ const safeTicket=ticketId==null?'':String(ticketId);
+ const encodedMatch=encodeURIComponent(String(matchName||''));
+ return `<button type="button" class="analysis-picker-button" onclick="openAnalysisPicker('${contextType}','${esc(safeTicket)}',${Number(index)},decodeURIComponent('${encodedMatch}'))"><span>${esc(label)}</span><span>Vybrat ▾</span></button>`;
+}
+function openAnalysisPicker(contextType,ticketId,index,matchName){
+ analysisPickerContext={contextType,ticketId,index,matchName};
+ const overlay=document.getElementById('analysisPickerOverlay');
+ const list=document.getElementById('analysisPickerList');
+ const subtitle=document.getElementById('analysisPickerSubtitle');
+ if(!overlay||!list)return;
+ const matching=matchingAnalyses(matchName);
+ const matchingIds=new Set(matching.map(a=>String(a.abaId||a.id)));
+ const others=(data.analyses||[]).filter(a=>!matchingIds.has(String(a.abaId||a.id)));
+ subtitle.textContent=matchName||'';
+ const item=(a,isMatch)=>`<button type="button" class="analysis-picker-item ${isMatch?'analysis-picker-match':''}" onclick="chooseLinkedAnalysis(${JSON.stringify(String(a.abaId||a.id))})"><strong>${esc(a.match||'Analýza')}</strong><span class="small">${esc(a.recommendation||'')} • ${esc(a.abaId||'')}</span></button>`;
+ let html=`<button type="button" class="analysis-picker-item" onclick="chooseLinkedAnalysis('')"><strong>Bez propojení</strong><span class="small">Odstranit propojení analýzy.</span></button>`;
+ if(matching.length)html+=`<div class="analysis-picker-section">Odpovídající analýzy</div>${matching.map(a=>item(a,true)).join('')}`;
+ if(others.length)html+=`<div class="analysis-picker-section">Všechny ostatní analýzy</div>${others.map(a=>item(a,false)).join('')}`;
+ if(!matching.length&&!others.length)html+=`<div class="small" style="padding:14px">Nejsou uloženy žádné analýzy.</div>`;
+ list.innerHTML=html;
+ overlay.hidden=false;overlay.setAttribute('aria-hidden','false');
+}
+function closeAnalysisPicker(){
+ const overlay=document.getElementById('analysisPickerOverlay');
+ if(overlay){overlay.hidden=true;overlay.setAttribute('aria-hidden','true')}
+ analysisPickerContext=null;
+}
+function chooseLinkedAnalysis(value){
+ const c=analysisPickerContext;if(!c)return;
+ if(c.contextType==='draft'){
+   if(draft&&draft.matches[c.index])draft.matches[c.index].linkedAnalysisId=value||null;
+   saveData();renderDraft();
+ }else{
+   const t=data.tickets.find(x=>String(x.id)===String(c.ticketId));
+   if(t&&t.matches[c.index]){t.matches[c.index].linkedAnalysisId=value||null;saveData();openTicket(t.id)}
+ }
+ closeAnalysisPicker();
+}
+
 function analysisById(id){
  return data.analyses.find(a=>String(a.abaId||'')===String(id)||String(a.id)===String(id))||null;
 }
@@ -2346,8 +2359,8 @@ function matchEditor(m,i){
  ${field('Poznámka',`<textarea oninput="setMatch(${i},'note',this.value)">${esc(m.note)}</textarea>`)}
  <div class="analysis-ticket-link">
    <label>Propojená analýza</label>
-   ${analysisPickerControl(m.name,m.linkedAnalysisId,'draft',i)}
-   <div id="linked-analysis-note-${i}" class="small" style="margin-top:5px">${matchingAnalyses(m.name).length?`ABA našla ${matchingAnalyses(m.name).length} odpovídající ${matchingAnalyses(m.name).length===1?'analýzu':'analýzy'}.`:'Analýzu lze vybrat ručně tlačítkem Vybrat analýzu.'}</div>
+   ${analysisPickerButton(m.name,m.linkedAnalysisId,'draft','',i)}
+   <div id="linked-analysis-note-${i}" class="small" style="margin-top:5px">${matchingAnalyses(m.name).length?`ABA našla ${matchingAnalyses(m.name).length} odpovídající ${matchingAnalyses(m.name).length===1?'analýzu':'analýzy'}.`:'Po zadání názvu zápasu ABA nabídne odpovídající analýzu.'}</div>
  </div>
  ${draft.matches.length>1?`<button class="danger" onclick="removeMatch(${i})">Odebrat zápas</button>`:''}</div>`;
 }
@@ -2474,7 +2487,7 @@ function matchDetail(t,i){
  </div>
  ${field('Poznámka',`<textarea onchange="editMatch('${t.id}',${i},'note',this.value)">${esc(m.note)}</textarea>`)}
  <div class="history-analysis-link">
-   ${field('Propojená analýza',analysisPickerControl(m.name,m.linkedAnalysisId,'ticket',t.id,i))}
+   ${field('Propojená analýza',analysisPickerButton(m.name,m.linkedAnalysisId,'history',t.id,i))}
    <div class="small">${matching.length
      ?`ABA našla ${matching.length} odpovídající ${matching.length===1?'analýzu':'analýzy'}.`
      :'Pro tento zápas zatím nebyla nalezena uložená analýza.'}</div>
@@ -3481,7 +3494,7 @@ function renderSettings(){
 <button class="secondary" onclick="resetLogin()">Změnit přihlášení</button>
 <button class="danger" onclick="resetData()">Obnovit výchozí data</button>
 </div>
- <p class="small">Verze: ABA 0.21.8 · Data jsou uložená pouze v tomto prohlížeči na tomto zařízení.</p></div>`;
+ <p class="small">Verze: ABA 0.21.9 · Data jsou uložená pouze v tomto prohlížeči na tomto zařízení.</p></div>`;
 }
 function saveSettings(){data.settings.startingBankroll=Number(document.getElementById('bankroll').value.replace(',','.'))||200000;saveData();alert('Nastavení uloženo.');renderDashboard()}
 function exportData(){const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`ABA_zaloha_${new Date().toISOString().slice(0,10)}_v${APP_VERSION}.json`;a.click();URL.revokeObjectURL(a.href)}
@@ -3585,6 +3598,17 @@ window.addEventListener('load',()=>{
   setTimeout(()=>splash?.classList.add('hide'),900);
 });
 </script>
+
+
+<div id="analysisPickerOverlay" class="analysis-picker-overlay" hidden aria-hidden="true">
+  <div class="analysis-picker-dialog" role="dialog" aria-modal="true" aria-labelledby="analysisPickerTitle">
+    <div class="analysis-picker-head">
+      <div><h3 id="analysisPickerTitle" style="margin:0">Vybrat propojenou analýzu</h3><div id="analysisPickerSubtitle" class="small"></div></div>
+      <button type="button" class="secondary" onclick="closeAnalysisPicker()">Zavřít</button>
+    </div>
+    <div id="analysisPickerList" class="analysis-picker-list"></div>
+  </div>
+</div>
 
 </body>
 </html>

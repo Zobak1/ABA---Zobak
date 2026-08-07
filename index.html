@@ -1547,7 +1547,7 @@ body.codex-open{
 }
 
 
-/* ABA 0.21.9 — spolehlivý výběr propojené analýzy pro Safari/iPad */
+/* ABA 0.22.0 — oprava duplicitních ID tiketů a chybného vyhodnocování */
 .analysis-picker-button{width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;text-align:left;background:#071924;border:1px solid #24465a;color:#eef9ff;border-radius:12px;padding:15px 16px;font:inherit;cursor:pointer}
 .analysis-picker-button:hover,.analysis-picker-button:focus{border-color:var(--teal);outline:none;box-shadow:0 0 0 3px rgba(13,180,188,.15)}
 .analysis-picker-overlay{position:fixed;inset:0;z-index:9999;background:rgba(0,8,14,.78);display:flex;align-items:center;justify-content:center;padding:22px}
@@ -1578,7 +1578,7 @@ body.codex-open{
     <img src="icon-512.png?v=0111" alt="ABA – Angel Bet Analytics">
     <div id="abaSplashTitle">ABA</div>
     <div id="abaSplashSub">ANGEL BET ANALYTICS</div>
-    <div id="abaSplashVersion">v0.21.9</div>
+    <div id="abaSplashVersion">v0.22.0</div>
   </div>
 </div>
 
@@ -1650,7 +1650,7 @@ body.codex-open{
 
 <header>
   <strong>ABA – Anděl Bet Analytics</strong>
-  <div style="display:flex;align-items:center;gap:10px"><span id="versionBadge" class="small">v0.21.9</span><span>Zobák</span><button class="secondary" onclick="logout()">Odhlásit</button></div>
+  <div style="display:flex;align-items:center;gap:10px"><span id="versionBadge" class="small">v0.22.0</span><span>Zobák</span><button class="secondary" onclick="logout()">Odhlásit</button></div>
 </header>
 <div class="layout">
 <nav>
@@ -1676,7 +1676,7 @@ body.codex-open{
 </section>
 
 <script>
-const APP_VERSION='0.21.9';
+const APP_VERSION='0.22.0';
 const KEY='aba_ipad_v01';
 const AUTH_KEY='aba_auth_v1';
 const BACKUP_KEY='aba_internal_backups_v1';
@@ -1795,12 +1795,41 @@ function migrateData(raw){
   const d=raw&&typeof raw==='object'?raw:structuredClone(defaultData);
   if(!d.settings)d.settings={startingBankroll:100000};
   if(d.settings.startingBankroll===undefined)d.settings.startingBankroll=100000;
-  // v0.21.9: sjednocení počátečního bankrollu projektu k 1. 8. 2026
+  // v0.22.0: sjednocení počátečního bankrollu projektu k 1. 8. 2026
   if(!d.settings.bankrollBaseline20260801){
     d.settings.startingBankroll=100000;
     d.settings.bankrollBaseline20260801=true;
   }
   if(!Array.isArray(d.tickets))d.tickets=[];
+
+  // v0.22.0: oprava duplicitních ID tiketů.
+  // Starší verze používala počet tiketů + 1. Po smazání tiketu tak mohl vzniknout
+  // nový tiket se stejným ID jako starší tiket a následné úpravy zasáhly špatný záznam.
+  const usedTicketIds=new Set();
+  const maxByYear={};
+  d.tickets.forEach(t=>{
+    const m=String(t.id||'').match(/^(\d{4})\s*-\s*(\d+)$/);
+    if(m){
+      const year=m[1],num=Number(m[2]);
+      maxByYear[year]=Math.max(maxByYear[year]||0,num);
+    }
+  });
+  const repairedTicketIds=[];
+  d.tickets.forEach(t=>{
+    const originalId=String(t.id||'');
+    if(!originalId || usedTicketIds.has(originalId)){
+      const m=originalId.match(/^(\d{4})\s*-\s*(\d+)$/);
+      const year=m?m[1]:(String(t.date||'').slice(0,4)||String(new Date().getFullYear()));
+      maxByYear[year]=(maxByYear[year]||0)+1;
+      const newId=`${year} - ${String(maxByYear[year]).padStart(6,'0')}`;
+      repairedTicketIds.push({oldId:originalId,newId,ticket:t});
+      t.id=newId;
+      usedTicketIds.add(newId);
+    }else{
+      usedTicketIds.add(originalId);
+    }
+  });
+
   if(!Array.isArray(d.consideredMatches))d.consideredMatches=[];
   if(!Array.isArray(d.analyses))d.analyses=[];
   d.analyses=d.analyses.map((a,index)=>{
@@ -1842,6 +1871,18 @@ function migrateData(raw){
       createdAt:a.createdAt||new Date().toISOString()
     };
   });
+  // Oprava zpětných odkazů analýz u přečíslovaného duplicitního tiketu,
+  // pokud lze cílový tiket jednoznačně určit podle názvu propojeného zápasu.
+  repairedTicketIds.forEach(change=>{
+    d.analyses.forEach(a=>{
+      if(String(a.linkedTicketId||'')!==String(change.oldId||''))return;
+      const linkedName=String(a.linkedMatchName||'').trim();
+      if(!linkedName)return;
+      const candidates=d.tickets.filter(t=>Array.isArray(t.matches) && t.matches.some(m=>String(m.name||'').trim()===linkedName));
+      if(candidates.length===1 && candidates[0]===change.ticket)a.linkedTicketId=change.newId;
+    });
+  });
+
   d.tickets.forEach(t=>{
     if(!Array.isArray(t.matches))t.matches=[];
     if(t.payout===undefined)t.payout=0;
@@ -1860,7 +1901,7 @@ function migrateData(raw){
       if(!m.status)m.status='Čeká';
     });
   });
-  d.schemaVersion=17;
+  d.schemaVersion=18;
   return d;
 }
 function loadData(){
@@ -2132,7 +2173,13 @@ function ticketTable(list){
  </tbody></table></div>`;
 }
 function nextId(){
- const y=new Date().getFullYear(), n=data.tickets.filter(t=>t.id.startsWith(y+' - ')).length+1;
+ const y=new Date().getFullYear();
+ const nums=data.tickets
+   .map(t=>String(t.id||'').match(new RegExp(`^${y}\s*-\s*(\d+)$`)))
+   .filter(Boolean)
+   .map(m=>Number(m[1]))
+   .filter(Number.isFinite);
+ const n=(nums.length?Math.max(...nums):0)+1;
  return `${y} - ${String(n).padStart(6,'0')}`;
 }
 function startDraft(){
@@ -2376,7 +2423,14 @@ function saveDraft(){
  if(!draft.date||draft.matches.some(m=>!m.name.trim()||!m.pick.trim()))return alert('Doplň datum, název zápasu a tip.');
  if(Number(draft.stake||0)<0)return alert('Vklad nesmí být záporný.');
  if(draft.matches.some(m=>Number(m.odds||0)<=0))return alert('Každý kurz musí být větší než nula.');
- draft.totalOdds=calcDraft();const savedTicket=structuredClone(draft);data.tickets.push(savedTicket);syncAnalysisLinksForTicket(savedTicket);saveData();alert('Tiket uložen.');showView('history');
+ draft.totalOdds=calcDraft();
+ const savedTicket=structuredClone(draft);
+ // Druhá pojistka: duplicitní ID se nesmí uložit ani v případě starých/migrovaných dat.
+ if(data.tickets.some(t=>String(t.id)===String(savedTicket.id))){
+   savedTicket.id=nextId();
+   draft.id=savedTicket.id;
+ }
+ data.tickets.push(savedTicket);syncAnalysisLinksForTicket(savedTicket);saveData();alert('Tiket uložen.');showView('history');
 }
 function renderHistory(){
  const el=document.getElementById('view-history');
@@ -3494,7 +3548,7 @@ function renderSettings(){
 <button class="secondary" onclick="resetLogin()">Změnit přihlášení</button>
 <button class="danger" onclick="resetData()">Obnovit výchozí data</button>
 </div>
- <p class="small">Verze: ABA 0.21.9 · Data jsou uložená pouze v tomto prohlížeči na tomto zařízení.</p></div>`;
+ <p class="small">Verze: ABA 0.22.0 · Data jsou uložená pouze v tomto prohlížeči na tomto zařízení.</p></div>`;
 }
 function saveSettings(){data.settings.startingBankroll=Number(document.getElementById('bankroll').value.replace(',','.'))||200000;saveData();alert('Nastavení uloženo.');renderDashboard()}
 function exportData(){const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`ABA_zaloha_${new Date().toISOString().slice(0,10)}_v${APP_VERSION}.json`;a.click();URL.revokeObjectURL(a.href)}

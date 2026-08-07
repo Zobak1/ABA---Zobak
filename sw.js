@@ -1,4 +1,4 @@
-const CACHE='aba-pwa-v0-21-9-analysis-link-over05';
+const CACHE='aba-pwa-v0-22-0-ticket-id-fix';
 const ASSETS=[
   './',
   './index.html',

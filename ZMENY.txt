@@ -1,27 +1,9 @@
-ABA v0.21.9 – cílený upgrade z projektu staženého z GitHubu
+ABA v0.22.0
 
-Změněny jsou pouze soubory:
-- index.html
-- sw.js
-
-Změny v index.html:
-1) Přidán typ sázky: Góly → Over 0,5.
-2) Nativní select „Propojená analýza“ nahrazen vlastním tlačítkem „Vybrat“ a dialogem.
-3) Dialog vždy nabízí:
-   - Bez propojení
-   - Odpovídající analýzy
-   - Všechny ostatní uložené analýzy
-4) Propojení se ukládá do linkedAnalysisId.
-5) Verze aplikace změněna na 0.21.9.
-
-Změna v sw.js:
-- změněn název cache na aba-pwa-v0-21-9-analysis-link-over05, aby Safari/PWA načetlo nový index.
-
-Ověření před předáním:
-- JavaScript prošel kontrolou syntaxe pomocí node --check.
-- Párování bylo ověřeno proti záloze ABA_zaloha_2026-08-06_v0.21.6.json:
-  Lech Poznaň - Klaksvik -> Lech Poznań - KÍ Klaksvík
-  Braga - Minsk -> Braga - Dinamo Minsk
-  Lugano - Runavik -> Lugano - NSÍ Runavík
-  Benfica - Hearts -> Benfica - Hearts
-- U názvů Ajax - Dublin a Twente - DAC automatická shoda nevychází, proto nový dialog vždy zobrazuje také všechny ostatní analýzy pro ruční propojení.
+KRITICKÁ OPRAVA TIKETŮ
+- Nové číslo tiketu = nejvyšší existující číslo v daném roce + 1.
+- Po smazání staršího tiketu už nevznikne stejné ID jako u jiného tiketu.
+- Při startu aplikace se již existující duplicitní ID automaticky přečíslují.
+- Ukládání má další kontrolu proti duplicitnímu ID.
+- Oprava řeší situaci, kdy po vyhodnocení nového tiketu aplikace otevřela starší tiket a změnila jeho vklad/výplatu.
+- Zachováno propojení analýz a typ Góly → Over 0,5 z v0.21.9.

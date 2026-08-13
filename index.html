@@ -9,7 +9,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png?v=0111">
 <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png?v=0111">
-<title>ABA – Anděl Bet Analytics</title>
+<title>ABA – Angel Bet Analytics</title>
 <style>
 :root{
   --nav:#19324D; --nav2:#274A6A; --bg:#F4F6F8; --card:#fff; --text:#263238;
@@ -950,7 +950,7 @@ main{
 }
 #view-dashboard .dashboard-chart .chart-box{
   min-height:0;
-  height:calc(100% - 31px);
+  height:calc(100% - 47px);
 }
 #view-dashboard .dashboard-chart .chart-box svg{
   width:100%;
@@ -1561,6 +1561,111 @@ body.codex-open{
 .analysis-picker-match{border-color:rgba(13,180,188,.8);background:rgba(13,180,188,.11)}
 .analysis-picker-section{margin:14px 0 7px;color:var(--teal);font-weight:700}
 
+/* ABA 1.0.5 — barevné rozlišení výsledků v historii tiketů */
+.ticket-row td{transition:background .15s ease}
+.ticket-row-win td{background:rgba(37,211,142,.055)}
+.ticket-row-loss td{background:rgba(255,77,87,.06)}
+.ticket-row-open td{background:rgba(13,180,188,.045)}
+.ticket-row-return td{background:rgba(255,193,7,.05)}
+.ticket-row-win td:first-child{box-shadow:inset 4px 0 0 var(--pos)}
+.ticket-row-loss td:first-child{box-shadow:inset 4px 0 0 var(--neg)}
+.ticket-row-open td:first-child{box-shadow:inset 4px 0 0 var(--teal)}
+.ticket-row-return td:first-child{box-shadow:inset 4px 0 0 #d5a100}
+.ticket-row-win:hover td{background:rgba(37,211,142,.11)!important}
+.ticket-row-loss:hover td{background:rgba(255,77,87,.12)!important}
+.ticket-row-open:hover td{background:rgba(13,180,188,.10)!important}
+.ticket-row-return:hover td{background:rgba(255,193,7,.10)!important}
+.ticket-status-badge{display:inline-flex;align-items:center;gap:7px;border-radius:999px;padding:5px 9px;font-weight:750;white-space:nowrap}
+.ticket-status-badge::before{content:'';width:8px;height:8px;border-radius:50%;background:currentColor}
+.ticket-status-win{color:var(--pos);background:rgba(37,211,142,.10);border:1px solid rgba(37,211,142,.3)}
+.ticket-status-loss{color:var(--neg);background:rgba(255,77,87,.10);border:1px solid rgba(255,77,87,.3)}
+.ticket-status-open{color:var(--teal);background:rgba(13,180,188,.10);border:1px solid rgba(13,180,188,.3)}
+.ticket-status-return{color:#e2b529;background:rgba(255,193,7,.10);border:1px solid rgba(255,193,7,.3)}
+.ticket-status-neutral{color:var(--muted);background:rgba(144,164,174,.10);border:1px solid rgba(144,164,174,.3)}
+
+/* ABA 1.0.6 — přehlednější dashboard a celý údaj profitu */
+#view-dashboard .dashboard-profit-item .dashboard-summary-value{
+  font-size:clamp(11px,.85vw,14px)!important;
+  letter-spacing:-.035em;
+  overflow:visible!important;
+  text-overflow:clip!important;
+}
+#view-dashboard .dashboard-profit-item{padding-right:2px!important}
+#view-dashboard .dashboard-chart-note{
+  color:var(--muted);
+  font-size:10px;
+  margin-top:-5px;
+  margin-bottom:3px;
+}
+
+/* ABA 1.0.7 — jednoduché hodnocení rizika a stav exportované zálohy */
+.ticket-risk{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  min-height:38px;
+  padding:8px 12px;
+  border:1px solid var(--line);
+  border-radius:11px;
+  background:rgba(144,164,174,.08);
+  color:var(--muted);
+}
+.ticket-risk::before{content:'';width:10px;height:10px;border-radius:50%;background:currentColor;box-shadow:0 0 0 4px rgba(144,164,174,.10)}
+.ticket-risk-low{color:var(--pos);border-color:rgba(37,211,142,.35);background:rgba(37,211,142,.08)}
+.ticket-risk-medium{color:#e2b529;border-color:rgba(255,193,7,.38);background:rgba(255,193,7,.08)}
+.ticket-risk-high{color:var(--neg);border-color:rgba(255,77,87,.38);background:rgba(255,77,87,.08)}
+.backup-export-status{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:14px;
+  margin:14px 0;
+  padding:12px 14px;
+  border:1px solid rgba(13,180,188,.28);
+  border-radius:12px;
+  background:rgba(13,180,188,.07);
+}
+.backup-export-status strong{color:var(--teal)}
+
+/* ABA 1.1.0 — hromadná obnova účetní řady a sportovní statistiky */
+.league-folder-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(225px,1fr));
+  gap:12px;
+  margin-top:16px;
+}
+.league-folder{
+  width:100%;
+  display:grid;
+  grid-template-columns:42px minmax(0,1fr);
+  align-items:center;
+  gap:11px;
+  text-align:left;
+  color:var(--text);
+  background:linear-gradient(180deg,var(--card),var(--card2));
+  border:1px solid var(--line);
+  border-radius:14px;
+  padding:14px;
+  box-shadow:0 8px 22px rgba(0,0,0,.16);
+}
+.league-folder:hover,.league-folder.active{border-color:var(--teal);background:rgba(13,180,188,.09)}
+.league-folder-icon{font-size:30px;line-height:1}
+.league-folder-title{display:block;font-weight:780;color:var(--teal);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.league-folder-country{display:block;font-size:12px;color:var(--muted);margin-top:3px}
+.league-folder-count{display:block;font-size:11px;color:var(--muted);margin-top:5px}
+.league-team-detail{margin-top:18px}
+.league-team-head{display:flex;align-items:flex-end;justify-content:space-between;gap:14px;margin-bottom:10px}
+.league-team-head h3{margin:0;color:var(--teal)}
+.team-success-value{font-weight:780;white-space:nowrap}
+.team-success-green{color:var(--pos)}
+.team-success-yellow{color:#e2b529}
+.team-success-red{color:var(--neg)}
+.team-success-gray{color:var(--muted)}
+@media(max-width:620px){
+  .league-folder-grid{grid-template-columns:1fr}
+  .league-team-head{align-items:flex-start;flex-direction:column}
+}
+
 </style>
 </head>
 <body>
@@ -1578,14 +1683,14 @@ body.codex-open{
     <img src="icon-512.png?v=0111" alt="ABA – Angel Bet Analytics">
     <div id="abaSplashTitle">ABA</div>
     <div id="abaSplashSub">ANGEL BET ANALYTICS</div>
-    <div id="abaSplashVersion">v0.22.0</div>
+    <div id="abaSplashVersion">v1.1.0</div>
   </div>
 </div>
 
 <section id="login">
   <div class="login-card">
     <h1>ABA</h1>
-    <p>Anděl Bet Analytics</p>
+    <p>Angel Bet Analytics</p>
 
     <div id="setupBox" class="hidden">
       <div class="small" style="margin-bottom:12px">
@@ -1649,8 +1754,8 @@ body.codex-open{
 </div>
 
 <header>
-  <strong>ABA – Anděl Bet Analytics</strong>
-  <div style="display:flex;align-items:center;gap:10px"><span id="versionBadge" class="small">v0.22.0</span><span>Zobák</span><button class="secondary" onclick="logout()">Odhlásit</button></div>
+  <strong>ABA – Angel Bet Analytics</strong>
+  <div style="display:flex;align-items:center;gap:10px"><span id="versionBadge" class="small">v1.1.0</span><span>Zobák</span><button class="secondary" onclick="logout()">Odhlásit</button></div>
 </header>
 <div class="layout">
 <nav>
@@ -1660,6 +1765,7 @@ body.codex-open{
   <button data-view="history"><svg class="nav-svg" viewBox="0 0 24 24"><rect x="4" y="3" width="14" height="18" rx="2"/><path d="M8 7h6M8 11h6"/><circle cx="17.5" cy="16.5" r="3.5"/><path d="M17.5 14.5v2.2l1.4.8"/></svg><span>Historie tiketů</span></button>
   <button data-view="watchlist"><svg class="nav-svg" viewBox="0 0 24 24"><path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2L12 17.3l-5.6 2.9 1.1-6.2L3 9.6l6.2-.9z"/></svg><span>Zvažované zápasy</span></button>
   <button data-view="analyses"><svg class="nav-svg" viewBox="0 0 24 24"><path d="M4 4h16v16H4z"/><path d="M8 9h8M8 13h5M8 17h7"/><path d="m15 13 2 2 3-4"/></svg><span>Analýzy</span></button>
+  <button data-view="teams"><svg class="nav-svg" viewBox="0 0 24 24"><path d="M3 6h7l2 2h9v11H3z"/><path d="M7 13h10M7 16h7"/></svg><span>Ligy a týmy</span></button>
   <button data-view="stats"><svg class="nav-svg" viewBox="0 0 24 24"><path d="M5 20V10M10 20V5M15 20v-8M20 20V3"/></svg><span>Statistiky</span></button>
   <button data-view="settings"><svg class="nav-svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1-2.8 2.8-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.5V21h-4v-.1a1.7 1.7 0 0 0-1-1.5 1.7 1.7 0 0 0-1.9.3l-.1.1L4.2 17l.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.5-1H3v-4h.1a1.7 1.7 0 0 0 1.5-1 1.7 1.7 0 0 0-.3-1.9L4.2 7 7 4.2l.1.1a1.7 1.7 0 0 0 1.9.3 1.7 1.7 0 0 0 1-1.5V3h4v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.9-.3l.1-.1L19.8 7l-.1.1a1.7 1.7 0 0 0-.3 1.9 1.7 1.7 0 0 0 1.5 1h.1v4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg><span>Nastavení</span></button>
 </nav>
@@ -1669,6 +1775,7 @@ body.codex-open{
   <section id="view-history" class="hidden"></section>
   <section id="view-watchlist" class="hidden"></section>
   <section id="view-analyses" class="hidden"></section>
+  <section id="view-teams" class="hidden"></section>
   <section id="view-stats" class="hidden"></section>
   <section id="view-settings" class="hidden"></section>
 </main>
@@ -1676,11 +1783,12 @@ body.codex-open{
 </section>
 
 <script>
-const APP_VERSION='0.22.0';
-const KEY='aba_ipad_v01';
-const AUTH_KEY='aba_auth_v1';
-const BACKUP_KEY='aba_internal_backups_v1';
+const APP_VERSION='1.1.0';
+const KEY='abu_zobak_v1';
+const AUTH_KEY='abu_auth_v1';
+const BACKUP_KEY='abu_internal_backups_v1';
 const MAX_INTERNAL_BACKUPS=20;
+const SPORTS=['Fotbal','Tenis','Jiný sport'];
 const COMPETITIONS = [
   {country:'Evropské poháry',league:'Liga mistrů',flag:'🏆'},
   {country:'Evropské poháry',league:'Evropská liga',flag:'🏆'},
@@ -1717,6 +1825,7 @@ const COMPETITIONS = [
 ];
 
 const BET_TYPES = [
+  {category:'Bet Builder',type:'Výhra týmu + Over 1,5'},
   {category:'Výsledek zápasu',type:'1 – výhra domácích'},
   {category:'Výsledek zápasu',type:'X – remíza'},
   {category:'Výsledek zápasu',type:'2 – výhra hostů'},
@@ -1730,12 +1839,18 @@ const BET_TYPES = [
   {category:'Góly',type:'Under 1,5'},
   {category:'Góly',type:'Under 2,5'},
   {category:'Góly',type:'Under 3,5'},
+  {category:'Týmové góly',type:'Over 0,5'},
+  {category:'Týmové góly',type:'Over 1,5'},
   {category:'Oba dají gól',type:'Ano'},
   {category:'Oba dají gól',type:'Ne'},
   {category:'Handicap',type:'Handicap domácí'},
   {category:'Handicap',type:'Handicap hosté'},
   {category:'Postup',type:'Postup domácího týmu'},
   {category:'Postup',type:'Postup hostujícího týmu'},
+  {category:'Výsledek prodloužení',type:'1 – výhra domácích'},
+  {category:'Výsledek prodloužení',type:'2 – výhra hostů'},
+  {category:'Tenis – vítěz',type:'Vítěz hráče / páru'},
+  {category:'Tenis – bod',type:'Vítěz bodu'},
   {category:'Rohy',type:'Počet rohů – Over'},
   {category:'Rohy',type:'Počet rohů – Under'},
   {category:'Rohy',type:'Více rohů domácí'},
@@ -1753,17 +1868,176 @@ const BET_TYPES = [
   {category:'Jiné',type:'Jiný typ'}
 ];
 const defaultData={
-  settings:{startingBankroll:100000},
-  tickets:[{
-    id:'2026 - 000001', date:'2026-08-02', stake:0, totalOdds:1, payout:0, status:'Rozpracovaný', note:'Předvyplněné dnešní zápasy.',
-    matches:[
-      {name:'Midtjylland – Horsens',pick:'Midtjylland vyhraje',odds:1,result:'2:1',status:'Vyšla',country:'Dánsko',league:'Superliga',euroLoad:'home',note:'Nepřesvědčivá výhra. Vedli 2:0 po poločase, ale závěr neměli plně pod kontrolou.'},
-      {name:'CSKA Sofia – dnešní soupeř',pick:'CSKA Sofia vyhraje',odds:1,result:'',status:'Čeká',country:'',league:'',euroLoad:'home',note:''},
-      {name:'Riga FC – dnešní soupeř',pick:'Riga FC vyhraje',odds:1,result:'4:0',status:'Vyšla',country:'',league:'',euroLoad:'home',note:'První poločas měl pomalejší rozjezd. Po prvním gólu měla Riga zápas ve svých rukou a zvítězila přesvědčivě 4:0.'},
-      {name:'Ludogorec – dnešní soupeř',pick:'Ludogorec vyhraje',odds:1,result:'',status:'Čeká',country:'',league:'',euroLoad:'home',note:''}
-    ]
-  }]
+  settings:{startingBankroll:100000,bankrollAdjustment:83.69,bankrollBaseline20260801:true,lastBackupAt:'2026-08-09'},
+  tickets:[
+    {id:'2026 - 000001',date:'2026-08-01',stake:100000,totalOdds:1.13,payout:113000,status:'Výherní',note:'Betano ID 20007901085.',matches:[
+      {name:'FC Porto – SC União Torreense',pick:'FC Porto vyhraje',odds:1.13,result:'1:0',status:'Vyšla',country:'Portugalsko',league:'',euroLoad:'none',note:''}]},
+    {id:'2026 - 000002',date:'2026-08-02',stake:100000,totalOdds:2.64,payout:259918.79,status:'Cash Out',note:'Betano ID 20007914645. Uzavřeno přes Cash Out.',matches:[
+      {name:'Midtjylland – Horsens',pick:'Midtjylland vyhraje',odds:1.35,result:'2:1',status:'Vyšla',country:'Dánsko',league:'Superliga',euroLoad:'none',note:''},
+      {name:'Ludogorets – Botev Vratsa',pick:'Ludogorets vyhraje',odds:1.33,result:'2:1',status:'Vyšla',country:'Bulharsko',league:'First League',euroLoad:'none',note:''},
+      {name:'CSKA Sofia – Dunav Ruse',pick:'CSKA Sofia vyhraje',odds:1.29,result:'2:1',status:'Vyšla',country:'Bulharsko',league:'',euroLoad:'none',note:''},
+      {name:'Riga FC – Grobiņas',pick:'Riga FC vyhraje',odds:1.14,result:'4:0',status:'Vyšla',country:'Lotyšsko',league:'',euroLoad:'none',note:''}]},
+    {id:'2026 - 000003',date:'2026-08-03',stake:72000,totalOdds:1.75,payout:122969.56,status:'Cash Out',note:'Betano ID 20007955303. Uzavřeno přes Cash Out.',matches:[
+      {name:'Shakhtar Donetsk – Kudrivka',pick:'Shakhtar Donetsk vyhraje',odds:1.14,result:'5:1',status:'Vyšla',country:'Ukrajina',league:'Premier League',euroLoad:'none',note:''},
+      {name:'Vojvodina – Mačva Šabac',pick:'Vojvodina vyhraje',odds:1.14,result:'2:0',status:'Vyšla',country:'Srbsko',league:'SuperLiga',euroLoad:'none',note:''},
+      {name:'Celtic – Dundee',pick:'Celtic vyhraje',odds:1.21,result:'1:0',status:'Vyšla',country:'Skotsko',league:'Premiership',euroLoad:'none',note:''},
+      {name:'Halmstads – Sirius',pick:'Dvojitá šance X2',odds:1.11,result:'0:2',status:'Vyšla',country:'Švédsko',league:'Allsvenskan',euroLoad:'none',note:''}]},
+    {id:'2026 - 000004',date:'2026-08-03',stake:20000,totalOdds:1.75,payout:34224.27,status:'Cash Out',note:'Betano ID 20007955625. Uzavřeno přes Cash Out.',matches:[
+      {name:'Shakhtar Donetsk – Kudrivka',pick:'Shakhtar Donetsk vyhraje',odds:1.14,result:'5:1',status:'Vyšla',country:'Ukrajina',league:'Premier League',euroLoad:'none',note:''},
+      {name:'Vojvodina – Mačva Šabac',pick:'Vojvodina vyhraje',odds:1.14,result:'2:0',status:'Vyšla',country:'Srbsko',league:'SuperLiga',euroLoad:'none',note:''},
+      {name:'Celtic – Dundee',pick:'Celtic vyhraje',odds:1.21,result:'1:0',status:'Vyšla',country:'Skotsko',league:'Premiership',euroLoad:'none',note:''},
+      {name:'Halmstads – Sirius',pick:'Dvojitá šance X2',odds:1.11,result:'0:2',status:'Vyšla',country:'Švédsko',league:'Allsvenskan',euroLoad:'none',note:''}]},
+    {id:'2026 - 000005',date:'2026-08-04',stake:100000,totalOdds:1.96,payout:0,status:'Proherní',note:'Betano ID 20007987686.',matches:[
+      {name:'Union Saint-Gilloise – Bodø/Glimt',pick:'Více než 0,5 gólu v zápase',odds:1.23,result:'3:3',status:'Vyšla',country:'',league:'',euroLoad:'none',note:''},
+      {name:'Dinamo Zagreb – Kauno Žalgiris',pick:'Dinamo Zagreb vyhraje',odds:1.17,result:'5:0',status:'Vyšla',country:'',league:'',euroLoad:'none',note:''},
+      {name:'Levski Sofia – Kairat',pick:'Více než 0,5 gólu v zápase',odds:1.20,result:'1:0',status:'Vyšla',country:'',league:'',euroLoad:'none',note:''},
+      {name:'Olympiacos – NEC Nijmegen',pick:'Více než 0,5 gólu v zápase',odds:1.12,result:'0:0',status:'Nevyšla',country:'',league:'',euroLoad:'none',note:''}]},
+    {id:'2026 - 000006',date:'2026-08-04',stake:80000,totalOdds:4.05,payout:309138.73,status:'Cash Out',note:'Betano ID 20008008077. Uzavřeno přes Cash Out.',matches:[
+      {name:'Shamrock Rovers – Egnatia',pick:'Shamrock Rovers vyhraje',odds:1.93,result:'3:1',status:'Vyšla',country:'Irsko',league:'Premier Division',euroLoad:'none',note:''},
+      {name:'Larne – Iberia Tbilisi',pick:'Remíza',odds:2.10,result:'0:0',status:'Vyšla',country:'',league:'',euroLoad:'none',note:''}]},
+    {id:'2026 - 000007',date:'2026-08-05',stake:100000,totalOdds:1.51,payout:0,status:'Proherní',note:'Betano ID 20008028652.',matches:[
+      {name:'Ferencváros – Górnik Zabrze',pick:'Více než 0,5 gólu v zápase',odds:1.15,result:'1:0',status:'Vyšla',country:'',league:'',euroLoad:'none',note:''},
+      {name:'Aarhus – Sabah',pick:'Více než 0,5 gólu v zápase',odds:1.16,result:'2:1',status:'Vyšla',country:'',league:'',euroLoad:'none',note:''},
+      {name:'Brann – Apollon Limassol',pick:'Brann dá více než 0,5 gólu',odds:1.13,result:'0:1',status:'Nevyšla',country:'',league:'',euroLoad:'none',note:''}]},
+    {id:'2026 - 000008',date:'2026-08-05',stake:100000,totalOdds:3.86,payout:0,status:'Proherní',note:'Betano ID 20008036631.',matches:[
+      {name:'Ferencváros – Górnik Zabrze',pick:'Ferencváros vyhraje',odds:1.67,result:'1:0',status:'Vyšla',country:'',league:'',euroLoad:'none',note:''},
+      {name:'Aarhus – Sabah',pick:'Aarhus vyhraje',odds:1.15,result:'2:1',status:'Vyšla',country:'',league:'',euroLoad:'none',note:''},
+      {name:'Ben Shelton – Jenson Brooksby',pick:'Ben Shelton vyhraje',odds:1.11,result:'0:2',status:'Vyšla',country:'',league:'Tenis',euroLoad:'none',note:''},
+      {name:'Taylor Fritz – Thiago Tirante',pick:'Taylor Fritz vyhraje',odds:1.16,result:'2:0',status:'Nevyšla',country:'',league:'Tenis',euroLoad:'none',note:''},
+      {name:'Rafael Jódar – Corentin Moutet',pick:'Rafael Jódar vyhraje',odds:1.30,result:'2:1',status:'Vyšla',country:'',league:'Tenis',euroLoad:'none',note:''}]},
+    {id:'2026 - 000009',date:'2026-08-05',stake:100000,totalOdds:3.22,payout:327372,status:'Výherní',note:'Betano ID 20008040221. Základní výplata 322 112,70 Kč + bonus 5 259,30 Kč.',matches:[
+      {name:'Hubert Hurkacz – Alejandro Tabilo',pick:'Hubert Hurkacz vyhraje',odds:1.17,result:'2:0',status:'Vyšla',country:'',league:'Tenis',euroLoad:'none',note:''},
+      {name:'Rafael Jódar – Corentin Moutet',pick:'Rafael Jódar vyhraje',odds:2.07,result:'2:1',status:'Vyšla',country:'',league:'Tenis',euroLoad:'none',note:''},
+      {name:'Elise Mertens – Anna Bondár',pick:'Elise Mertens vyhraje',odds:1.33,result:'2:1',status:'Vyšla',country:'',league:'Tenis',euroLoad:'none',note:''}]},
+    {id:'2026 - 000010',date:'2026-08-06',stake:94707,totalOdds:1.97,payout:200362.87,status:'Cash Out',note:'Betano ID 20008058163. Uzavřeno přes Cash Out.',matches:[
+      {name:'Lech Poznań – KÍ Klaksvík',pick:'Lech Poznań vyhraje',odds:1.16,result:'1:0',status:'Vyšla',country:'',league:'',euroLoad:'none',note:''},
+      {name:'Benfica – Hearts',pick:'Benfica vyhraje',odds:1.11,result:'6:1',status:'Vyšla',country:'',league:'',euroLoad:'none',note:''},
+      {name:'Braga – Dinamo Minsk',pick:'Braga vyhraje',odds:1.13,result:'1:0',status:'Vyšla',country:'',league:'',euroLoad:'none',note:''},
+      {name:'Lugano – NSÍ Runavík',pick:'Lugano vyhraje',odds:1.12,result:'2:0',status:'Vyšla',country:'',league:'',euroLoad:'none',note:''},
+      {name:'Ajax – Shelbourne',pick:'Více než 1,5 gólu v zápase',odds:1.13,result:'3:1',status:'Vyšla',country:'',league:'',euroLoad:'none',note:''},
+      {name:'Twente – DAC',pick:'Twente vyhraje',odds:1.20,result:'6:0',status:'Vyšla',country:'',league:'',euroLoad:'none',note:''}]},
+    {id:'2026 - 000011',date:'2026-08-06',stake:100000,totalOdds:2.17,payout:175564.32,status:'Cash Out',note:'Betano ID 20008067051. Uzavřeno přes Cash Out.',matches:[
+      {name:'Hradec Králové – Beşiktaş',pick:'Beşiktaş vyhraje',odds:1.78,result:'0:1',status:'Vyšla',country:'',league:'',euroLoad:'none',note:''},
+      {name:'Jablonec – RFS',pick:'Jablonec vyhraje',odds:1.22,result:'2:0',status:'Vyšla',country:'',league:'',euroLoad:'none',note:''}]},
+    {id:'2026 - 000012',date:'2026-08-06',stake:75000,totalOdds:4.22,payout:33564.69,status:'Cash Out',note:'Betano ID 20008074247. Částečný Cash Out se ztrátou.',matches:[
+      {name:'Salzburg – Pafos',pick:'Salzburg vyhraje',odds:1.55,result:'1:0',status:'Vyšla',country:'',league:'',euroLoad:'none',note:''},
+      {name:'Marta Kostyuk – Madison Keys',pick:'Marta Kostyuk vyhraje',odds:1.78,result:'2:0',status:'Vyšla',country:'',league:'Tenis',euroLoad:'none',note:''},
+      {name:'Alex de Minaur – Cameron Norrie',pick:'Alex de Minaur vyhraje',odds:1.53,result:'2:1',status:'Nevyšla',country:'',league:'Tenis',euroLoad:'none',note:''}]},
+    {id:'2026 - 000013',date:'2026-08-07',stake:100000,totalOdds:2.07,payout:207000,status:'Výherní',note:'Betano ID 20008097290.',matches:[
+      {name:'Club Brugge – Kortrijk',pick:'Club Brugge vyhraje',odds:1.25,result:'3:0',status:'Vyšla',country:'Belgie',league:'Jupiler Pro League',euroLoad:'none',note:''},
+      {name:'Östersunds – Sundsvall',pick:'Östersunds vyhraje',odds:1.44,result:'1:0',status:'Vyšla',country:'Švédsko',league:'',euroLoad:'none',note:''},
+      {name:'Elena Rybakina – Ann Li',pick:'Elena Rybakina vyhraje',odds:1.15,result:'0:2',status:'Vyšla',country:'',league:'Tenis',euroLoad:'none',note:''}]},
+    {id:'2026 - 000014',date:'2026-08-07',stake:20000,totalOdds:3.97,payout:0,status:'Proherní',note:'Betano ID 20008113458.',matches:[
+      {name:'Jakub Menšík – Terence Atmane',pick:'Jakub Menšík vyhraje',odds:1.47,result:'0:2',status:'Vyšla',country:'',league:'Tenis',euroLoad:'none',note:''},
+      {name:'Naomi Osaka – Elise Mertens',pick:'Naomi Osaka vyhraje',odds:1.40,result:'0:2',status:'Vyšla',country:'',league:'Tenis',euroLoad:'none',note:''},
+      {name:'Middlesbrough – Wrexham',pick:'Middlesbrough vyhraje',odds:1.18,result:'1:0',status:'Vyšla',country:'Anglie',league:'',euroLoad:'none',note:''},
+      {name:'Famalicão – Estoril',pick:'Famalicão vyhraje',odds:1.37,result:'1:1',status:'Nevyšla',country:'Portugalsko',league:'Primeira Liga',euroLoad:'none',note:''},
+      {name:'Shamrock Rovers – Dundalk',pick:'Shamrock Rovers vyhraje',odds:1.15,result:'3:2',status:'Vyšla',country:'Irsko',league:'Premier Division',euroLoad:'none',note:''}]},
+    {id:'2026 - 000015',date:'2026-08-07',stake:10000,totalOdds:8.02,payout:0,status:'Proherní',note:'Betano ID 20008114555.',matches:[
+      {name:'Jakub Menšík – Terence Atmane',pick:'Jakub Menšík vyhraje',odds:1.45,result:'0:2',status:'Vyšla',country:'',league:'Tenis',euroLoad:'none',note:''},
+      {name:'Naomi Osaka – Elise Mertens',pick:'Naomi Osaka vyhraje',odds:1.39,result:'0:2',status:'Vyšla',country:'',league:'Tenis',euroLoad:'none',note:''},
+      {name:'Resistencia – Independiente',pick:'Resistencia vyhraje',odds:1.34,result:'1:1',status:'Nevyšla',country:'',league:'',euroLoad:'none',note:''},
+      {name:'Hubert Hurkacz – Botic van de Zandschulp',pick:'Hubert Hurkacz vyhraje',odds:1.82,result:'2:1',status:'Nevyšla',country:'',league:'Tenis',euroLoad:'none',note:''},
+      {name:'Maya Joint – Liudmila Samsonova',pick:'Maya Joint vyhraje',odds:2.32,result:'1:2',status:'Nevyšla',country:'',league:'Tenis',euroLoad:'none',note:''}]},
+    {id:'2026 - 000016',date:'2026-08-07',stake:11000,totalOdds:4.38,payout:0,status:'Proherní',note:'Betano ID 20008115005.',matches:[
+      {name:'Jakub Menšík – Terence Atmane',pick:'Jakub Menšík vyhraje',odds:1.45,result:'0:2',status:'Vyšla',country:'',league:'Tenis',euroLoad:'none',note:''},
+      {name:'Naomi Osaka – Elise Mertens',pick:'Naomi Osaka vyhraje',odds:1.39,result:'0:2',status:'Vyšla',country:'',league:'Tenis',euroLoad:'none',note:''},
+      {name:'Hubert Hurkacz – Botic van de Zandschulp',pick:'Hubert Hurkacz vyhraje',odds:1.75,result:'2:1',status:'Nevyšla',country:'',league:'Tenis',euroLoad:'none',note:''},
+      {name:'Maya Joint – Liudmila Samsonova',pick:'Maya Joint vyhraje',odds:1.47,result:'1:2',status:'Nevyšla',country:'',league:'Tenis',euroLoad:'none',note:''}]},
+    {id:'2026 - 000017',date:'2026-08-08',stake:50000,totalOdds:4.30,payout:221099.57,status:'Výherní',note:'Betano ID 20008115722. Základní výplata 214 932,92 Kč + bonus 6 166,65 Kč.',matches:[
+      {name:'João Fonseca – Casper Ruud',pick:'João Fonseca vyhraje',odds:1.72,result:'0:2',status:'Vyšla',country:'',league:'Tenis',euroLoad:'none',note:''},
+      {name:'Naomi Osaka – Elise Mertens',pick:'Naomi Osaka vyhraje',odds:1.39,result:'0:2',status:'Vyšla',country:'',league:'Tenis',euroLoad:'none',note:'Předčasná výplata.'},
+      {name:'Coco Gauff – Maria Sakkari',pick:'Coco Gauff vyhraje',odds:1.24,result:'0:2',status:'Vyšla',country:'',league:'Tenis',euroLoad:'none',note:'Předčasná výplata.'},
+      {name:'Jakub Menšík – Terence Atmane',pick:'Jakub Menšík vyhraje',odds:1.45,result:'0:2',status:'Vyšla',country:'',league:'Tenis',euroLoad:'none',note:''}]},
+    {id:'2026 - 000018',date:'2026-08-08',stake:100000,totalOdds:2.175,payout:0,status:'Proherní',note:'Betano – trojkombinace. Prohra.',matches:[
+      {name:'PSV Eindhoven – Fortuna Sittard',pick:'PSV Eindhoven vyhraje',odds:1.20,result:'2:2',status:'Nevyšla',country:'Nizozemsko',league:'Eredivisie',euroLoad:'none',note:'',linkedAnalysisId:'ABA-20260808-PSV-FOR'},
+      {name:'AZ Alkmaar – ADO Den Haag',pick:'AZ Alkmaar vyhraje',odds:1.45,result:'2:0',status:'Vyšla',country:'Nizozemsko',league:'Eredivisie',euroLoad:'none',note:'',linkedAnalysisId:'ABA-20260808-AZ-ADO'},
+      {name:'CF Estrela – Sporting CP',pick:'Sporting CP vyhraje',odds:1.25,result:'2:2',status:'Nevyšla',country:'Portugalsko',league:'Primeira Liga',euroLoad:'none',note:'',linkedAnalysisId:'ABA-20260808-EST-SCP'}]},
+    {id:'2026 - 000019',date:'2026-08-08',stake:100000,totalOdds:3.49168,payout:0,status:'Proherní',note:'Betano – trojkombinace. Prohra.',matches:[
+      {name:'CF Estrela – Sporting CP',pick:'Sporting CP vyhraje',odds:1.39,result:'2:2',status:'Nevyšla',country:'Portugalsko',league:'Primeira Liga',euroLoad:'none',note:''},
+      {name:'AZ Alkmaar – ADO Den Haag',pick:'AZ Alkmaar vyhraje',odds:1.57,result:'2:0',status:'Vyšla',country:'Nizozemsko',league:'Eredivisie',euroLoad:'none',note:''},
+      {name:'Arthur Rinderknech – Brandon Nakashima',pick:'Brandon Nakashima vyhraje',odds:1.60,result:'1:2',status:'Vyšla',country:'',league:'Tenis',euroLoad:'none',note:''}]},
+    {id:'2026 - 000020',date:'2026-08-08',stake:71000,totalOdds:4.657014,payout:0,status:'Proherní',note:'Betano – čtyřkombinace. Prohra.',matches:[
+      {name:'Arthur Rinderknech – Brandon Nakashima',pick:'Brandon Nakashima vyhraje',odds:1.78,result:'1:2',status:'Vyšla',country:'',league:'Tenis',euroLoad:'none',note:''},
+      {name:'Jiří Lehečka – Rafael Jódar',pick:'Rafael Jódar vyhraje',odds:1.70,result:'0:2',status:'Vyšla',country:'',league:'Tenis',euroLoad:'none',note:''},
+      {name:'Arthur Fils – Cameron Norrie',pick:'Arthur Fils vyhraje',odds:1.35,result:'2:0',status:'Vyšla',country:'',league:'Tenis',euroLoad:'none',note:''},
+      {name:'Aryna Sabalenka – Ekaterina Alexandrova',pick:'Aryna Sabalenka vyhraje',odds:1.14,result:'1:2',status:'Nevyšla',country:'',league:'Tenis',euroLoad:'none',note:''}]},
+    {id:'2026 - 000021',date:'2026-08-09',stake:200000,totalOdds:2.072673,payout:0,status:'Otevřený',note:'Betano – trojkombinace. Potenciální výplata 414 534,60 Kč.',matches:[
+      {name:'Slavia Praha – Pardubice',pick:'Slavia Praha vyhraje a vstřelí více než 1,5 gólu',odds:1.37,result:'',status:'Čeká',country:'Česko',league:'Chance Liga',euroLoad:'none',note:'',linkedAnalysisId:'ABA-20260809-SLA-PAR'},
+      {name:'FC Porto – Alverca',pick:'FC Porto vyhraje',odds:1.23,result:'',status:'Čeká',country:'Portugalsko',league:'Primeira Liga',euroLoad:'none',note:'',linkedAnalysisId:'ABA-20260809-POR-ALV'},
+      {name:'Benfica – Académico Viseu',pick:'Benfica vyhraje a vstřelí více než 1,5 gólu',odds:1.23,result:'',status:'Čeká',country:'Portugalsko',league:'Primeira Liga',euroLoad:'none',note:'',linkedAnalysisId:'ABA-20260809-BEN-VIS'}]}
+  ]
 };
+
+// Ověřená účetní řada z Betano screenshotů 9.–12. 8. 2026.
+// Tiket 000021 už v aplikaci existoval jako otevřený a pouze se vyhodnotí.
+// Ostatní tikety se doplní podle Betano ID; toto ID zároveň chrání před duplicitami.
+const VERIFIED_TICKETS_20260813=[
+  {id:'2026 - 000021',date:'2026-08-09',stake:200000,totalOdds:2.072673,payout:0,status:'Proherní',note:'Betano ID 20008171405. Trojkombinace – prohra.',matches:[
+    {name:'FC Porto – Alverca',pick:'FC Porto vyhraje',odds:1.23,result:'2:0',status:'Vyšla',sport:'Fotbal',country:'Portugalsko',league:'Primeira Liga',euroLoad:'none',betCategory:'Výsledek zápasu',betType:'1 – výhra domácích',note:'',linkedAnalysisId:'ABA-20260809-POR-ALV'},
+    {name:'Slavia Praha – Pardubice',pick:'Slavia Praha vyhraje + over 1,5 gólu v zápase',odds:1.37,result:'2:1',status:'Vyšla',sport:'Fotbal',country:'Česko',league:'Chance Liga',euroLoad:'none',betCategory:'Bet Builder',betType:'Výhra týmu + Over 1,5',note:'',linkedAnalysisId:'ABA-20260809-SLA-PAR'},
+    {name:'Benfica – Académico Viseu',pick:'Benfica vyhraje + over 1,5 gólu v zápase',odds:1.23,result:'2:2',status:'Nevyšla',sport:'Fotbal',country:'Portugalsko',league:'Primeira Liga',euroLoad:'none',betCategory:'Bet Builder',betType:'Výhra týmu + Over 1,5',note:'',linkedAnalysisId:'ABA-20260809-BEN-VIS'}]},
+  {id:'2026 - 000022',date:'2026-08-09',stake:100000,totalOdds:2.465,payout:113358.79,status:'Cash Out',note:'Betano ID 20008192091. Cash Out se ziskem.',matches:[
+    {name:'RSC Anderlecht – Real La Louvière',pick:'RSC Anderlecht vyhraje',odds:1.70,result:'2:1',status:'Vyšla',sport:'Fotbal',country:'Belgie',league:'Jupiler Pro League',euroLoad:'none',betCategory:'Výsledek zápasu',betType:'1 – výhra domácích',note:'',linkedAnalysisId:null},
+    {name:'Liudmila Samsonova – Elena Rybakina',pick:'Elena Rybakina vyhraje',odds:1.45,result:'1:2',status:'Vyšla',sport:'Tenis',country:'',league:'Tenis',euroLoad:'none',betCategory:'Tenis – vítěz',betType:'Vítěz hráče / páru',note:'',linkedAnalysisId:null}]},
+  {id:'2026 - 000023',date:'2026-08-09',stake:13000,totalOdds:9.584614735872,payout:1288.16,status:'Cash Out',note:'Betano ID 20008196498. Částečný Cash Out se ztrátou.',matches:[
+    {name:'Artis Brno – Sigma Olomouc',pick:'Sigma Olomouc vyhraje',odds:1.21,result:'1:2',status:'Vyšla',sport:'Fotbal',country:'Česko',league:'Chance Liga',euroLoad:'none',betCategory:'Výsledek zápasu',betType:'2 – výhra hostů',note:'',linkedAnalysisId:null},
+    {name:'Hajduk Split – Istra 1961',pick:'Hajduk Split vyhraje',odds:1.39,result:'2:2',status:'Nevyšla',sport:'Fotbal',country:'Chorvatsko',league:'HNL',euroLoad:'none',betCategory:'Výsledek zápasu',betType:'1 – výhra domácích',note:'',linkedAnalysisId:null},
+    {name:'Víkingur Reykjavík – ÍBV Vestmannaeyjar',pick:'Víkingur Reykjavík vyhraje',odds:1.55,result:'2:2',status:'Nevyšla',sport:'Fotbal',country:'Island',league:'Besta deild karla',euroLoad:'none',betCategory:'Výsledek zápasu',betType:'1 – výhra domácích',note:'',linkedAnalysisId:null},
+    {name:'Stjarnan – Keflavík',pick:'Stjarnan vyhraje',odds:1.28,result:'1:0',status:'Vyšla',sport:'Fotbal',country:'Island',league:'Besta deild karla',euroLoad:'none',betCategory:'Výsledek zápasu',betType:'1 – výhra domácích',note:'',linkedAnalysisId:null},
+    {name:'Jagiellonia Białystok – Widzew Łódź',pick:'Dvojitá šance 1X',odds:1.32,result:'0:2',status:'Nevyšla',sport:'Fotbal',country:'Polsko',league:'Ekstraklasa',euroLoad:'none',betCategory:'Dvojitá šance',betType:'1X',note:'',linkedAnalysisId:null},
+    {name:'Maribor – Koper',pick:'Maribor vyhraje',odds:1.36,result:'2:0',status:'Vyšla',sport:'Fotbal',country:'Slovinsko',league:'PrvaLiga',euroLoad:'none',betCategory:'Výsledek zápasu',betType:'1 – výhra domácích',note:'',linkedAnalysisId:null},
+    {name:'Vojvodina – Radnik Surdulica',pick:'Vojvodina vyhraje',odds:1.60,result:'2:1',status:'Vyšla',sport:'Fotbal',country:'Srbsko',league:'SuperLiga',euroLoad:'none',betCategory:'Výsledek zápasu',betType:'1 – výhra domácích',note:'',linkedAnalysisId:null}]},
+  {id:'2026 - 000024',date:'2026-08-09',stake:2000,totalOdds:31.649859648,payout:0,status:'Proherní',note:'Betano ID 20008199541. Pět remíz – prohra.',matches:[
+    {name:'Moreirense – Braga',pick:'Remíza',odds:2.42,result:'2:2',status:'Vyšla',sport:'Fotbal',country:'Portugalsko',league:'Primeira Liga',euroLoad:'none',betCategory:'Výsledek zápasu',betType:'X – remíza',note:'',linkedAnalysisId:null},
+    {name:'Gil Vicente – Rio Ave',pick:'Remíza',odds:2.40,result:'1:0',status:'Nevyšla',sport:'Fotbal',country:'Portugalsko',league:'Primeira Liga',euroLoad:'none',betCategory:'Výsledek zápasu',betType:'X – remíza',note:'',linkedAnalysisId:null},
+    {name:'Benevento – Ravenna',pick:'Remíza',odds:1.98,result:'5:3',status:'Nevyšla',sport:'Fotbal',country:'Itálie',league:'Coppa Italia',euroLoad:'none',betCategory:'Výsledek zápasu',betType:'X – remíza',note:'',linkedAnalysisId:null},
+    {name:'Frosinone – Lazio',pick:'Remíza',odds:1.39,result:'1:2',status:'Nevyšla',sport:'Fotbal',country:'Itálie',league:'Coppa Italia',euroLoad:'none',betCategory:'Výsledek zápasu',betType:'X – remíza',note:'',linkedAnalysisId:null},
+    {name:'Hajduk Split – Istra 1961',pick:'Remíza',odds:1.98,result:'2:2',status:'Vyšla',sport:'Fotbal',country:'Chorvatsko',league:'HNL',euroLoad:'none',betCategory:'Výsledek zápasu',betType:'X – remíza',note:'',linkedAnalysisId:null}]},
+  {id:'2026 - 000025',date:'2026-08-09',stake:100000,totalOdds:4.1405175,payout:425353,status:'Výherní',note:'Betano ID 20008201687. Výplata 414 051,75 Kč + bonus 5 % ve výši 11 301,25 Kč.',matches:[
+    {name:'João Fonseca – Ben Shelton',pick:'Ben Shelton vyhraje',odds:1.75,result:'0:2',status:'Vyšla',sport:'Tenis',country:'',league:'Tenis',euroLoad:'none',betCategory:'Tenis – vítěz',betType:'Vítěz hráče / páru',note:'',linkedAnalysisId:null},
+    {name:'Botic van de Zandschulp – Jakub Menšík',pick:'Jakub Menšík vyhraje',odds:1.35,result:'0:2',status:'Vyšla',sport:'Tenis',country:'',league:'Tenis',euroLoad:'none',betCategory:'Tenis – vítěz',betType:'Vítěz hráče / páru',note:'',linkedAnalysisId:null},
+    {name:'Leylah Fernandez – Naomi Osaka',pick:'Naomi Osaka vyhraje',odds:1.38,result:'0:2',status:'Vyšla',sport:'Tenis',country:'',league:'Tenis',euroLoad:'none',betCategory:'Tenis – vítěz',betType:'Vítěz hráče / páru',note:'',linkedAnalysisId:null},
+    {name:'Hsieh / Ostapenko – Li / Tauson',pick:'Hsieh / Ostapenko vyhrají',odds:1.27,result:'2:0',status:'Vyšla',sport:'Tenis',country:'',league:'Tenis',euroLoad:'none',betCategory:'Tenis – vítěz',betType:'Vítěz hráče / páru',note:'',linkedAnalysisId:null}]},
+  {id:'2026 - 000026',date:'2026-08-10',stake:75000,totalOdds:2.06325,payout:0,status:'Proherní',note:'Betano ID 20008225368. Trojkombinace – prohra.',matches:[
+    {name:'Santa Clara – Nacional Madeira',pick:'Under 3,5 gólu',odds:1.25,result:'2:2',status:'Nevyšla',sport:'Fotbal',country:'Portugalsko',league:'Primeira Liga',euroLoad:'none',betCategory:'Góly',betType:'Under 3,5',note:'',linkedAnalysisId:null},
+    {name:'Botev Plovdiv – Spartak Varna',pick:'Over 1,5 gólu',odds:1.26,result:'3:2',status:'Vyšla',sport:'Fotbal',country:'Bulharsko',league:'First League',euroLoad:'none',betCategory:'Góly',betType:'Over 1,5',note:'',linkedAnalysisId:null},
+    {name:'Sirius – Brommapojkarna',pick:'Sirius vyhraje',odds:1.31,result:'2:2',status:'Nevyšla',sport:'Fotbal',country:'Švédsko',league:'Allsvenskan',euroLoad:'none',betCategory:'Výsledek zápasu',betType:'1 – výhra domácích',note:'',linkedAnalysisId:null}]},
+  {id:'2026 - 000027',date:'2026-08-10',stake:100000,totalOdds:2.4779664,payout:241988.57,status:'Cash Out',note:'Betano ID 20008239710. Cash Out se ziskem.',matches:[
+    {name:'Silkeborg – Odense',pick:'Silkeborg vyhraje',odds:1.24,result:'1:0',status:'Vyšla',sport:'Fotbal',country:'Dánsko',league:'Superliga',euroLoad:'none',betCategory:'Výsledek zápasu',betType:'1 – výhra domácích',note:'',linkedAnalysisId:null},
+    {name:'Sepsi – FCSB',pick:'Dvojitá šance X2',odds:1.26,result:'0:0',status:'Vyšla',sport:'Fotbal',country:'Rumunsko',league:'Liga I',euroLoad:'none',betCategory:'Dvojitá šance',betType:'X2',note:'',linkedAnalysisId:null},
+    {name:'Västerås – Djurgården',pick:'Västerås vyhraje',odds:1.30,result:'1:0',status:'Vyšla',sport:'Fotbal',country:'Švédsko',league:'Allsvenskan',euroLoad:'none',betCategory:'Výsledek zápasu',betType:'1 – výhra domácích',note:'',linkedAnalysisId:null},
+    {name:'Santa Clara – Nacional Madeira',pick:'Dvojitá šance 1X',odds:1.22,result:'2:2',status:'Vyšla',sport:'Fotbal',country:'Portugalsko',league:'Primeira Liga',euroLoad:'none',betCategory:'Dvojitá šance',betType:'1X',note:'',linkedAnalysisId:null}]},
+  {id:'2026 - 000028',date:'2026-08-10',stake:50000,totalOdds:3.465,payout:90864.44,status:'Cash Out',note:'Betano ID 20008244244. Cash Out se ziskem.',matches:[
+    {name:'Arribagé / Olivetti – Marozsan / Medvedev',pick:'Arribagé / Olivetti vyhrají',odds:2.10,result:'2:1',status:'Vyšla',sport:'Tenis',country:'',league:'Tenis',euroLoad:'none',betCategory:'Tenis – vítěz',betType:'Vítěz hráče / páru',note:'',linkedAnalysisId:null},
+    {name:'Siniaková / Zhang – Krawczyk / Hunter',pick:'Siniaková / Zhang vyhrají',odds:1.32,result:'2:0',status:'Vyšla',sport:'Tenis',country:'',league:'Tenis',euroLoad:'none',betCategory:'Tenis – vítěz',betType:'Vítěz hráče / páru',note:'',linkedAnalysisId:null},
+    {name:'Chan / Galarneau – Pavić / Arévalo',pick:'Pavić / Arévalo vyhrají bod (2. set, 8. gem, 2. bod)',odds:1.25,result:'0:2',status:'Vyšla',sport:'Tenis',country:'',league:'Tenis',euroLoad:'none',betCategory:'Tenis – bod',betType:'Vítěz bodu',note:'',linkedAnalysisId:null}]},
+  {id:'2026 - 000029',date:'2026-08-10',stake:83000,totalOdds:1.988,payout:110921.31,status:'Cash Out',note:'Betano ID 20008244763. Cash Out se ziskem.',matches:[
+    {name:'Siniaková / Zhang – Krawczyk / Hunter',pick:'Siniaková / Zhang vyhrají',odds:1.42,result:'2:0',status:'Vyšla',sport:'Tenis',country:'',league:'Tenis',euroLoad:'none',betCategory:'Tenis – vítěz',betType:'Vítěz hráče / páru',note:'',linkedAnalysisId:null},
+    {name:'Luciano Darderi – Brandon Nakashima',pick:'Brandon Nakashima vyhraje',odds:1.40,result:'0:2',status:'Vyšla',sport:'Tenis',country:'',league:'Tenis',euroLoad:'none',betCategory:'Tenis – vítěz',betType:'Vítěz hráče / páru',note:'',linkedAnalysisId:null}]},
+  {id:'2026 - 000030',date:'2026-08-11',stake:100000,totalOdds:3.2025,payout:17822.84,status:'Cash Out',note:'Betano ID 20008258926. Částečný Cash Out se ztrátou.',matches:[
+    {name:'Lyon – Sparta Praha',pick:'Lyon vyhraje',odds:1.40,result:'3:0',status:'Vyšla',sport:'Fotbal',country:'Evropské poháry',league:'Liga mistrů',euroLoad:'none',betCategory:'Výsledek zápasu',betType:'1 – výhra domácích',note:'',linkedAnalysisId:null},
+    {name:'Crvena zvezda – Hapoel Beer Sheva',pick:'Crvena zvezda vyhraje',odds:1.25,result:'0:2',status:'Nevyšla',sport:'Fotbal',country:'Evropské poháry',league:'Liga mistrů',euroLoad:'none',betCategory:'Výsledek zápasu',betType:'1 – výhra domácích',note:'',linkedAnalysisId:null},
+    {name:'NEC Nijmegen – Olympiacos',pick:'Olympiacos postoupí',odds:1.83,result:'(1:1) 2:1',status:'Nevyšla',sport:'Fotbal',country:'Evropské poháry',league:'Liga mistrů',euroLoad:'none',betCategory:'Postup',betType:'Postup hostujícího týmu',note:'',linkedAnalysisId:null}]},
+  {id:'2026 - 000031',date:'2026-08-11',stake:100000,totalOdds:3.57742659456,payout:357742.66,status:'Výherní',note:'Betano ID 20008282988. Šest kombinací – výhra.',matches:[
+    {name:'Sturm Graz – Fenerbahçe',pick:'Dvojitá šance X2',odds:1.33,result:'0:1',status:'Vyšla',sport:'Fotbal',country:'Evropské poháry',league:'Liga mistrů',euroLoad:'none',betCategory:'Dvojitá šance',betType:'X2',note:'',linkedAnalysisId:null},
+    {name:'Celje – Ararat-Armenia',pick:'Dvojitá šance 1X',odds:1.14,result:'2:0',status:'Vyšla',sport:'Fotbal',country:'Evropské poháry',league:'Liga mistrů',euroLoad:'none',betCategory:'Dvojitá šance',betType:'1X',note:'',linkedAnalysisId:null},
+    {name:'CSKA 1948 Sofia – Panathinaikos',pick:'Remíza po 90 minutách',odds:1.15,result:'(1:1) 1:2',status:'Vyšla',sport:'Fotbal',country:'Evropské poháry',league:'Liga mistrů',euroLoad:'none',betCategory:'Výsledek zápasu',betType:'X – remíza',note:'',linkedAnalysisId:null},
+    {name:'Apollon Limassol – Brann',pick:'Brann vyhraje v prodloužení',odds:1.37,result:'(1:2) 2:4',status:'Vyšla',sport:'Fotbal',country:'Evropské poháry',league:'Liga mistrů',euroLoad:'none',betCategory:'Výsledek prodloužení',betType:'2 – výhra hostů',note:'',linkedAnalysisId:null},
+    {name:'Slovan Bratislava – Mjällby',pick:'Slovan Bratislava vyhraje',odds:1.28,result:'2:0',status:'Vyšla',sport:'Fotbal',country:'Evropské poháry',league:'Liga mistrů',euroLoad:'none',betCategory:'Výsledek zápasu',betType:'1 – výhra domácích',note:'',linkedAnalysisId:null},
+    {name:'NEC Nijmegen – Olympiacos',pick:'Remíza po 90 minutách',odds:1.17,result:'(1:1) 2:1',status:'Vyšla',sport:'Fotbal',country:'Evropské poháry',league:'Liga mistrů',euroLoad:'none',betCategory:'Výsledek zápasu',betType:'X – remíza',note:'',linkedAnalysisId:null}]},
+  {id:'2026 - 000032',date:'2026-08-11',stake:100000,totalOdds:3.0996771456,payout:309115.78,status:'Cash Out',note:'Betano ID 20008283126. Cash Out se ziskem.',matches:[
+    {name:'Sturm Graz – Fenerbahçe',pick:'Dvojitá šance X2',odds:1.33,result:'0:1',status:'Vyšla',sport:'Fotbal',country:'Evropské poháry',league:'Liga mistrů',euroLoad:'none',betCategory:'Dvojitá šance',betType:'X2',note:'',linkedAnalysisId:null},
+    {name:'Celje – Ararat-Armenia',pick:'Dvojitá šance 1X',odds:1.13,result:'2:0',status:'Vyšla',sport:'Fotbal',country:'Evropské poháry',league:'Liga mistrů',euroLoad:'none',betCategory:'Dvojitá šance',betType:'1X',note:'',linkedAnalysisId:null},
+    {name:'Apollon Limassol – Brann',pick:'Brann vyhraje v prodloužení',odds:1.31,result:'(1:2) 2:4',status:'Vyšla',sport:'Fotbal',country:'Evropské poháry',league:'Liga mistrů',euroLoad:'none',betCategory:'Výsledek prodloužení',betType:'2 – výhra hostů',note:'',linkedAnalysisId:null},
+    {name:'Slovan Bratislava – Mjällby',pick:'Slovan Bratislava vyhraje',odds:1.28,result:'2:0',status:'Vyšla',sport:'Fotbal',country:'Evropské poháry',league:'Liga mistrů',euroLoad:'none',betCategory:'Výsledek zápasu',betType:'1 – výhra domácích',note:'',linkedAnalysisId:null},
+    {name:'Lyon – Sparta Praha',pick:'Lyon vyhraje',odds:1.23,result:'3:0',status:'Vyšla',sport:'Fotbal',country:'Evropské poháry',league:'Liga mistrů',euroLoad:'none',betCategory:'Výsledek zápasu',betType:'1 – výhra domácích',note:'',linkedAnalysisId:null}]},
+  {id:'2026 - 000033',date:'2026-08-12',stake:146000,totalOdds:1.65,payout:240900,status:'Výherní',note:'Betano ID 20008319303. SOLO sázka – výhra.',matches:[
+    {name:'Paris Saint-Germain – Aston Villa',pick:'Paris Saint-Germain vyhraje',odds:1.65,result:'2:1',status:'Vyšla',sport:'Fotbal',country:'Evropské poháry',league:'UEFA Super Cup',euroLoad:'none',betCategory:'Výsledek zápasu',betType:'1 – výhra domácích',note:'',linkedAnalysisId:null}]},
+  {id:'2026 - 000034',date:'2026-08-12',stake:100000,totalOdds:1.9738,payout:197380,status:'Výherní',note:'Betano ID 20008325032. Dvojkombinace – výhra.',matches:[
+    {name:'Pavić / Arévalo – Arribagé / Olivetti',pick:'Pavić / Arévalo vyhrají',odds:1.42,result:'2:0',status:'Vyšla',sport:'Tenis',country:'',league:'Tenis',euroLoad:'none',betCategory:'Tenis – vítěz',betType:'Vítěz hráče / páru',note:'',linkedAnalysisId:null},
+    {name:'Etcheverry / Cerúndolo – Luz / Matos',pick:'Luz / Matos vyhrají',odds:1.39,result:'0:2',status:'Vyšla',sport:'Tenis',country:'',league:'Tenis',euroLoad:'none',betCategory:'Tenis – vítěz',betType:'Vítěz hráče / páru',note:'',linkedAnalysisId:null}]}
+];
 if(!defaultData.consideredMatches){defaultData.consideredMatches=[]}
 if(!defaultData.analyses){defaultData.analyses=[]}
 let data=loadData();
@@ -1782,11 +2056,15 @@ saveData();
 if(!data.consideredMatches){data.consideredMatches=[]}
 if(!data.analyses){data.analyses=[]}
 data.tickets.forEach(t=>t.matches.forEach(m=>{
+  if(m.sport===undefined||!m.sport)m.sport=String(m.league||'').toLowerCase()==='tenis'?'Tenis':'Fotbal';
   if(m.country===undefined)m.country='';
   if(m.league===undefined)m.league='';
   if(m.euroLoad===undefined)m.euroLoad='none';
       if(m.betCategory===undefined)m.betCategory='';
       if(m.betType===undefined)m.betType='';
+      const inferredBet=inferBetClassification(m);
+      if(!m.betCategory)m.betCategory=inferredBet.category;
+      if(!m.betType)m.betType=inferredBet.type;
 }));
 saveData()
 let draft=null;
@@ -1795,6 +2073,9 @@ function migrateData(raw){
   const d=raw&&typeof raw==='object'?raw:structuredClone(defaultData);
   if(!d.settings)d.settings={startingBankroll:100000};
   if(d.settings.startingBankroll===undefined)d.settings.startingBankroll=100000;
+  if(d.settings.bankrollAdjustment===undefined)d.settings.bankrollAdjustment=83.94;
+  // Zobák provedl ověřený export 9. 8. 2026. Další exporty datum aktualizují.
+  if(d.settings.lastBackupAt===undefined)d.settings.lastBackupAt='2026-08-09';
   // v0.22.0: sjednocení počátečního bankrollu projektu k 1. 8. 2026
   if(!d.settings.bankrollBaseline20260801){
     d.settings.startingBankroll=100000;
@@ -1883,6 +2164,123 @@ function migrateData(raw){
     });
   });
 
+  // v1.0.4: jednorázová obnova účetní řady podle ověřených screenshotů.
+  // Prvních 17 správných tiketů zůstává zachováno včetně ručních poznámek
+  // a propojení. Chybné/duplicitní pozdější záznamy nahradí tikety 18–21.
+  if(!d.settings.ticketLedgerRepair20260809){
+    const ticketNumber=t=>{
+      const m=String(t?.id||'').match(/^(\d{4})\s*[-–—]\s*(\d+)$/);
+      return m&&m[1]==='2026'?Number(m[2]):null;
+    };
+    const preservedBase=defaultData.tickets.slice(0,17).map((template,index)=>{
+      const number=index+1;
+      const candidates=d.tickets.filter(t=>ticketNumber(t)===number);
+      const betanoId=String(template.note||'').match(/Betano ID\s+(\d+)/)?.[1]||'';
+      const exact=candidates.find(t=>betanoId&&String(t.note||'').includes(betanoId));
+      return structuredClone(exact||candidates[0]||template);
+    });
+    const verifiedTail=structuredClone(defaultData.tickets.slice(17));
+    d.tickets=[...preservedBase,...verifiedTail];
+
+    const analysisLinks={
+      'ABA-20260808-PSV-FOR':{ticketId:'2026 - 000018',match:'PSV Eindhoven – Fortuna Sittard',score:'2:2',evaluation:'Neúspěšná'},
+      'ABA-20260808-AZ-ADO':{ticketId:'2026 - 000018',match:'AZ Alkmaar – ADO Den Haag',score:'2:0',evaluation:'Úspěšná'},
+      'ABA-20260808-EST-SCP':{ticketId:'2026 - 000018',match:'CF Estrela – Sporting CP',score:'2:2',evaluation:'Neúspěšná'},
+      'ABA-20260809-SLA-PAR':{ticketId:'2026 - 000021',match:'Slavia Praha – Pardubice'},
+      'ABA-20260809-POR-ALV':{ticketId:'2026 - 000021',match:'FC Porto – Alverca'},
+      'ABA-20260809-BEN-VIS':{ticketId:'2026 - 000021',match:'Benfica – Académico Viseu'}
+    };
+    d.analyses.forEach(a=>{
+      const link=analysisLinks[String(a.abaId||'')];
+      if(!link)return;
+      a.linkedTicketId=link.ticketId;
+      a.linkedMatchName=link.match;
+      if(link.score)a.actualScore=link.score;
+      if(link.evaluation){a.evaluation=link.evaluation;a.resultStatus=link.evaluation}
+    });
+    d.settings.startingBankroll=100000;
+    d.settings.bankrollAdjustment=83.94;
+    d.settings.ticketLedgerRepair20260809=true;
+  }
+
+  // v1.0.5: úplná obnova tiketů 1–21. Ve v1.0.4 se kvůli dřívější
+  // duplicitě ID mohl zachovat poškozený tiket 000001. Ověřená řada ze
+  // screenshotů je proto obnovena celá; uživatelské analýzy a nastavení
+  // mimo účetní řadu zůstávají zachované.
+  if(!d.settings.ticketLedgerRepair20260809V2){
+    d.tickets=structuredClone(defaultData.tickets);
+    const verifiedAnalysisLinks={
+      'ABA-20260808-PSV-FOR':{ticketId:'2026 - 000018',match:'PSV Eindhoven – Fortuna Sittard',score:'2:2',evaluation:'Neúspěšná'},
+      'ABA-20260808-AZ-ADO':{ticketId:'2026 - 000018',match:'AZ Alkmaar – ADO Den Haag',score:'2:0',evaluation:'Úspěšná'},
+      'ABA-20260808-EST-SCP':{ticketId:'2026 - 000018',match:'CF Estrela – Sporting CP',score:'2:2',evaluation:'Neúspěšná'},
+      'ABA-20260809-SLA-PAR':{ticketId:'2026 - 000021',match:'Slavia Praha – Pardubice'},
+      'ABA-20260809-POR-ALV':{ticketId:'2026 - 000021',match:'FC Porto – Alverca'},
+      'ABA-20260809-BEN-VIS':{ticketId:'2026 - 000021',match:'Benfica – Académico Viseu'}
+    };
+    d.analyses.forEach(a=>{
+      const link=verifiedAnalysisLinks[String(a.abaId||'')];
+      if(!link)return;
+      a.linkedTicketId=link.ticketId;
+      a.linkedMatchName=link.match;
+      if(link.score)a.actualScore=link.score;
+      if(link.evaluation){a.evaluation=link.evaluation;a.resultStatus=link.evaluation}
+    });
+    d.settings.startingBankroll=100000;
+    d.settings.bankrollAdjustment=83.94;
+    d.settings.ticketLedgerRepair20260809V2=true;
+  }
+
+  // v1.1.0: vyhodnocení tiketu 000021 a doplnění tiketů 000022–000034.
+  // Primárním klíčem je Betano ID, takže opakované otevření verze nevytvoří duplicity.
+  if(!d.settings.ticketLedgerUpgrade20260813){
+    const betanoId=t=>String(t?.note||'').match(/Betano ID\s+(\d+)/)?.[1]||'';
+    VERIFIED_TICKETS_20260813.forEach(template=>{
+      const verified=structuredClone(template);
+      const id=betanoId(verified);
+      let index=id?d.tickets.findIndex(t=>betanoId(t)===id):-1;
+      if(index<0)index=d.tickets.findIndex(t=>String(t.id||'')===String(verified.id));
+      if(index>=0){
+        const previous=d.tickets[index];
+        verified.matches.forEach(match=>{
+          const old=(previous.matches||[]).find(m=>String(m.name||'').trim()===String(match.name||'').trim());
+          if(old?.linkedAnalysisId&&!match.linkedAnalysisId)match.linkedAnalysisId=old.linkedAnalysisId;
+          if(old?.note&&!match.note)match.note=old.note;
+        });
+        d.tickets[index]=verified;
+      }else{
+        d.tickets.push(verified);
+      }
+    });
+
+    const verifiedIds=new Set(VERIFIED_TICKETS_20260813.map(t=>betanoId(t)).filter(Boolean));
+    const seenBetanoIds=new Set();
+    d.tickets=d.tickets.filter(t=>{
+      const id=betanoId(t);
+      if(!id||!verifiedIds.has(id))return true;
+      if(seenBetanoIds.has(id))return false;
+      seenBetanoIds.add(id);
+      return true;
+    });
+    d.tickets.sort((a,b)=>String(a.date||'').localeCompare(String(b.date||''))||String(a.id||'').localeCompare(String(b.id||'')));
+
+    VERIFIED_TICKETS_20260813.forEach(ticket=>ticket.matches.forEach(match=>{
+      if(!match.linkedAnalysisId)return;
+      const analysis=d.analyses.find(a=>String(a.abaId||a.id)===String(match.linkedAnalysisId));
+      if(!analysis)return;
+      analysis.linkedTicketId=ticket.id;
+      analysis.linkedMatchName=match.name;
+      analysis.actualScore=match.result||analysis.actualScore||'';
+      if(match.status==='Vyšla'){analysis.evaluation='Úspěšná';analysis.resultStatus='Úspěšná'}
+      if(match.status==='Nevyšla'){analysis.evaluation='Neúspěšná';analysis.resultStatus='Neúspěšná'}
+    }));
+
+    d.settings.startingBankroll=100000;
+    // Dorovnání o 0,25 Kč proti staré verzi drží celkový bankroll přesně na
+    // zůstatku Betana 1 438 327,04 Kč a nevstupuje do profitu ani ROI.
+    d.settings.bankrollAdjustment=83.69;
+    d.settings.ticketLedgerUpgrade20260813=true;
+  }
+
   d.tickets.forEach(t=>{
     if(!Array.isArray(t.matches))t.matches=[];
     if(t.payout===undefined)t.payout=0;
@@ -1890,18 +2288,22 @@ function migrateData(raw){
     if(t.stake===undefined)t.stake=0;
     if(!t.status)t.status='Otevřený';
     t.matches.forEach(m=>{
+      if(m.sport===undefined||!m.sport)m.sport=String(m.league||'').toLowerCase()==='tenis'?'Tenis':'Fotbal';
       if(m.country===undefined)m.country='';
       if(m.league===undefined)m.league='';
       if(m.euroLoad===undefined)m.euroLoad='none';
       if(m.betCategory===undefined)m.betCategory='';
       if(m.betType===undefined)m.betType='';
+      const inferredBet=inferBetClassification(m);
+      if(!m.betCategory)m.betCategory=inferredBet.category;
+      if(!m.betType)m.betType=inferredBet.type;
       if(m.note===undefined)m.note='';
       if(m.linkedAnalysisId===undefined)m.linkedAnalysisId=null;
       if(m.result===undefined)m.result='';
       if(!m.status)m.status='Čeká';
     });
   });
-  d.schemaVersion=18;
+  d.schemaVersion=22;
   return d;
 }
 function loadData(){
@@ -1928,7 +2330,7 @@ function createInternalBackup(snapshot){
   }catch(e){}
 }
 function saveData(){
-  data.schemaVersion=17;
+  data.schemaVersion=22;
   const previous=localStorage.getItem(KEY);
   if(previous){
     try{createInternalBackup(JSON.parse(previous))}catch(e){}
@@ -1936,6 +2338,7 @@ function saveData(){
   localStorage.setItem(KEY,JSON.stringify(data));
 }
 function money(n){return new Intl.NumberFormat('cs-CZ',{maximumFractionDigits:0}).format(Number(n)||0)+' Kč'}
+function moneyExact(n){return new Intl.NumberFormat('cs-CZ',{minimumFractionDigits:2,maximumFractionDigits:2}).format(Number(n)||0)+' Kč'}
 function esc(s){return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
 function bytesToB64(bytes){
   let s=''; bytes.forEach(b=>s+=String.fromCharCode(b)); return btoa(s);
@@ -2021,23 +2424,40 @@ function showView(v){
   document.querySelectorAll('main>section').forEach(s=>s.classList.add('hidden'));
   document.getElementById('view-'+v).classList.remove('hidden');
   document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('active',b.dataset.view===v));
-  if(v==='dashboard')renderDashboard(); if(v==='history')renderHistory(); if(v==='watchlist')renderWatchlist(); if(v==='analyses')renderAnalyses(); if(v==='stats')renderStats(); if(v==='settings')renderSettings(); if(v==='new')startDraft();
+  if(v==='dashboard')renderDashboard(); if(v==='history')renderHistory(); if(v==='watchlist')renderWatchlist(); if(v==='analyses')renderAnalyses(); if(v==='teams')renderLeagueTeams(); if(v==='stats')renderStats(); if(v==='settings')renderSettings(); if(v==='new')startDraft();
+}
+function ticketOutcome(t){
+  if(!t)return 'open';
+  if(t.status==='Výherní')return 'win';
+  if(t.status==='Proherní')return 'loss';
+  if(t.status==='Cash Out'){
+    const profit=ticketProfit(t);
+    return profit>0?'win':profit<0?'loss':'void';
+  }
+  if(t.status==='Vrácený'||t.status==='Storno')return 'void';
+  return 'open';
 }
 function summary(){
-  let profit=0,wins=0,losses=0,settledStake=0,open=0;
+  let profit=0,wins=0,losses=0,settledStake=0,open=0,openStake=0;
   data.tickets.forEach(t=>{
-    if(['Otevřený','Rozpracovaný'].includes(t.status))open++;
-    if(t.status==='Výherní'){profit+=(effectivePayout(t)-Number(t.stake||0));wins++;settledStake+=Number(t.stake||0)}
-    if(t.status==='Proherní'){profit-=Number(t.stake||0);losses++;settledStake+=Number(t.stake||0)}
-    if(t.status==='Vrácený'){profit+=(effectivePayout(t)-Number(t.stake||0));settledStake+=Number(t.stake||0)}
+    const outcome=ticketOutcome(t);
+    if(outcome==='open'){
+      if(['Otevřený','Rozpracovaný'].includes(t.status)){open++;openStake+=Number(t.stake||0)}
+      return;
+    }
+    profit+=ticketProfit(t);
+    settledStake+=Number(t.stake||0);
+    if(outcome==='win')wins++;
+    if(outcome==='loss')losses++;
   });
-  return {profit,current:data.settings.startingBankroll+profit,roi:settledStake?profit/settledStake*100:0,success:(wins+losses)?wins/(wins+losses)*100:0,open};
+  const total=data.settings.startingBankroll+profit+Number(data.settings.bankrollAdjustment||0);
+  return {profit,current:total-openStake,total,openStake,roi:settledStake?profit/settledStake*100:0,success:(wins+losses)?wins/(wins+losses)*100:0,open};
 }
 
 function todayProfit(){
  const today=new Date().toISOString().slice(0,10);
  return data.tickets
-   .filter(t=>t.date===today && ['Výherní','Proherní','Vrácený'].includes(t.status))
+   .filter(t=>t.date===today && ['Výherní','Proherní','Vrácený','Cash Out'].includes(t.status))
    .reduce((sum,t)=>sum+ticketProfit(t),0);
 }
 function bankrollMetrics(){
@@ -2103,8 +2523,8 @@ function dashboardCounts(){
  const settled=settledTickets();
  return {
    total:data.tickets.length,
-   wins:settled.filter(t=>t.status==='Výherní').length,
-   losses:settled.filter(t=>t.status==='Proherní').length
+   wins:settled.filter(t=>ticketOutcome(t)==='win').length,
+   losses:settled.filter(t=>ticketOutcome(t)==='loss').length
  };
 }
 
@@ -2131,23 +2551,25 @@ function dashboardRangeButtons(){
 
 function renderDashboard(){
  const s=summary(),today=todayProfit(),bm=bankrollMetrics(),avg=dashboardAverageOdds(),counts=dashboardCounts(),el=document.getElementById('view-dashboard');
+ const exposurePct=s.total>0?s.openStake/s.total*100:0;
  const kpi=(l,v,i,c='')=>`<div class="dashboard-kpi"><div class="dashboard-label">${l}</div><div class="dashboard-value ${c}">${v}</div><span class="dashboard-icon">${DASH_ICONS[i]}</span></div>`;
  const detail=(l,v,i,c='')=>`<div class="dashboard-detail-card"><div class="dashboard-label">${l}</div><div class="dashboard-detail-value ${c}">${v}</div><span class="dashboard-detail-icon">${DASH_ICONS[i]}</span></div>`;
- const mini=(l,v,i,c='')=>`<div class="dashboard-summary-item"><span class="dashboard-mini-icon">${DASH_ICONS[i]}</span><div class="dashboard-label">${l}</div><div class="dashboard-summary-value ${c}">${v}</div></div>`;
+ const mini=(l,v,i,c='')=>`<div class="dashboard-summary-item ${i==='coins'?'dashboard-profit-item':''}"><span class="dashboard-mini-icon">${DASH_ICONS[i]}</span><div class="dashboard-label">${l}</div><div class="dashboard-summary-value ${c}" title="${esc(v)}">${v}</div></div>`;
  const book=`<svg viewBox="0 0 24 24"><path d="M3 5.5A3.5 3.5 0 0 1 6.5 2H11v18H6.5A3.5 3.5 0 0 0 3 23z"/><path d="M21 5.5A3.5 3.5 0 0 0 17.5 2H13v18h4.5A3.5 3.5 0 0 1 21 23z"/><path d="M6 7h3M15 7h3M6 11h3M15 11h3"/></svg>`;
  el.innerHTML=`<div class="dashboard-shell">
  <div class="dashboard-title-wrap">
  <div><h2 class="dashboard-title">Dashboard</h2><div class="small" style="color:var(--teal)!important">Nejsem lovec sázek, jsem správce kapitálu.</div></div>
  <button class="dashboard-analysis-link" type="button" onclick="showView('analyses')"><svg viewBox="0 0 24 24"><path d="M4 4h16v16H4z"/><path d="M8 9h8M8 13h5M8 17h7"/><path d="m15 13 2 2 3-4"/></svg><span>Analýzy (${data.analyses.length})</span></button>
  </div>
- <div class="dashboard-kpi-grid">${kpi('Bankroll',money(s.current),'wallet')}${kpi('Dnes',`${today>=0?'+':''}${money(today)}`,'calendar',today>=0?'pos':'neg')}${kpi('ROI',`${s.roi.toFixed(2)} %`,'roi',s.roi>=0?'pos':'neg')}</div>
+ <div class="dashboard-kpi-grid">${kpi('Dostupný bankroll',moneyExact(s.current),'wallet')}${kpi('Dnes',`${today>=0?'+':''}${money(today)}`,'calendar',today>=0?'pos':'neg')}${kpi('ROI',`${s.roi.toFixed(2)} %`,'roi',s.roi>=0?'pos':'neg')}</div>
  <div class="dashboard-main-grid">
    <div class="dashboard-main-left">
      <div class="dashboard-chart">
-       <div class="dashboard-chart-head"><h3>Vývoj bankrollu</h3><div class="chart-range">${dashboardRangeButtons()}</div></div>
+       <div class="dashboard-chart-head"><h3>Vývoj celkového bankrollu</h3><div class="chart-range">${dashboardRangeButtons()}</div></div>
+       <div class="dashboard-chart-note">Otevřené vklady se v grafu nepočítají jako ztráta.</div>
        ${bankrollChart()}
      </div>
-     <div class="dashboard-detail-grid">${detail('Nejvyšší bankroll',money(bm.maximum),'high')}${detail('Aktuální stav',money(bm.current),'pulse')}${detail('Rozdíl od maxima',`${bm.drawdown>=0?'+':''}${money(bm.drawdown)}`,'trophy',bm.drawdown>=0?'pos':'neg')}${detail('Průměrný kurz',avg?avg.toFixed(2):'—','bars')}</div>
+     <div class="dashboard-detail-grid">${detail('Celkový bankroll',moneyExact(s.total),'pulse')}${detail(`V otevřených tiketech (${exposurePct.toFixed(2)} %)`,moneyExact(s.openStake),'ticket')}${detail('Nejvyšší celkový bankroll',moneyExact(bm.maximum),'high')}${detail('Skutečný rozdíl od maxima',`${bm.drawdown>=0?'+':''}${moneyExact(bm.drawdown)}`,'trophy',bm.drawdown>=0?'pos':'neg')}</div>
      <div class="dashboard-summary-grid">${mini('Počet tiketů',counts.total,'ticket')}${mini('Výhry',counts.wins,'check','pos')}${mini('Prohry',counts.losses,'cross','neg')}${mini('Úspěšnost',`${s.success.toFixed(2)} %`,'target')}${mini('Průměrný kurz',avg?avg.toFixed(2):'—','bars')}${mini('Profit',`${s.profit>=0?'+':''}${money(s.profit)}`,'coins',s.profit>=0?'pos':'neg')}</div>
    </div>
    <aside class="dashboard-codex-link">
@@ -2167,24 +2589,62 @@ function renderDashboard(){
  </div>`;
 }
 function card(k,v,c=''){return `<div class="card"><div class="k">${k}</div><div class="v ${c}">${v}</div></div>`}
+function ticketStatusVisual(ticket){
+ const status=typeof ticket==='object'?ticket?.status:ticket;
+ const outcome=typeof ticket==='object'?ticketOutcome(ticket):null;
+ if(outcome==='win'||(!outcome&&status==='Výherní'))return 'win';
+ if(outcome==='loss'||(!outcome&&status==='Proherní'))return 'loss';
+ if(status==='Otevřený'||status==='Rozpracovaný')return 'open';
+ if(outcome==='void'||status==='Vrácený')return 'return';
+ return 'neutral';
+}
 function ticketTable(list){
  return `<div class="table-wrap"><table><thead><tr><th>Tiket</th><th>Datum</th><th>Zápasů</th><th>Kurz</th><th>Vklad</th><th>Výplata</th><th>Stav</th></tr></thead><tbody>
- ${list.map(t=>`<tr onclick="openTicket('${t.id}')" style="cursor:pointer"><td>${esc(t.id)}</td><td>${esc(t.date)}</td><td>${t.matches.length}</td><td>${Number(t.totalOdds).toFixed(2)}</td><td>${money(t.stake)}</td><td>${money(effectivePayout(t))}</td><td>${esc(t.status)}</td></tr>`).join('')}
+ ${list.map(t=>{const visual=ticketStatusVisual(t);return `<tr class="ticket-row ticket-row-${visual}" onclick="openTicket('${t.id}')" style="cursor:pointer"><td>${esc(t.id)}</td><td>${esc(t.date)}</td><td>${t.matches.length}</td><td>${Number(t.totalOdds).toFixed(2)}</td><td>${money(t.stake)}</td><td>${money(effectivePayout(t))}</td><td><span class="ticket-status-badge ticket-status-${visual}">${esc(t.status)}</span></td></tr>`}).join('')}
  </tbody></table></div>`;
 }
-function nextId(){
- const y=new Date().getFullYear();
+function nextId(dateOrYear){
+ const yearMatch=String(dateOrYear||new Date().getFullYear()).match(/\d{4}/);
+ const y=yearMatch?yearMatch[0]:String(new Date().getFullYear());
  const nums=data.tickets
-   .map(t=>String(t.id||'').match(new RegExp(`^${y}\s*-\s*(\d+)$`)))
-   .filter(Boolean)
-   .map(m=>Number(m[1]))
+   .map(t=>String(t.id||'').match(/^(\d{4})\s*[-–—]\s*(\d+)$/))
+   .filter(m=>m&&m[1]===y)
+   .map(m=>Number(m[2]))
    .filter(Number.isFinite);
- const n=(nums.length?Math.max(...nums):0)+1;
- return `${y} - ${String(n).padStart(6,'0')}`;
+ let n=(nums.length?Math.max(...nums):0)+1;
+ const used=new Set(data.tickets.map(t=>String(t.id||'').replace(/[–—]/g,'-').replace(/\s+/g,' ').trim()));
+ let candidate=`${y} - ${String(n).padStart(6,'0')}`;
+ while(used.has(candidate)){
+   n+=1;
+   candidate=`${y} - ${String(n).padStart(6,'0')}`;
+ }
+ return candidate;
 }
 function startDraft(){
- draft={id:nextId(),date:new Date().toISOString().slice(0,10),stake:0,totalOdds:1,payout:0,status:'Otevřený',note:'',matches:[{name:'',pick:'',odds:1,result:'',status:'Čeká',country:'',league:'',euroLoad:'none',betCategory:'',betType:'',note:'',linkedAnalysisId:null}]};
+ const today=new Date().toISOString().slice(0,10);
+ draft={id:nextId(today),date:today,stake:0,totalOdds:1,payout:0,status:'Otevřený',note:'',matches:[{name:'',pick:'',odds:1,result:'',status:'Čeká',sport:'Fotbal',country:'',league:'',euroLoad:'none',betCategory:'',betType:'',note:'',linkedAnalysisId:null}]};
  renderDraft();
+}
+function draftRiskAssessment(stake){
+ const amount=Number(stake||0);
+ const bankroll=Number(summary().total||0);
+ if(amount<=0||bankroll<=0)return {key:'none',label:'Zadej vklad'};
+ const share=amount/bankroll;
+ if(share<=0.10)return {key:'low',label:'Nízké riziko'};
+ if(share<=0.20)return {key:'medium',label:'Střední riziko'};
+ return {key:'high',label:'Vysoké riziko'};
+}
+function draftRiskMarkup(){
+ const risk=draftRiskAssessment(draft?.stake);
+ return `<div id="d-risk" class="ticket-risk ticket-risk-${risk.key}"><strong>Hodnocení rizika:</strong> <span id="d-risk-label">${risk.label}</span></div>`;
+}
+function updateDraftRisk(){
+ const box=document.getElementById('d-risk');
+ const label=document.getElementById('d-risk-label');
+ if(!box||!label)return;
+ const risk=draftRiskAssessment(draft?.stake);
+ box.className=`ticket-risk ticket-risk-${risk.key}`;
+ label.textContent=risk.label;
 }
 function renderDraft(){
  const el=document.getElementById('view-new');
@@ -2193,7 +2653,7 @@ function renderDraft(){
  ${field('Vklad',`<input id="d-stake" inputmode="decimal" value="${draft.stake}">`)}
  ${field('Poznámka k tiketu',`<input id="d-note" value="${esc(draft.note)}">`)}
  </div>
- <div class="toolbar" style="margin-top:12px"><strong>Celkový kurz: <span id="d-total">${calcDraft().toFixed(2)}</span></strong><strong>Možná výhra: <span id="d-possible">${money(calcDraft()*Number(draft.stake||0))}</span></strong></div>
+ <div class="toolbar" style="margin-top:12px"><strong>Celkový kurz: <span id="d-total">${calcDraft().toFixed(2)}</span></strong><strong>Možná výhra: <span id="d-possible">${money(calcDraft()*Number(draft.stake||0))}</span></strong>${draftRiskMarkup()}</div>
  <div id="matches">${draft.matches.map((m,i)=>matchEditor(m,i)).join('')}</div>
  <div class="row-actions"><button class="secondary" onclick="addMatch()">+ Přidat zápas</button><button class="primary" onclick="saveDraft()">Uložit tiket</button></div>`;
  document.getElementById('d-date').oninput=e=>draft.date=e.target.value;
@@ -2201,6 +2661,15 @@ function renderDraft(){
  document.getElementById('d-note').oninput=e=>draft.note=e.target.value;
 }
 function field(label,html){return `<div><label>${label}</label>${html}</div>`}
+function sportOptions(selected='Fotbal'){
+ return SPORTS.map(s=>`<option value="${esc(s)}" ${s===selected?'selected':''}>${esc(s)}</option>`).join('');
+}
+function setSport(i,value){
+ draft.matches[i].sport=value||'Fotbal';
+ if(value==='Tenis'){draft.matches[i].country='';draft.matches[i].league='Tenis'}
+ if(value!=='Tenis'&&draft.matches[i].league==='Tenis')draft.matches[i].league='';
+ renderDraft();
+}
 function competitionOptions(selectedCountry='',selectedLeague=''){
  const groups={};
  COMPETITIONS.forEach(x=>{
@@ -2332,7 +2801,10 @@ function openAnalysisPicker(contextType,ticketId,index,matchName){
  const matchingIds=new Set(matching.map(a=>String(a.abaId||a.id)));
  const others=(data.analyses||[]).filter(a=>!matchingIds.has(String(a.abaId||a.id)));
  subtitle.textContent=matchName||'';
- const item=(a,isMatch)=>`<button type="button" class="analysis-picker-item ${isMatch?'analysis-picker-match':''}" onclick="chooseLinkedAnalysis(${JSON.stringify(String(a.abaId||a.id))})"><strong>${esc(a.match||'Analýza')}</strong><span class="small">${esc(a.recommendation||'')} • ${esc(a.abaId||'')}</span></button>`;
+ const item=(a,isMatch)=>{
+   const encodedId=encodeURIComponent(String(a.abaId||a.id));
+   return `<button type="button" class="analysis-picker-item ${isMatch?'analysis-picker-match':''}" onclick="chooseLinkedAnalysis(decodeURIComponent('${encodedId}'))"><strong>${esc(a.match||'Analýza')}</strong><span class="small">${esc(a.recommendation||'')} • ${esc(a.abaId||'')}</span></button>`;
+ };
  let html=`<button type="button" class="analysis-picker-item" onclick="chooseLinkedAnalysis('')"><strong>Bez propojení</strong><span class="small">Odstranit propojení analýzy.</span></button>`;
  if(matching.length)html+=`<div class="analysis-picker-section">Odpovídající analýzy</div>${matching.map(a=>item(a,true)).join('')}`;
  if(others.length)html+=`<div class="analysis-picker-section">Všechny ostatní analýzy</div>${others.map(a=>item(a,false)).join('')}`;
@@ -2349,12 +2821,26 @@ function chooseLinkedAnalysis(value){
  const c=analysisPickerContext;if(!c)return;
  if(c.contextType==='draft'){
    if(draft&&draft.matches[c.index])draft.matches[c.index].linkedAnalysisId=value||null;
-   saveData();renderDraft();
+   closeAnalysisPicker();renderDraft();
  }else{
    const t=data.tickets.find(x=>String(x.id)===String(c.ticketId));
-   if(t&&t.matches[c.index]){t.matches[c.index].linkedAnalysisId=value||null;saveData();openTicket(t.id)}
+   if(t&&t.matches[c.index]){
+     const match=t.matches[c.index];
+     data.analyses.forEach(a=>{
+       if(String(a.linkedTicketId||'')===String(t.id) && String(a.linkedMatchName||'')===String(match.name||'')){
+         a.linkedTicketId=null;a.linkedMatchName='';
+       }
+     });
+     match.linkedAnalysisId=value||null;
+     const linked=analysisById(value);
+     if(linked){linked.linkedTicketId=t.id;linked.linkedMatchName=match.name}
+     saveData();
+     closeAnalysisPicker();
+     openTicket(t.id);
+   }else{
+     closeAnalysisPicker();
+   }
  }
- closeAnalysisPicker();
 }
 
 function analysisById(id){
@@ -2394,8 +2880,11 @@ function matchEditor(m,i){
  ${field('Kurz',`<input inputmode="decimal" value="${m.odds}" oninput="setMatch(${i},'odds',this.value)">`)}
  </div>
  <div class="grid3" style="margin-top:8px">
+ ${field('Sport',`<select onchange="setSport(${i},this.value)">${sportOptions(m.sport||'Fotbal')}</select>`)}
  ${field('Typ sázky',`<select onchange="setBetType(${i},this.value)">${betTypeOptions(m.betCategory,m.betType)}</select>`)}
  ${field('Země / soutěž',`<select onchange="setCompetition(${i},this.value)">${competitionOptions(m.country,m.league)}</select>`)}
+ </div>
+ <div class="grid3" style="margin-top:8px">
  ${field('Evropský pohár v týdnu',`<select onchange="setMatch(${i},'euroLoad',this.value)">
    <option value="none" ${m.euroLoad==='none'?'selected':''}>Nikdo</option>
    <option value="home" ${m.euroLoad==='home'?'selected':''}>🏆 Domácí tým</option>
@@ -2416,8 +2905,8 @@ function setMatch(i,k,v){
  if(k==='odds')updateDraftTotals();
 }
 function calcDraft(){return draft.matches.reduce((p,m)=>p*(Number(m.odds)||1),1)}
-function updateDraftTotals(){const t=calcDraft();document.getElementById('d-total').textContent=t.toFixed(2);document.getElementById('d-possible').textContent=money(t*Number(draft.stake||0))}
-function addMatch(){draft.matches.push({name:'',pick:'',odds:1,result:'',status:'Čeká',country:'',league:'',euroLoad:'none',betCategory:'',betType:'',note:'',linkedAnalysisId:null});renderDraft()}
+function updateDraftTotals(){const t=calcDraft();document.getElementById('d-total').textContent=t.toFixed(2);document.getElementById('d-possible').textContent=money(t*Number(draft.stake||0));updateDraftRisk()}
+function addMatch(){draft.matches.push({name:'',pick:'',odds:1,result:'',status:'Čeká',sport:'Fotbal',country:'',league:'',euroLoad:'none',betCategory:'',betType:'',note:'',linkedAnalysisId:null});renderDraft()}
 function removeMatch(i){draft.matches.splice(i,1);renderDraft()}
 function saveDraft(){
  if(!draft.date||draft.matches.some(m=>!m.name.trim()||!m.pick.trim()))return alert('Doplň datum, název zápasu a tip.');
@@ -2425,11 +2914,10 @@ function saveDraft(){
  if(draft.matches.some(m=>Number(m.odds||0)<=0))return alert('Každý kurz musí být větší než nula.');
  draft.totalOdds=calcDraft();
  const savedTicket=structuredClone(draft);
- // Druhá pojistka: duplicitní ID se nesmí uložit ani v případě starých/migrovaných dat.
- if(data.tickets.some(t=>String(t.id)===String(savedTicket.id))){
-   savedTicket.id=nextId();
-   draft.id=savedTicket.id;
- }
+ // ID se přiděluje znovu až v okamžiku uložení. Tím zůstane jedinečné
+ // i tehdy, když byl formulář otevřený delší dobu nebo obsahuje staré ID.
+ savedTicket.id=nextId(savedTicket.date);
+ draft.id=savedTicket.id;
  data.tickets.push(savedTicket);syncAnalysisLinksForTicket(savedTicket);saveData();alert('Tiket uložen.');showView('history');
 }
 function renderHistory(){
@@ -2508,7 +2996,7 @@ function openTicket(id){
  ${field('Celkový kurz',`<input inputmode="decimal" value="${t.totalOdds}" onchange="editTicket('${id}','totalOdds',this.value)">`)}
  ${field('Skutečná výplata',`<input inputmode="decimal" value="${effectivePayout(t)}" onchange="editTicket('${id}','payout',this.value)">`)}
  ${field('Profit / ztráta',`<input value="${money(ticketProfit(t))}" readonly>`)}
- ${field('Stav',`<select onchange="editTicket('${id}','status',this.value)">${['Rozpracovaný','Otevřený','Výherní','Proherní','Vrácený','Storno'].map(s=>`<option ${s===t.status?'selected':''}>${s}</option>`).join('')}</select>`)}
+ ${field('Stav',`<select onchange="editTicket('${id}','status',this.value)">${['Rozpracovaný','Otevřený','Výherní','Proherní','Cash Out','Vrácený','Storno'].map(s=>`<option ${s===t.status?'selected':''}>${s}</option>`).join('')}</select>`)}
  ${field('Poznámka k tiketu',`<input value="${esc(t.note)}" onchange="editTicket('${id}','note',this.value)">`)}
  </div>
  <div class="row-actions" style="margin:14px 0">
@@ -2529,8 +3017,11 @@ function matchDetail(t,i){
  ${field('Výsledek',`<input value="${esc(m.result)}" onchange="editMatch('${t.id}',${i},'result',this.value)">`)}
  </div>
  <div class="grid3" style="margin-top:8px">
+ ${field('Sport',`<select onchange="editSport('${t.id}',${i},this.value)">${sportOptions(m.sport||'Fotbal')}</select>`)}
  ${field('Typ sázky',`<select onchange="editBetType('${t.id}',${i},this.value)">${betTypeOptions(m.betCategory,m.betType)}</select>`)}
  ${field('Země / soutěž',`<select onchange="editCompetition('${t.id}',${i},this.value)">${competitionOptions(m.country,m.league)}</select>`)}
+ </div>
+ <div class="grid3" style="margin-top:8px">
  ${field('Evropský pohár v týdnu',`<select onchange="editMatch('${t.id}',${i},'euroLoad',this.value)">
    <option value="none" ${m.euroLoad==='none'?'selected':''}>Nikdo</option>
    <option value="home" ${m.euroLoad==='home'?'selected':''}>🏆 Domácí tým</option>
@@ -2559,6 +3050,14 @@ function editBetType(id,i,value){
  const parts=value.split('||');
  t.matches[i].betCategory=parts[0]||'';
  t.matches[i].betType=parts[1]||'';
+ saveData();
+}
+function editSport(id,i,value){
+ const t=data.tickets.find(x=>String(x.id)===String(id));
+ if(!t?.matches?.[i])return;
+ t.matches[i].sport=value||'Fotbal';
+ if(value==='Tenis'){t.matches[i].country='';t.matches[i].league='Tenis'}
+ if(value!=='Tenis'&&t.matches[i].league==='Tenis')t.matches[i].league='';
  saveData();
 }
 function editCompetition(id,i,value){const t=data.tickets.find(x=>String(x.id)===String(id));const parts=value.split('||');t.matches[i].country=parts[0]||'';t.matches[i].league=parts[1]||'';saveData()}
@@ -2681,7 +3180,7 @@ function removeConsidered(id){
 }
 
 function settledTickets(){
- return data.tickets.filter(t=>['Výherní','Proherní','Vrácený'].includes(t.status))
+ return data.tickets.filter(t=>['Výherní','Proherní','Vrácený','Cash Out'].includes(t.status))
    .slice().sort((a,b)=>a.date.localeCompare(b.date)||a.id.localeCompare(b.id));
 }
 function effectivePayout(t){
@@ -2695,23 +3194,26 @@ function effectivePayout(t){
  return payout;
 }
 function ticketProfit(t){
- if(t.status==='Výherní'||t.status==='Vrácený')return effectivePayout(t)-Number(t.stake||0);
+ if(t.status==='Výherní'||t.status==='Vrácený'||t.status==='Cash Out')return effectivePayout(t)-Number(t.stake||0);
  if(t.status==='Proherní')return -Number(t.stake||0);
  return 0;
 }
 const BANKROLL_BASELINE_DATE='2026-08-01';
 const BANKROLL_BASELINE_VALUE=100000;
-const BANKROLL_Y_STEP=20000;
+const BANKROLL_Y_STEP=100000;
 
 function bankrollSeries(){
  let bank=BANKROLL_BASELINE_VALUE;
+ const adjustment=Number(data.settings.bankrollAdjustment||0);
  const rows=[{label:'1. 8.',date:BANKROLL_BASELINE_DATE,value:bank,isBaseline:true}];
  settledTickets()
    .filter(t=>String(t.date||'')>=BANKROLL_BASELINE_DATE)
    .forEach(t=>{
      bank+=ticketProfit(t);
-     rows.push({label:t.date,date:t.date,value:bank,id:t.id});
+     // Dorovnání je součástí celkového kapitálu, ale nikoli profitu ani ROI.
+     rows.push({label:t.date,date:t.date,value:bank+adjustment,id:t.id});
    });
+ if(rows.length===1)rows[0].value+=adjustment;
  return rows;
 }
 function bankrollChart(){
@@ -2772,7 +3274,7 @@ function bankrollChart(){
 
  return `<div class="chart-box">
  <img class="chart-watermark" src="aba-watermark.png?v=0216" alt="">
- <svg viewBox="0 0 ${w} ${h}" role="img" aria-label="Vývoj bankrollu">
+ <svg viewBox="0 0 ${w} ${h}" role="img" aria-label="Vývoj celkového bankrollu">
    <defs>
      <linearGradient id="bankrollAreaGradient" x1="0" y1="0" x2="0" y2="1">
        <stop offset="0%" stop-color="#00D6D6" stop-opacity=".46"/>
@@ -2788,6 +3290,164 @@ function bankrollChart(){
  </svg>
  </div>`;
 }
+function matchSport(match){
+ const explicit=String(match?.sport||'').trim();
+ if(explicit)return explicit;
+ const league=String(match?.league||'').toLowerCase();
+ const country=String(match?.country||'').toLowerCase();
+ return league.includes('tenis')||country.includes('tenis')?'Tenis':'Fotbal';
+}
+function inferBetClassification(match){
+ const pick=String(match?.pick||'').trim();
+ const p=pick.toLowerCase().replace(/\./g,',');
+ if(matchSport(match)==='Tenis'){
+   if(p.includes('bod'))return {category:'Tenis – bod',type:'Vítěz bodu'};
+   return {category:'Tenis – vítěz',type:'Vítěz hráče / páru'};
+ }
+ if(p.includes('dvojitá šance')||p.includes('dvojita sance')){
+   const type=p.includes('x2')?'X2':p.includes('1x')?'1X':p.includes('12')?'12':'Jiný typ';
+   return {category:'Dvojitá šance',type};
+ }
+ if(p.includes('postoup')){
+   const [home]=String(match?.name||'').split(/\s+[–—-]\s+/);
+   const clean=v=>String(v||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/\b(fc|fk|sk|ac|cf|sc|afc|nk)\b/g,' ').replace(/[^a-z0-9]+/g,' ').trim();
+   const selected=clean(pick.replace(/postoup\S*/i,''));
+   const isHome=selected&&clean(home).includes(selected);
+   return {category:'Postup',type:isHome?'Postup domácího týmu':'Postup hostujícího týmu'};
+ }
+ const thresholds=[['0,5','0,5'],['1,5','1,5'],['2,5','2,5'],['3,5','3,5']];
+ for(const [needle,label] of thresholds){
+   if(p.includes(needle)&&(/více než|over/.test(p))){
+     const team=/\bdá\b|tým/.test(p);
+     return {category:team?'Týmové góly':'Góly',type:`Over ${label}`};
+   }
+   if(p.includes(needle)&&(/méně než|under/.test(p)))return {category:'Góly',type:`Under ${label}`};
+ }
+ if(/remíza|remiza/.test(p))return {category:'Výsledek zápasu',type:'X – remíza'};
+ if(/vyhraje|výhra/.test(p)){
+   const [home]=String(match?.name||'').split(/\s+[–—-]\s+/);
+   const clean=v=>String(v||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/\b(fc|fk|sk|ac|cf|sc|afc|nk)\b/g,' ').replace(/[^a-z0-9]+/g,' ').trim();
+   const selected=clean(pick.replace(/vyhraje.*/i,'').replace(/výhra.*/i,''));
+   const homeName=clean(home);
+   const isHome=selected&&(homeName.includes(selected)||selected.includes(homeName));
+   return {category:'Výsledek zápasu',type:isHome?'1 – výhra domácích':'2 – výhra hostů'};
+ }
+ return {category:'Jiné',type:'Jiný typ'};
+}
+function isTennisMatchForDirectory(match){
+ if(matchSport(match)==='Tenis')return true;
+ const league=String(match?.league||'').toLowerCase();
+ const country=String(match?.country||'').toLowerCase();
+ return league.includes('tenis')||country.includes('tenis');
+}
+
+function teamsTrackedByTip(match,home,away){
+ const source=[match?.pick,match?.betType].filter(Boolean).join(' ');
+ const homeMention=teamNamesMatch(source,home);
+ const awayMention=teamNamesMatch(source,away);
+ if(homeMention&&!awayMention)return [home];
+ if(awayMention&&!homeMention)return [away];
+ if(homeMention&&awayMention)return [home,away];
+
+ const normalized=normalizeTeamName(source);
+ const tokens=new Set(normalized.split(' ').filter(Boolean));
+ const rawPick=String(match?.pick||'').trim().toLowerCase();
+ const homeRule=rawPick==='1'||tokens.has('1x')||[
+   'vyhra domacich','domaci tym','domaciho tymu','handicap domaci',
+   'vice rohu domaci','rohy domacich','vice strel domaci'
+ ].some(rule=>normalized.includes(rule));
+ const awayRule=rawPick==='2'||tokens.has('x2')||[
+   'vyhra hostu','hostujici tym','hostujiciho tymu','handicap hoste',
+   'vice rohu hoste','rohy hostu','vice strel hoste'
+ ].some(rule=>normalized.includes(rule));
+ if(homeRule&&!awayRule)return [home];
+ if(awayRule&&!homeRule)return [away];
+
+ // Tipy na celý zápas (góly, remíza, rohy apod.) patří oběma týmům.
+ return [home,away];
+}
+
+function leagueDirectoryPriority(league){
+ const name=normalizeTeamName(league?.name||'');
+ if(name.includes('liga mistru')||name.includes('champions league'))return 0;
+ if(name.includes('evropska liga')||name.includes('europa league'))return 1;
+ if(name.includes('konferencni liga')||name.includes('conference league'))return 2;
+ if(league?.name==='Liga neuvedena')return 99;
+ return 10;
+}
+
+function leagueDirectoryStats(){
+ const leagues=new Map();
+ data.tickets.forEach(ticket=>{
+   (ticket.matches||[]).forEach(match=>{
+     if(isTennisMatchForDirectory(match))return;
+     const [home,away]=splitMatchTeams(match.name);
+     if(!home||!away)return;
+     const country=String(match.country||'').trim()||'Nezařazené';
+     const leagueName=String(match.league||'').trim()||'Liga neuvedena';
+     const leagueKey=`${country}||${leagueName}`;
+     if(!leagues.has(leagueKey))leagues.set(leagueKey,{key:leagueKey,country,name:leagueName,teams:new Map()});
+     const league=leagues.get(leagueKey);
+     teamsTrackedByTip(match,home,away).filter(Boolean).forEach(teamName=>{
+       const teamKey=normalizeTeamName(teamName)||teamName.toLowerCase();
+       if(!league.teams.has(teamKey))league.teams.set(teamKey,{name:teamName,ticketIds:new Set(),wins:0,losses:0,voids:0,pending:0});
+       const team=league.teams.get(teamKey);
+       team.ticketIds.add(String(ticket.id||''));
+       if(match.status==='Vyšla')team.wins++;
+       else if(match.status==='Nevyšla')team.losses++;
+       else if(match.status==='Vrácena')team.voids++;
+       else team.pending++;
+     });
+   });
+ });
+ return [...leagues.values()].map(league=>{
+   const teams=[...league.teams.values()].map(team=>{
+     const evaluated=team.wins+team.losses;
+     return {...team,tickets:team.ticketIds.size,evaluated,success:evaluated?team.wins/evaluated*100:0};
+   }).sort((a,b)=>a.name.localeCompare(b.name,'cs'));
+   return {...league,teams};
+ }).sort((a,b)=>{
+   const priority=leagueDirectoryPriority(a)-leagueDirectoryPriority(b);
+   if(priority)return priority;
+   const country=a.country.localeCompare(b.country,'cs');
+   return country||a.name.localeCompare(b.name,'cs');
+ });
+}
+
+function leagueCountryFlag(country){
+ return COMPETITIONS.find(item=>item.country===country)?.flag||'🏳️';
+}
+
+let openLeagueDirectoryKey=null;
+function openLeagueDirectory(index){
+ const league=leagueDirectoryStats()[Number(index)];
+ if(!league)return;
+ openLeagueDirectoryKey=openLeagueDirectoryKey===league.key?null:league.key;
+ renderLeagueTeams();
+}
+
+function renderLeagueTeams(){
+ const el=document.getElementById('view-teams');
+ if(!el)return;
+ const leagues=leagueDirectoryStats();
+ if(openLeagueDirectoryKey&&!leagues.some(league=>league.key===openLeagueDirectoryKey))openLeagueDirectoryKey=null;
+ const selected=leagues.find(league=>league.key===openLeagueDirectoryKey)||null;
+ const folders=leagues.map((league,index)=>`<button type="button" class="league-folder ${selected?.key===league.key?'active':''}" onclick="openLeagueDirectory(${index})" aria-expanded="${selected?.key===league.key?'true':'false'}">
+   <span class="league-folder-icon">📁</span>
+   <span><span class="league-folder-title">${esc(league.name)}</span><span class="league-folder-country">${leagueCountryFlag(league.country)} ${esc(league.country)}</span><span class="league-folder-count">${league.teams.length} ${league.teams.length===1?'tým':'týmů'}</span></span>
+ </button>`).join('');
+ const detail=selected?`<div class="league-team-detail">
+   <div class="league-team-head"><div><h3>${esc(selected.name)}</h3><div class="small">${leagueCountryFlag(selected.country)} ${esc(selected.country)} · týmy jsou seřazené abecedně</div></div><div class="small">Úspěšnost vychází z jednotlivých tipů, ne z výsledku celého kombinovaného tiketu.</div></div>
+   <div class="table-wrap"><table><thead><tr><th>Tým</th><th>Na tiketu</th><th>Úspěšné tipy</th><th>Neúspěšné tipy</th><th>Úspěšnost</th></tr></thead><tbody>
+   ${selected.teams.map(team=>{const color=analyticsColor(team.success,team.evaluated);return `<tr><td><span class="status-dot status-${color}"></span><strong>${esc(team.name)}</strong></td><td>${team.tickets}×</td><td class="pos">${team.wins}</td><td class="neg">${team.losses}</td><td class="team-success-value team-success-${color}">${team.evaluated?team.success.toFixed(1)+' %':'—'}</td></tr>`}).join('')}
+   </tbody></table></div>
+   <div class="small" style="margin-top:8px">Nevyhodnocené a vrácené tipy jsou zahrnuté v počtu výskytů na tiketu, ale nevstupují do procentuální úspěšnosti.</div>
+ </div>`:`<div class="filter-panel" style="margin-top:18px">Otevři složku ligy a ABA zobrazí její týmy a výsledky tvých tipů.</div>`;
+ el.innerHTML=`<div class="dashboard-title-wrap"><div><h2 style="margin-bottom:4px">Ligy a týmy</h2><div class="small">Vlastní týmové statistiky vytvořené z uložených fotbalových tiketů. Tenis se zde nezobrazuje.</div></div></div>
+ <div class="filter-panel"><strong>Jak se statistika počítá</strong><div class="small" style="margin-top:5px">Týmový tip se připíše vybranému týmu. Tip na celý zápas se připíše oběma účastníkům. Zápasy bez uložené soutěže najdeš ve složce „Liga neuvedena“.</div></div>
+ ${leagues.length?`<div class="league-folder-grid">${folders}</div>${detail}`:'<div class="filter-panel">Zatím nejsou k dispozici žádné fotbalové zápasy.</div>'}`;
+}
+
 function countryStats(){
  const map={};
  data.tickets.forEach(t=>t.matches.forEach(m=>{
@@ -2809,13 +3469,14 @@ function dayStats(){
  const out=names.map((name,i)=>({name,index:i,tickets:0,wins:0,losses:0,profit:0}));
  settledTickets().forEach(t=>{
    const d=new Date(t.date+'T12:00:00').getDay(), x=out[d];
-   x.tickets++; if(t.status==='Výherní')x.wins++; if(t.status==='Proherní')x.losses++; x.profit+=ticketProfit(t);
+   const outcome=ticketOutcome(t);
+   x.tickets++; if(outcome==='win')x.wins++; if(outcome==='loss')x.losses++; x.profit+=ticketProfit(t);
  });
  return [out[1],out[2],out[3],out[4],out[5],out[6],out[0]].map(x=>({...x,success:(x.wins+x.losses)?x.wins/(x.wins+x.losses)*100:0}));
 }
 function winLossPanel(){
- const wins=data.tickets.filter(t=>t.status==='Výherní').length;
- const losses=data.tickets.filter(t=>t.status==='Proherní').length;
+ const wins=data.tickets.filter(t=>ticketOutcome(t)==='win').length;
+ const losses=data.tickets.filter(t=>ticketOutcome(t)==='loss').length;
  const total=Math.max(1,wins+losses);
  return `<div class="chart-box">
  <div style="display:grid;grid-template-columns:110px 1fr 60px;gap:10px;align-items:center;margin-bottom:12px">
@@ -2854,7 +3515,21 @@ function filteredTickets(){
  return data.tickets.filter(t=>ticketInRange(t,range));
 }
 function filteredSettledTickets(){
- return filteredTickets().filter(t=>['Výherní','Proherní','Vrácený'].includes(t.status));
+ return filteredTickets().filter(t=>['Výherní','Proherní','Vrácený','Cash Out'].includes(t.status));
+}
+function aggregateBySport(tickets){
+ const map={};
+ tickets.forEach(t=>t.matches.forEach(m=>{
+   if(!['Vyšla','Nevyšla','Vrácena'].includes(m.status))return;
+   const name=matchSport(m);
+   if(!map[name])map[name]={name,wins:0,losses:0,voids:0,total:0};
+   const x=map[name];x.total++;
+   if(m.status==='Vyšla')x.wins++;
+   if(m.status==='Nevyšla')x.losses++;
+   if(m.status==='Vrácena')x.voids++;
+ }));
+ return Object.values(map).map(x=>({...x,success:(x.wins+x.losses)?x.wins/(x.wins+x.losses)*100:0}))
+   .sort((a,b)=>b.success-a.success||b.total-a.total);
 }
 function aggregateByCountry(tickets){
  const map={};
@@ -2886,10 +3561,15 @@ function aggregateByLeague(tickets){
 function aggregateTicketFinancials(tickets){
  const map={};
  tickets.forEach(t=>{
+   const uniqueSports=[...new Set(t.matches.map(m=>matchSport(m)).filter(Boolean))];
    const uniqueCountries=[...new Set(t.matches.map(m=>m.country).filter(Boolean))];
    const uniqueLeagues=[...new Set(t.matches.map(m=>m.league).filter(Boolean))];
    const uniqueBetTypes=[...new Set(t.matches.map(m=>m.betType).filter(Boolean))];
    const profit=ticketProfit(t),stake=Number(t.stake||0);
+   uniqueSports.forEach(k=>{
+     if(!map['S:'+k])map['S:'+k]={stake:0,profit:0,tickets:0};
+     map['S:'+k].stake+=stake;map['S:'+k].profit+=profit;map['S:'+k].tickets++;
+   });
    uniqueCountries.forEach(k=>{
      if(!map['C:'+k])map['C:'+k]={stake:0,profit:0,tickets:0};
      map['C:'+k].stake+=stake;map['C:'+k].profit+=profit;map['C:'+k].tickets++;
@@ -2945,7 +3625,7 @@ function monthStatsForYear(year){
  const monthNames=['Leden','Únor','Březen','Duben','Květen','Červen','Červenec','Srpen','Září','Říjen','Listopad','Prosinec'];
  const rows=monthNames.map((name,index)=>({name,index,tickets:0,wins:0,losses:0,stake:0,profit:0}));
  data.tickets
-   .filter(t=>Number(String(t.date||'').slice(0,4))===year && ['Výherní','Proherní','Vrácený'].includes(t.status))
+   .filter(t=>Number(String(t.date||'').slice(0,4))===year && ['Výherní','Proherní','Vrácený','Cash Out'].includes(t.status))
    .forEach(t=>{
       const month=Number(String(t.date).slice(5,7))-1;
       if(month<0||month>11)return;
@@ -2953,8 +3633,9 @@ function monthStatsForYear(year){
       x.tickets++;
       x.stake+=Number(t.stake||0);
       x.profit+=ticketProfit(t);
-      if(t.status==='Výherní')x.wins++;
-      if(t.status==='Proherní')x.losses++;
+      const outcome=ticketOutcome(t);
+      if(outcome==='win')x.wins++;
+      if(outcome==='loss')x.losses++;
    });
  return rows.map(x=>({
    ...x,
@@ -2979,10 +3660,20 @@ function renderAnalyticsTables(){
  const tickets=filteredTickets();
  const settled=filteredSettledTickets();
  const financials=aggregateTicketFinancials(settled);
+ const sports=aggregateBySport(tickets);
  const countries=aggregateByCountry(tickets);
  const leagues=aggregateByLeague(tickets);
  const betTypes=aggregateByBetType(tickets);
  const days=dayStatsForTickets(settled);
+
+ document.getElementById('sportAnalytics').innerHTML=`<div class="table-wrap"><table class="analytics-table"><thead><tr>
+ <th>Sport</th><th>Tipy</th><th>Výhry</th><th>Prohry</th><th>Úspěšnost</th><th>ROI*</th><th>Profit*</th>
+ </tr></thead><tbody>${sports.length?sports.map(x=>{
+   const fin=financials['S:'+x.name]||{stake:0,profit:0};
+   const color=analyticsColor(x.success,x.wins+x.losses);
+   return `<tr><td><span class="status-dot status-${color}"></span><strong>${esc(x.name)}</strong></td><td>${x.total}</td><td>${x.wins}</td><td>${x.losses}</td><td>${x.success.toFixed(1)} %</td><td class="${roiValue(fin)>=0?'pos':'neg'}">${roiValue(fin).toFixed(2)} %</td><td class="${fin.profit>=0?'pos':'neg'}">${fin.profit>=0?'+':''}${money(fin.profit)}</td></tr>`;
+ }).join(''):`<tr><td colspan="7">Pro zvolené období zatím nejsou data.</td></tr>`}</tbody></table></div>
+ <div class="small" style="margin-top:8px">* U smíšených tiketů je finanční výsledek orientačně přiřazen každému sportu zastoupenému na tiketu. Úspěšnost vychází z jednotlivých tipů.</div>`;
 
  document.getElementById('countryAnalytics').innerHTML=`<div class="table-wrap"><table class="analytics-table"><thead><tr>
  <th>Země</th><th>Liga</th><th>Zápasy</th><th>Výhry</th><th>Prohry</th><th>Úspěšnost</th><th>ROI*</th><th>Profit*</th>
@@ -3024,8 +3715,9 @@ function dayStatsForTickets(tickets){
  tickets.forEach(t=>{
    const d=new Date(t.date+'T12:00:00').getDay(),x=out[d];
    x.tickets++;x.stake+=Number(t.stake||0);x.profit+=ticketProfit(t);
-   if(t.status==='Výherní')x.wins++;
-   if(t.status==='Proherní')x.losses++;
+   const outcome=ticketOutcome(t);
+   if(outcome==='win')x.wins++;
+   if(outcome==='loss')x.losses++;
  });
  return [out[1],out[2],out[3],out[4],out[5],out[6],out[0]].map(x=>({
    ...x,
@@ -3062,10 +3754,11 @@ function renderStats(){
    </div>
  </div>
 
- <div class="analytics-section"><h2 style="font-size:18px">1. Analýza podle zemí</h2><div id="countryAnalytics"></div></div>
- <div class="analytics-section"><h2 style="font-size:18px">2. Analýza podle soutěží</h2><div id="leagueAnalytics"></div></div>
- <div class="analytics-section"><h2 style="font-size:18px">3. Analýza podle dnů</h2><div id="dayAnalytics"></div></div>
- <div class="analytics-section"><h2 style="font-size:18px">4. Analýza podle měsíců</h2>
+ <div class="analytics-section"><h2 style="font-size:18px">1. Analýza podle sportů</h2><div id="sportAnalytics"></div></div>
+ <div class="analytics-section"><h2 style="font-size:18px">2. Analýza podle zemí</h2><div id="countryAnalytics"></div></div>
+ <div class="analytics-section"><h2 style="font-size:18px">3. Analýza podle soutěží</h2><div id="leagueAnalytics"></div></div>
+ <div class="analytics-section"><h2 style="font-size:18px">4. Analýza podle dnů</h2><div id="dayAnalytics"></div></div>
+ <div class="analytics-section"><h2 style="font-size:18px">5. Analýza podle měsíců</h2>
    <div class="filter-panel" style="margin-bottom:10px">
      <div class="filter-grid">
        ${field('Rok',`<select id="monthYearFilter" onchange="renderMonthAnalytics()">${availableYears().map(y=>`<option value="${y}">${y}</option>`).join('')}</select>`)}
@@ -3073,7 +3766,7 @@ function renderStats(){
    </div>
    <div id="monthAnalytics"></div>
  </div>
- <div class="analytics-section"><h2 style="font-size:18px">5. Analýza podle typu sázky</h2><div id="betTypeAnalytics"></div></div>
+ <div class="analytics-section"><h2 style="font-size:18px">6. Analýza podle typu sázky</h2><div id="betTypeAnalytics"></div></div>
  <div class="analytics-section"><h2 style="font-size:18px">Vývoj bankrollu</h2>${bankrollChart()}</div>`;
  renderAnalyticsTables();
 }
@@ -3538,6 +4231,9 @@ function renderAnalyses(){
 function renderSettings(){
  const el=document.getElementById('view-settings');el.innerHTML=`<h2>Nastavení</h2><div class="card">
  ${field('Počáteční bankroll',`<input id="bankroll" inputmode="decimal" value="${data.settings.startingBankroll}">`)}
+ ${field('Dorovnání skutečného zůstatku',`<input id="bankrollAdjustment" inputmode="decimal" value="${Number(data.settings.bankrollAdjustment||0)}">`)}
+ <p class="small">Dorovnání ovlivňuje bankroll, ale nevstupuje do profitu ani ROI.</p>
+ <div class="backup-export-status"><strong>Poslední exportovaná záloha</strong><span>${data.settings.lastBackupAt?formatBackupDay(data.settings.lastBackupAt):'Zatím nezaznamenána'}</span></div>
  <div class="row-actions" style="flex-wrap:wrap">
 <button class="primary" onclick="saveSettings()">Uložit</button>
 <button class="secondary" onclick="exportData()">Exportovat kompletní zálohu</button>
@@ -3548,10 +4244,23 @@ function renderSettings(){
 <button class="secondary" onclick="resetLogin()">Změnit přihlášení</button>
 <button class="danger" onclick="resetData()">Obnovit výchozí data</button>
 </div>
- <p class="small">Verze: ABA 0.22.0 · Data jsou uložená pouze v tomto prohlížeči na tomto zařízení.</p></div>`;
+ <p class="small">Verze: ABA 1.1.0 · Data jsou uložená pouze v tomto prohlížeči na tomto zařízení.</p></div>`;
 }
-function saveSettings(){data.settings.startingBankroll=Number(document.getElementById('bankroll').value.replace(',','.'))||200000;saveData();alert('Nastavení uloženo.');renderDashboard()}
-function exportData(){const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`ABA_zaloha_${new Date().toISOString().slice(0,10)}_v${APP_VERSION}.json`;a.click();URL.revokeObjectURL(a.href)}
+function saveSettings(){data.settings.startingBankroll=Number(document.getElementById('bankroll').value.replace(',','.'))||100000;data.settings.bankrollAdjustment=Number(document.getElementById('bankrollAdjustment').value.replace(',','.'))||0;saveData();alert('Nastavení uloženo.');renderDashboard()}
+function exportData(){
+ data.settings.lastBackupAt=new Date().toISOString();
+ saveData();
+ const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+ const a=document.createElement('a');
+ a.href=URL.createObjectURL(blob);
+ a.download=`ABA_zaloha_${new Date().toISOString().slice(0,10)}_v${APP_VERSION}.json`;
+ a.click();
+ URL.revokeObjectURL(a.href);
+ renderSettings();
+}
+function formatBackupDay(iso){
+ try{return new Date(iso).toLocaleDateString('cs-CZ',{day:'numeric',month:'numeric',year:'numeric'})}catch(e){return iso}
+}
 function formatBackupDate(iso){
   try{return new Date(iso).toLocaleString('cs-CZ')}catch(e){return iso}
 }
@@ -3621,8 +4330,8 @@ function resetLogin(){
   localStorage.removeItem(AUTH_KEY);
   logout();
 }
-function resetData(){if(confirm('Opravdu obnovit výchozí data?')){data=structuredClone(defaultData);saveData();renderAll();showView('dashboard')}}
-function renderAll(){renderDashboard();renderHistory();renderWatchlist();renderAnalyses();renderStats();renderSettings()}
+function resetData(){if(confirm('Opravdu obnovit výchozí data?')){data=migrateData(structuredClone(defaultData));saveData();renderAll();showView('dashboard')}}
+function renderAll(){renderDashboard();renderHistory();renderWatchlist();renderAnalyses();renderLeagueTeams();renderStats();renderSettings()}
 if ("serviceWorker" in navigator) {
   let refreshing=false;
   navigator.serviceWorker.addEventListener("controllerchange",()=>{

@@ -1,4 +1,4 @@
-const CACHE='aba-pwa-v1-1-0-sports-ledger';
+const CACHE='aba-pwa-v1-1-1-analytics-repair';
 const ASSETS=[
   './',
   './index.html',

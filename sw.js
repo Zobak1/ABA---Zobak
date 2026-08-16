@@ -1,4 +1,4 @@
-const CACHE='aba-pwa-v1-1-1-analytics-repair';
+const CACHE='aba-pwa-v1-2-0-tickets-withdrawal';
 const ASSETS=[
   './',
   './index.html',

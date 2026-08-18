@@ -51,7 +51,7 @@ th{color:var(--muted);font-weight:600;background:#FAFBFC}
 .toolbar input{max-width:360px}
 .ticket-head{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;background:#fff;border:1px solid var(--line);padding:16px;border-radius:14px}
 .match-card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px;margin-top:12px}
-.grid3{display:grid;grid-template-columns:2fr 2fr 1fr;gap:10px}
+.grid3{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,2fr) minmax(0,1fr);gap:10px}
 .row-actions{display:flex;gap:10px;justify-content:space-between;margin-top:14px}
 .small{font-size:12px;color:var(--muted)}
 .pos{color:var(--pos)} .neg{color:var(--neg)}
@@ -1736,6 +1736,39 @@ body.codex-open{
   width:100%;
 }
 
+
+/* ABA v1.5.3 — definitivní oprava mřížky formuláře Nový tiket */
+.match-card .grid3{
+  grid-template-columns:minmax(0,2fr) minmax(0,2fr) minmax(0,1fr);
+}
+.match-card .grid3 > div{
+  min-width:0;
+  max-width:100%;
+}
+.match-card .grid3 input,
+.match-card .grid3 select,
+.match-card .grid3 textarea{
+  display:block;
+  width:100%;
+  min-width:0;
+  max-width:100%;
+}
+.match-card .ticket-meta-row > div:nth-child(1){
+  grid-column:1;
+}
+.match-card .ticket-meta-row > div:nth-child(2){
+  grid-column:2;
+}
+@media(max-width:900px){
+  .match-card .grid3{
+    grid-template-columns:1fr;
+  }
+  .match-card .ticket-meta-row > div:nth-child(1),
+  .match-card .ticket-meta-row > div:nth-child(2){
+    grid-column:auto;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -1753,7 +1786,7 @@ body.codex-open{
     <img src="icon-512.png?v=0111" alt="ABA – Angel Bet Analytics">
     <div id="abaSplashTitle">ABA</div>
     <div id="abaSplashSub">ANGEL BET ANALYTICS</div>
-    <div id="abaSplashVersion">v1.5.2</div>
+    <div id="abaSplashVersion">v1.5.3</div>
   </div>
 </div>
 
@@ -1825,7 +1858,7 @@ body.codex-open{
 
 <header>
   <strong>ABA – Angel Bet Analytics</strong>
-  <div style="display:flex;align-items:center;gap:10px"><span id="versionBadge" class="small">v1.5.2</span><span>Zobák</span><button class="secondary" onclick="logout()">Odhlásit</button></div>
+  <div style="display:flex;align-items:center;gap:10px"><span id="versionBadge" class="small">v1.5.3</span><span>Zobák</span><button class="secondary" onclick="logout()">Odhlásit</button></div>
 </header>
 <div class="layout">
 <nav>
@@ -1853,7 +1886,7 @@ body.codex-open{
 </section>
 
 <script>
-const APP_VERSION='1.5.2';
+const APP_VERSION='1.5.3';
 const KEY='abu_zobak_v1';
 const AUTH_KEY='abu_auth_v1';
 const BACKUP_KEY='abu_internal_backups_v1';
@@ -3180,7 +3213,7 @@ function matchEditor(m,i){
  ${field('Typ sázky',`<select onchange="setBetType(${i},this.value)">${betTypeOptions(m.betCategory,m.betType)}</select>`)}
  ${field('Země / soutěž',`<select onchange="setCompetition(${i},this.value)">${competitionOptions(m.country,m.league)}</select>`)}
  </div>
- <div class="grid3" style="margin-top:8px">
+ <div class="grid3 ticket-meta-row" style="margin-top:8px">
  ${field('Datum utkání',`<input type="date" value="${esc(m.eventDate||'')}" oninput="setMatch(${i},'eventDate',this.value)">`)}
  ${field('Evropský pohár v týdnu',`<select onchange="setMatch(${i},'euroLoad',this.value)">
    <option value="none" ${m.euroLoad==='none'?'selected':''}>Nikdo</option>

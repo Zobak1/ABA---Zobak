@@ -1,4 +1,4 @@
-const CACHE='aba-pwa-v1-2-0-tickets-withdrawal';
+const CACHE='aba-pwa-v1-3-0-tickets-20260817';
 const ASSETS=[
   './',
   './index.html',

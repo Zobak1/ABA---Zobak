@@ -1,3 +1,11 @@
+ABA v1.3.0 — 17. 8. 2026
+- Import 7 ověřených tiketů z 16.–17. 8. 2026.
+- Vklady nových tiketů: 568 000 Kč.
+- Výplaty nových tiketů: 573 636,22 Kč.
+- Čistý výsledek dávky: +5 636,22 Kč.
+- Zachována evidence výběru 980 805,69 Kč a všech starších dat.
+- Přepočet statistik probíhá z jednotlivých zápasů tiketů.
+
 ABA v0.22.0
 
 KRITICKÁ OPRAVA TIKETŮ

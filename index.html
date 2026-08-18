@@ -1683,7 +1683,7 @@ body.codex-open{
     <img src="icon-512.png?v=0111" alt="ABA – Angel Bet Analytics">
     <div id="abaSplashTitle">ABA</div>
     <div id="abaSplashSub">ANGEL BET ANALYTICS</div>
-    <div id="abaSplashVersion">v1.3.0</div>
+    <div id="abaSplashVersion">v1.3.1</div>
   </div>
 </div>
 
@@ -1755,7 +1755,7 @@ body.codex-open{
 
 <header>
   <strong>ABA – Angel Bet Analytics</strong>
-  <div style="display:flex;align-items:center;gap:10px"><span id="versionBadge" class="small">v1.3.0</span><span>Zobák</span><button class="secondary" onclick="logout()">Odhlásit</button></div>
+  <div style="display:flex;align-items:center;gap:10px"><span id="versionBadge" class="small">v1.3.1</span><span>Zobák</span><button class="secondary" onclick="logout()">Odhlásit</button></div>
 </header>
 <div class="layout">
 <nav>
@@ -2009,7 +2009,7 @@ const VERIFIED_TICKETS_20260817=[
 ];
 
 const defaultData={
-  settings:{startingBankroll:100000,bankrollAdjustment:83.69,withdrawalsTotal:980805.69,bankrollBaseline20260801:true,lastBackupAt:'2026-08-09'},
+  settings:{startingBankroll:100000,bankrollAdjustment:83.69,withdrawalsTotal:1080805.69,bankrollBaseline20260801:true,lastBackupAt:'2026-08-09'},
   tickets:[
     {id:'2026 - 000001',date:'2026-08-01',stake:100000,totalOdds:1.13,payout:113000,status:'Výherní',note:'Betano ID 20007901085.',matches:[
       {name:'FC Porto – SC União Torreense',pick:'FC Porto vyhraje',odds:1.13,result:'1:0',status:'Vyšla',country:'Portugalsko',league:'',euroLoad:'none',note:''}]},
@@ -2438,7 +2438,7 @@ function migrateData(raw){
     d.settings.ticketLedgerUpgrade20260816=true;
   }
 
-  // v1.3.0: import 7 ověřených tiketů 16.–17. 8. 2026.
+  // v1.3.1: import 7 ověřených tiketů 16.–17. 8. 2026.
   if(!d.settings.ticketLedgerUpgrade20260817){
     const getBetanoId130=t=>String(t?.note||'').match(/Betano ID\s+(\d+)/)?.[1]||'';
     VERIFIED_TICKETS_20260817.forEach(template=>{
@@ -2450,6 +2450,13 @@ function migrateData(raw){
     });
     d.tickets.sort((a,b)=>String(a.date||'').localeCompare(String(b.date||''))||String(a.id||'').localeCompare(String(b.id||'')));
     d.settings.ticketLedgerUpgrade20260817=true;
+  }
+
+  // v1.3.1: doplnění dalšího ověřeného výběru 100 000 Kč.
+  // Provede se pouze jednou, takže při dalších aktualizacích se výběr nebude násobit.
+  if(!d.settings.withdrawalUpgrade20260818){
+    d.settings.withdrawalsTotal=Number(d.settings.withdrawalsTotal||0)+100000;
+    d.settings.withdrawalUpgrade20260818=true;
   }
 
   // v1.1.1: oprava analytických metadat. Změna se provede pouze jednou a

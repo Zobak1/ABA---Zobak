@@ -1,4 +1,4 @@
-const CACHE='aba-pwa-v1-3-1-withdrawal-20260818';
+const CACHE='aba-pwa-v1-4-0-team-bet-stats';
 const ASSETS=[
   './',
   './index.html',

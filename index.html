@@ -1666,6 +1666,27 @@ body.codex-open{
   .league-team-head{align-items:flex-start;flex-direction:column}
 }
 
+
+/* ABA v1.4.0 — statistika vsazených týmů a obecných trhů */
+.team-bet-tools{
+  display:flex;
+  gap:10px;
+  align-items:center;
+  margin-bottom:10px;
+}
+.team-bet-tools input{flex:1}
+.team-bet-count{
+  white-space:nowrap;
+  color:var(--teal);
+  font-weight:750;
+}
+.team-bet-note{
+  color:var(--muted);
+  font-size:12px;
+  line-height:1.5;
+  margin-top:8px;
+}
+
 </style>
 </head>
 <body>
@@ -1683,7 +1704,7 @@ body.codex-open{
     <img src="icon-512.png?v=0111" alt="ABA – Angel Bet Analytics">
     <div id="abaSplashTitle">ABA</div>
     <div id="abaSplashSub">ANGEL BET ANALYTICS</div>
-    <div id="abaSplashVersion">v1.3.1</div>
+    <div id="abaSplashVersion">v1.4.0</div>
   </div>
 </div>
 
@@ -1755,7 +1776,7 @@ body.codex-open{
 
 <header>
   <strong>ABA – Angel Bet Analytics</strong>
-  <div style="display:flex;align-items:center;gap:10px"><span id="versionBadge" class="small">v1.3.1</span><span>Zobák</span><button class="secondary" onclick="logout()">Odhlásit</button></div>
+  <div style="display:flex;align-items:center;gap:10px"><span id="versionBadge" class="small">v1.4.0</span><span>Zobák</span><button class="secondary" onclick="logout()">Odhlásit</button></div>
 </header>
 <div class="layout">
 <nav>
@@ -1783,7 +1804,7 @@ body.codex-open{
 </section>
 
 <script>
-const APP_VERSION='1.2.0';
+const APP_VERSION='1.4.0';
 const KEY='abu_zobak_v1';
 const AUTH_KEY='abu_auth_v1';
 const BACKUP_KEY='abu_internal_backups_v1';
@@ -3910,6 +3931,163 @@ function renderMonthAnalytics(){
  }).join('')}</tbody></table></div>`;
 }
 
+
+function canonicalBetTeam(team){
+ const raw=String(team||'').trim();
+ const key=normalizeTeamName(raw);
+ const aliases={
+   'sl benfica':'Benfica',
+   'benfica':'Benfica',
+   'twente enschede':'Twente',
+   'twente':'Twente',
+   'sparta praha':'Sparta Praha',
+   'slovan bratislava':'Slovan Bratislava',
+   'brann':'Brann',
+   'gnk dinamo zagreb':'Dinamo Zagreb',
+   'dinamo zagreb':'Dinamo Zagreb',
+   'porto':'Porto',
+   'club brugge kv':'Club Brugge',
+   'brugge kv':'Club Brugge',
+   'brugge':'Club Brugge',
+   'besiktas jk':'Beşiktaş',
+   'besiktas':'Beşiktaş',
+   'feyenoord rotterdam':'Feyenoord',
+   'feyenoord':'Feyenoord',
+   'psv eindhoven':'PSV Eindhoven',
+   'psv':'PSV Eindhoven',
+   'hammarby if':'Hammarby',
+   'hammarby':'Hammarby',
+   'lech poznan':'Lech Poznań'
+ };
+ return aliases[key]||raw;
+}
+
+function directlyTrackedTeam(match){
+ if(matchSport(match)!=='Fotbal')return '';
+ const [home,away]=splitMatchTeams(match.name);
+ if(!home||!away)return '';
+ const pick=String(match.pick||'');
+ const source=[match.pick,match.betType].filter(Boolean).join(' ');
+ const sourceNorm=normalizeTeamName(source);
+
+ // Nejvyšší priorita: v tipu je přímo napsaný konkrétní tým.
+ const homeMention=teamNamesMatch(source,home);
+ const awayMention=teamNamesMatch(source,away);
+ if(homeMention&&!awayMention)return canonicalBetTeam(home);
+ if(awayMention&&!homeMention)return canonicalBetTeam(away);
+
+ const raw=pick.trim().toLowerCase();
+ const betType=normalizeTeamName(match.betType||'');
+
+ // Výsledkové a dvojité šance, kde název týmu nemusí být v textu tipu.
+ if(raw==='1'||raw==='1x'||sourceNorm.includes('dvojita sance 1x')||betType.includes('1 vyhra domacich'))return canonicalBetTeam(home);
+ if(raw==='2'||raw==='x2'||sourceNorm.includes('dvojita sance x2')||betType.includes('2 vyhra hostu'))return canonicalBetTeam(away);
+
+ // Obecné trhy na celý zápas se žádnému klubu nepřipisují.
+ return '';
+}
+
+function normalizedGeneralMarket(match){
+ if(matchSport(match)!=='Fotbal')return '';
+ if(directlyTrackedTeam(match))return '';
+ const source=[match.betType,match.pick].filter(Boolean).join(' ');
+ const n=normalizeTeamName(source);
+
+ const over=n.match(/\b(?:over|vice nez)\s*(\d+)[ ,.]?(\d*)/);
+ if(over){
+   const decimal=over[2]?`${over[1]},${over[2]}`:over[1];
+   return `Over ${decimal}`;
+ }
+ const under=n.match(/\b(?:under|mene nez)\s*(\d+)[ ,.]?(\d*)/);
+ if(under){
+   const decimal=under[2]?`${under[1]},${under[2]}`:under[1];
+   return `Under ${decimal}`;
+ }
+ if(n.includes('oba tymy')||n.includes('btts'))return 'BTTS';
+ if(n.includes('remiza')||String(match.pick||'').trim().toLowerCase()==='x')return 'Remíza';
+
+ // Zachová ostatní obecné trhy (rohy, střely...), aby se nic neztratilo.
+ const type=String(match.betType||'').trim();
+ if(type&&type!=='Jiný typ')return type;
+ return String(match.pick||'').trim()||'Jiný trh';
+}
+
+function aggregateDirectTeamBets(tickets){
+ const map=new Map();
+ tickets.forEach(ticket=>(ticket.matches||[]).forEach(match=>{
+   const team=directlyTrackedTeam(match);
+   if(!team)return;
+   const key=normalizeTeamName(team);
+   if(!map.has(key))map.set(key,{name:team,total:0,wins:0,losses:0,other:0});
+   const x=map.get(key);
+   x.total++;
+   if(match.status==='Vyšla')x.wins++;
+   else if(match.status==='Nevyšla')x.losses++;
+   else x.other++;
+ }));
+ return [...map.values()].map(x=>{
+   const evaluated=x.wins+x.losses;
+   return {...x,success:evaluated?x.wins/evaluated*100:0};
+ }).sort((a,b)=>b.total-a.total||b.success-a.success||a.name.localeCompare(b.name,'cs'));
+}
+
+function aggregateGeneralMarkets(tickets){
+ const map=new Map();
+ tickets.forEach(ticket=>(ticket.matches||[]).forEach(match=>{
+   const market=normalizedGeneralMarket(match);
+   if(!market)return;
+   const key=normalizeTeamName(market);
+   if(!map.has(key))map.set(key,{name:market,total:0,wins:0,losses:0,other:0});
+   const x=map.get(key);
+   x.total++;
+   if(match.status==='Vyšla')x.wins++;
+   else if(match.status==='Nevyšla')x.losses++;
+   else x.other++;
+ }));
+ return [...map.values()].map(x=>{
+   const evaluated=x.wins+x.losses;
+   return {...x,success:evaluated?x.wins/evaluated*100:0};
+ }).sort((a,b)=>b.total-a.total||b.success-a.success||a.name.localeCompare(b.name,'cs'));
+}
+
+function renderTeamBetStats(){
+ const host=document.getElementById('teamBetAnalytics');
+ if(!host)return;
+ const tickets=filteredTickets();
+ const all=aggregateDirectTeamBets(tickets);
+ const q=String(document.getElementById('teamBetSearch')?.value||'').trim().toLowerCase();
+ const rows=q?all.filter(x=>x.name.toLowerCase().includes(q)):all;
+ const count=document.getElementById('teamBetCount');
+ if(count)count.textContent=`${rows.length}/${all.length} týmů`;
+
+ host.innerHTML=`<div class="table-wrap"><table class="analytics-table"><thead><tr>
+   <th>Tým</th><th>Vsazeno</th><th>Vyšlo</th><th>Nevyšlo</th><th>Úspěšnost</th>
+ </tr></thead><tbody>${rows.length?rows.map(x=>{
+   const color=analyticsColor(x.success,x.wins+x.losses);
+   return `<tr>
+     <td><span class="status-dot status-${color}"></span><strong>${esc(x.name)}</strong></td>
+     <td>${x.total}</td><td>${x.wins}</td><td>${x.losses}</td><td>${x.success.toFixed(1)} %</td>
+   </tr>`;
+ }).join(''):`<tr><td colspan="5">Žádný tým neodpovídá filtru.</td></tr>`}</tbody></table></div>
+ <div class="team-bet-note">Počítají se pouze sázky přímo na konkrétní tým (výhra, 1X/X2, postup, týmový gól, tým + další podmínka). Over/under celého zápasu se klubu nepřipisuje. Otevřené nebo stornované tipy jsou v počtu „Vsazeno“, ale nevstupují do procenta úspěšnosti.</div>`;
+}
+
+function renderGeneralMarketStats(){
+ const host=document.getElementById('generalMarketAnalytics');
+ if(!host)return;
+ const rows=aggregateGeneralMarkets(filteredTickets());
+ host.innerHTML=`<div class="table-wrap"><table class="analytics-table"><thead><tr>
+   <th>Trh</th><th>Vsazeno</th><th>Vyšlo</th><th>Nevyšlo</th><th>Úspěšnost</th>
+ </tr></thead><tbody>${rows.length?rows.map(x=>{
+   const color=analyticsColor(x.success,x.wins+x.losses);
+   return `<tr>
+     <td><span class="status-dot status-${color}"></span><strong>${esc(x.name)}</strong></td>
+     <td>${x.total}</td><td>${x.wins}</td><td>${x.losses}</td><td>${x.success.toFixed(1)} %</td>
+   </tr>`;
+ }).join(''):`<tr><td colspan="5">Zatím nejsou žádné obecné fotbalové trhy.</td></tr>`}</tbody></table></div>
+ <div class="team-bet-note">Stejné trhy se automaticky sjednocují (např. „Více než 1,5 gólu v zápase“ a „Over 1,5“ jsou jedna statistika).</div>`;
+}
+
 function renderAnalyticsTables(){
  const tickets=filteredTickets();
  const settled=filteredSettledTickets();
@@ -3972,6 +4150,8 @@ function renderAnalyticsTables(){
  }).join(''):`<tr><td colspan="9">Pro zvolené období zatím nejsou data.</td></tr>`}</tbody></table></div>
  <div class="small" style="margin-top:8px">${allocatedNote}</div>`;
  renderMonthAnalytics();
+ renderTeamBetStats();
+ renderGeneralMarketStats();
 }
 function dayStatsForTickets(tickets){
  const names=['Neděle','Pondělí','Úterý','Středa','Čtvrtek','Pátek','Sobota'];
@@ -4053,6 +4233,15 @@ function renderStats(){
    <div id="monthAnalytics"></div>
  </div>
  <div class="analytics-section"><h2 style="font-size:18px">6. Analýza podle typu sázky</h2><div id="betTypeAnalytics"></div></div>
+ <div class="analytics-section">
+   <h2 style="font-size:18px">7. Vsazené fotbalové týmy</h2>
+   <div class="team-bet-tools">
+     <input id="teamBetSearch" placeholder="Hledat tým…" oninput="renderTeamBetStats()">
+     <div id="teamBetCount" class="team-bet-count"></div>
+   </div>
+   <div id="teamBetAnalytics"></div>
+ </div>
+ <div class="analytics-section"><h2 style="font-size:18px">8. Obecné fotbalové trhy</h2><div id="generalMarketAnalytics"></div></div>
  <div class="analytics-section"><h2 style="font-size:18px">Vývoj bankrollu</h2>${bankrollChart()}</div>`;
  renderAnalyticsTables();
 }

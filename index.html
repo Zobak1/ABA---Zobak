@@ -1720,6 +1720,20 @@ body.codex-open{
 .analysis-v150-empty{padding:28px;text-align:center;color:var(--muted)}
 @media(max-width:700px){.analysis-v150-toolbar{align-items:stretch}.analysis-v150-toolbar input{min-width:100%}.analysis-v150-pager{align-items:stretch;flex-direction:column}}
 
+
+/* ABA v1.5.1 — zarovnání pole Evropský pohár v týdnu */
+.match .row:has(select[data-field="euroWeek"]),
+.match-card .row:has(select[data-field="euroWeek"]){
+  align-items:start !important;
+}
+select[data-field="euroWeek"]{
+  width:100% !important;
+  max-width:none !important;
+  margin:0 !important;
+  position:static !important;
+  transform:none !important;
+}
+
 </style>
 </head>
 <body>
@@ -1737,7 +1751,7 @@ body.codex-open{
     <img src="icon-512.png?v=0111" alt="ABA – Angel Bet Analytics">
     <div id="abaSplashTitle">ABA</div>
     <div id="abaSplashSub">ANGEL BET ANALYTICS</div>
-    <div id="abaSplashVersion">v1.5.0</div>
+    <div id="abaSplashVersion">v1.5.1</div>
   </div>
 </div>
 
@@ -1809,7 +1823,7 @@ body.codex-open{
 
 <header>
   <strong>ABA – Angel Bet Analytics</strong>
-  <div style="display:flex;align-items:center;gap:10px"><span id="versionBadge" class="small">v1.5.0</span><span>Zobák</span><button class="secondary" onclick="logout()">Odhlásit</button></div>
+  <div style="display:flex;align-items:center;gap:10px"><span id="versionBadge" class="small">v1.5.1</span><span>Zobák</span><button class="secondary" onclick="logout()">Odhlásit</button></div>
 </header>
 <div class="layout">
 <nav>
@@ -1837,7 +1851,7 @@ body.codex-open{
 </section>
 
 <script>
-const APP_VERSION='1.5.0';
+const APP_VERSION='1.5.1';
 const KEY='abu_zobak_v1';
 const AUTH_KEY='abu_auth_v1';
 const BACKUP_KEY='abu_internal_backups_v1';

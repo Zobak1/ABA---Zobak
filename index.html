@@ -1704,7 +1704,7 @@ body.codex-open{
     <img src="icon-512.png?v=0111" alt="ABA – Angel Bet Analytics">
     <div id="abaSplashTitle">ABA</div>
     <div id="abaSplashSub">ANGEL BET ANALYTICS</div>
-    <div id="abaSplashVersion">v1.4.0</div>
+    <div id="abaSplashVersion">v1.4.1</div>
   </div>
 </div>
 
@@ -1776,7 +1776,7 @@ body.codex-open{
 
 <header>
   <strong>ABA – Angel Bet Analytics</strong>
-  <div style="display:flex;align-items:center;gap:10px"><span id="versionBadge" class="small">v1.4.0</span><span>Zobák</span><button class="secondary" onclick="logout()">Odhlásit</button></div>
+  <div style="display:flex;align-items:center;gap:10px"><span id="versionBadge" class="small">v1.4.1</span><span>Zobák</span><button class="secondary" onclick="logout()">Odhlásit</button></div>
 </header>
 <div class="layout">
 <nav>
@@ -1804,7 +1804,7 @@ body.codex-open{
 </section>
 
 <script>
-const APP_VERSION='1.4.0';
+const APP_VERSION='1.4.1';
 const KEY='abu_zobak_v1';
 const AUTH_KEY='abu_auth_v1';
 const BACKUP_KEY='abu_internal_backups_v1';
@@ -3811,6 +3811,40 @@ function aggregateBySport(tickets){
  });
  return finalizeTipAggregate(Object.values(map));
 }
+
+function countryLeagueLabel(country){
+ const raw=String(country||'').trim();
+ const key=normalizeTeamName(raw);
+ const special={
+   'evropske pohary':'Evropské poháry',
+   'liga mistru':'Liga mistrů',
+   'evropska liga':'Evropská liga',
+   'konferencni liga':'Konferenční liga'
+ };
+ if(special[key])return special[key];
+
+ const names={
+   'cesko':'Česká liga','ceska republika':'Česká liga',
+   'slovensko':'Slovenská liga','nemecko':'Německá liga',
+   'svedsko':'Švédská liga','portugalsko':'Portugalská liga',
+   'dansko':'Dánská liga','rakousko':'Rakouská liga',
+   'spanelsko':'Španělská liga','francie':'Francouzská liga',
+   'italie':'Italská liga','anglie':'Anglická liga',
+   'nizozemsko':'Nizozemská liga','belgie':'Belgická liga',
+   'svycarsko':'Švýcarská liga','polsko':'Polská liga',
+   'norsko':'Norská liga','finsko':'Finská liga',
+   'island':'Islandská liga','turecko':'Turecká liga',
+   'recko':'Řecká liga','chorvatsko':'Chorvatská liga',
+   'srbsko':'Srbská liga','skotsko':'Skotská liga',
+   'irsko':'Irská liga','rumunsko':'Rumunská liga',
+   'bulharsko':'Bulharská liga','ukrajina':'Ukrajinská liga',
+   'slovinsko':'Slovinská liga','lotyssko':'Lotyšská liga',
+   'madarsko':'Maďarská liga','saudska arabie':'Saúdskoarabská liga',
+   'paraguay':'Paraguayská liga'
+ };
+ return names[key]||(raw?`${raw} – liga`:'Liga neuvedena');
+}
+
 function aggregateByCountry(tickets){
  const map={};
  analyticsRows(tickets).forEach(row=>{
@@ -4110,13 +4144,13 @@ function renderAnalyticsTables(){
  <div class="small" style="margin-top:8px">${allocatedNote}</div>`;
 
  document.getElementById('countryAnalytics').innerHTML=`<div class="table-wrap"><table class="analytics-table"><thead><tr>
- <th>Země / skupina</th><th>Soutěže</th><th>Unikátní zápasy</th><th>Tipy</th><th>Úspěšné</th><th>Neúspěšné</th><th>Úspěšnost tipů</th><th>Přiřazené ROI†</th><th>Přiřazený P/L†</th>
+ <th>Země / skupina</th><th>Liga podle země</th><th>Unikátní zápasy</th><th>Tipy</th><th>Úspěšné</th><th>Neúspěšné</th><th>Úspěšnost tipů</th><th>Přiřazené ROI†</th><th>Přiřazený P/L†</th>
  </tr></thead><tbody>${countries.length?countries.map(x=>{
    const fin=financials['C:'+x.name]||{stake:0,profit:0};
    const color=analyticsColor(x.success,x.wins+x.losses);
-   return `<tr><td><span class="status-dot status-${color}"></span>${esc(x.name)}</td><td>${esc(x.league)}</td><td>${x.uniqueMatches}</td><td>${x.total}</td><td>${x.wins}</td><td>${x.losses}</td><td>${x.success.toFixed(1)} %</td><td class="${roiValue(fin)>=0?'pos':'neg'}">${roiValue(fin).toFixed(2)} %</td><td class="${fin.profit>=0?'pos':'neg'}">${fin.profit>=0?'+':''}${moneyExact(fin.profit)}</td></tr>`;
+   return `<tr><td><span class="status-dot status-${color}"></span>${esc(x.name)}</td><td><strong>${esc(countryLeagueLabel(x.name))}</strong></td><td>${x.uniqueMatches}</td><td>${x.total}</td><td>${x.wins}</td><td>${x.losses}</td><td>${x.success.toFixed(1)} %</td><td class="${roiValue(fin)>=0?'pos':'neg'}">${roiValue(fin).toFixed(2)} %</td><td class="${fin.profit>=0?'pos':'neg'}">${fin.profit>=0?'+':''}${moneyExact(fin.profit)}</td></tr>`;
  }).join(''):`<tr><td colspan="9">Pro zvolené období zatím nejsou data.</td></tr>`}</tbody></table></div>
- <div class="small" style="margin-top:8px">${allocatedNote}</div>`;
+ <div class="small" style="margin-top:8px">Názvy jsou sjednocené podle země (např. Česko = Česká liga), nezávisle na obchodním názvu soutěže. Evropské poháry zůstávají vedené samostatně.<br>${allocatedNote}</div>`;
 
  document.getElementById('leagueAnalytics').innerHTML=`<div class="table-wrap"><table class="analytics-table"><thead><tr>
  <th>Soutěž</th><th>Země / skupina</th><th>Unikátní zápasy</th><th>Tipy</th><th>Úspěšné</th><th>Neúspěšné</th><th>Úspěšnost tipů</th><th>Přiřazené ROI†</th><th>Přiřazený P/L†</th>

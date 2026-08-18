@@ -1,4 +1,4 @@
-const CACHE='aba-pwa-v1-4-1-country-league-labels';
+const CACHE='aba-pwa-v1-5-0-analysis-database';
 const ASSETS=[
   './',
   './index.html',

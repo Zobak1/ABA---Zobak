@@ -1769,6 +1769,40 @@ body.codex-open{
   }
 }
 
+
+/* ABA v1.5.4 — samostatná dvousloupcová řádka Datum utkání + Evropský pohár */
+.ticket-meta2{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+  gap:12px;
+  width:100%;
+  align-items:start;
+}
+.ticket-meta2-field{
+  min-width:0;
+  width:100%;
+}
+.ticket-meta2-field label{
+  display:block;
+  margin:0 0 6px 0;
+  color:var(--muted);
+  font-size:13px;
+}
+.ticket-meta2-field input,
+.ticket-meta2-field select{
+  display:block;
+  box-sizing:border-box;
+  width:100%;
+  min-width:0;
+  max-width:100%;
+  margin:0;
+  position:static;
+  transform:none;
+}
+@media(max-width:760px){
+  .ticket-meta2{grid-template-columns:1fr;}
+}
+
 </style>
 </head>
 <body>
@@ -1786,7 +1820,7 @@ body.codex-open{
     <img src="icon-512.png?v=0111" alt="ABA – Angel Bet Analytics">
     <div id="abaSplashTitle">ABA</div>
     <div id="abaSplashSub">ANGEL BET ANALYTICS</div>
-    <div id="abaSplashVersion">v1.5.3</div>
+    <div id="abaSplashVersion">v1.5.4</div>
   </div>
 </div>
 
@@ -1858,7 +1892,7 @@ body.codex-open{
 
 <header>
   <strong>ABA – Angel Bet Analytics</strong>
-  <div style="display:flex;align-items:center;gap:10px"><span id="versionBadge" class="small">v1.5.3</span><span>Zobák</span><button class="secondary" onclick="logout()">Odhlásit</button></div>
+  <div style="display:flex;align-items:center;gap:10px"><span id="versionBadge" class="small">v1.5.4</span><span>Zobák</span><button class="secondary" onclick="logout()">Odhlásit</button></div>
 </header>
 <div class="layout">
 <nav>
@@ -1886,7 +1920,7 @@ body.codex-open{
 </section>
 
 <script>
-const APP_VERSION='1.5.3';
+const APP_VERSION='1.5.4';
 const KEY='abu_zobak_v1';
 const AUTH_KEY='abu_auth_v1';
 const BACKUP_KEY='abu_internal_backups_v1';
@@ -3213,14 +3247,20 @@ function matchEditor(m,i){
  ${field('Typ sázky',`<select onchange="setBetType(${i},this.value)">${betTypeOptions(m.betCategory,m.betType)}</select>`)}
  ${field('Země / soutěž',`<select onchange="setCompetition(${i},this.value)">${competitionOptions(m.country,m.league)}</select>`)}
  </div>
- <div class="grid3 ticket-meta-row" style="margin-top:8px">
- ${field('Datum utkání',`<input type="date" value="${esc(m.eventDate||'')}" oninput="setMatch(${i},'eventDate',this.value)">`)}
- ${field('Evropský pohár v týdnu',`<select onchange="setMatch(${i},'euroLoad',this.value)">
-   <option value="none" ${m.euroLoad==='none'?'selected':''}>Nikdo</option>
-   <option value="home" ${m.euroLoad==='home'?'selected':''}>🏆 Domácí tým</option>
-   <option value="away" ${m.euroLoad==='away'?'selected':''}>🏆 Hostující tým</option>
-   <option value="both" ${m.euroLoad==='both'?'selected':''}>🏆 Oba týmy</option>
- </select>`)}
+ <div class="ticket-meta2" style="margin-top:8px">
+   <div class="ticket-meta2-field">
+     <label>Datum utkání</label>
+     <input type="date" value="${esc(m.eventDate||'')}" oninput="setMatch(${i},'eventDate',this.value)">
+   </div>
+   <div class="ticket-meta2-field">
+     <label>Evropský pohár v týdnu</label>
+     <select onchange="setMatch(${i},'euroLoad',this.value)">
+       <option value="none" ${m.euroLoad==='none'?'selected':''}>Nikdo</option>
+       <option value="home" ${m.euroLoad==='home'?'selected':''}>🏆 Domácí tým</option>
+       <option value="away" ${m.euroLoad==='away'?'selected':''}>🏆 Hostující tým</option>
+       <option value="both" ${m.euroLoad==='both'?'selected':''}>🏆 Oba týmy</option>
+     </select>
+   </div>
  </div>
  ${field('Poznámka',`<textarea oninput="setMatch(${i},'note',this.value)">${esc(m.note)}</textarea>`)}
  <div class="analysis-ticket-link">

@@ -1,4 +1,4 @@
-const CACHE='aba-pwa-v1-6-0-tickets-analyses';
+const CACHE='aba-pwa-v1-6-1-screenshot-import';
 const ASSETS=[
   './',
   './index.html',

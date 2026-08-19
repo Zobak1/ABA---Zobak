@@ -1803,6 +1803,12 @@ body.codex-open{
   .ticket-meta2{grid-template-columns:1fr;}
 }
 
+
+/* ABA 1.6.1 — import tiketu ze screenshotu */
+.screenshot-import{margin:12px 0;padding:14px;border:1px solid var(--line);border-radius:14px;background:linear-gradient(180deg,var(--card),var(--card2))}
+.screenshot-import-actions{display:flex;gap:10px;flex-wrap:wrap;align-items:center}.screenshot-import input[type=file]{display:none}
+.screenshot-preview{margin-top:10px;max-width:280px;max-height:220px;border-radius:10px;border:1px solid var(--line);display:none}
+.screenshot-status{margin-top:9px;color:var(--muted);font-size:13px}.screenshot-status.ok{color:var(--pos)}.screenshot-status.err{color:var(--neg)}
 </style>
 </head>
 <body>
@@ -1920,7 +1926,7 @@ body.codex-open{
 </section>
 
 <script>
-const APP_VERSION='1.6.0';
+const APP_VERSION='1.6.1';
 const KEY='abu_zobak_v1';
 const AUTH_KEY='abu_auth_v1';
 const BACKUP_KEY='abu_internal_backups_v1';
@@ -3059,7 +3065,15 @@ function updateDraftRisk(){
 }
 function renderDraft(){
  const el=document.getElementById('view-new');
- el.innerHTML=`<h2>Nový tiket</h2><div class="ticket-head">
+ el.innerHTML=`<h2>Nový tiket</h2>
+ <div class="screenshot-import">
+   <strong>Import tiketu ze screenshotu</strong>
+   <div class="small" style="margin:5px 0 10px">Vyber screenshot tiketu. ABA jej odešle ke zpracování a rozpoznané údaje předvyplní do formuláře ke kontrole.</div>
+   <div class="screenshot-import-actions"><label class="primary" style="cursor:pointer">Vybrat screenshot<input id="ticket-screenshot-file" type="file" accept="image/*"></label><button id="ticket-screenshot-send" class="secondary" type="button" disabled>Rozpoznat tiket</button></div>
+   <img id="ticket-screenshot-preview" class="screenshot-preview" alt="Náhled screenshotu">
+   <div id="ticket-screenshot-status" class="screenshot-status"></div>
+ </div>
+ <div class="ticket-head">
  ${field('Datum',`<input id="d-date" value="${draft.date}">`)}
  ${field('Vklad',`<input id="d-stake" inputmode="decimal" value="${draft.stake}">`)}
  ${field('Poznámka k tiketu',`<input id="d-note" value="${esc(draft.note)}">`)}
@@ -3070,7 +3084,72 @@ function renderDraft(){
  document.getElementById('d-date').oninput=e=>draft.date=e.target.value;
  document.getElementById('d-stake').oninput=e=>{draft.stake=Number(e.target.value.replace(',','.'))||0;updateDraftTotals()};
  document.getElementById('d-note').oninput=e=>draft.note=e.target.value;
+ setupScreenshotImport();
 }
+
+const SCREENSHOT_WORKER_URL='https://aba-screenshotimport.zobak1.workers.dev/';
+let screenshotImportDataUrl='';
+function screenshotStatus(text,type=''){
+ const el=document.getElementById('ticket-screenshot-status');if(!el)return;
+ el.textContent=text||'';el.className='screenshot-status'+(type?' '+type:'');
+}
+function setupScreenshotImport(){
+ const file=document.getElementById('ticket-screenshot-file');
+ const send=document.getElementById('ticket-screenshot-send');
+ const preview=document.getElementById('ticket-screenshot-preview');
+ if(!file||!send)return;
+ file.onchange=()=>{
+   const f=file.files&&file.files[0]; if(!f)return;
+   if(!f.type.startsWith('image/')){screenshotStatus('Vybraný soubor není obrázek.','err');return}
+   const reader=new FileReader();
+   reader.onload=()=>{screenshotImportDataUrl=String(reader.result||'');preview.src=screenshotImportDataUrl;preview.style.display='block';send.disabled=false;screenshotStatus('Screenshot připraven. Klepni na „Rozpoznat tiket“.')};
+   reader.onerror=()=>screenshotStatus('Screenshot se nepodařilo načíst.','err');
+   reader.readAsDataURL(f);
+ };
+ send.onclick=importTicketScreenshot;
+}
+function firstValue(obj,keys,def=''){
+ for(const k of keys){if(obj&&obj[k]!==undefined&&obj[k]!==null&&obj[k]!=='')return obj[k]}
+ return def;
+}
+function normalizeImportedMatch(m){
+ return {
+  name:String(firstValue(m,['name','match','event','fixture'],'')).trim(),
+  pick:String(firstValue(m,['pick','tip','selection','bet'],'')).trim(),
+  odds:Number(String(firstValue(m,['odds','odd','kurz'],1)).replace(',','.'))||1,
+  result:'',eventDate:String(firstValue(m,['eventDate','date','matchDate'],'')).slice(0,10),status:'Čeká',
+  sport:String(firstValue(m,['sport'],'Fotbal'))||'Fotbal',country:String(firstValue(m,['country','state'],'')||''),
+  league:String(firstValue(m,['league','competition'],'')||''),euroLoad:'none',betCategory:String(firstValue(m,['betCategory','marketCategory'],'')||''),
+  betType:String(firstValue(m,['betType','market','type'],'')||''),note:String(firstValue(m,['note'],'')||''),linkedAnalysisId:null
+ };
+}
+function applyImportedTicket(payload){
+ const root=payload&&payload.ticket?payload.ticket:(payload&&payload.data&&payload.data.ticket?payload.data.ticket:(payload&&payload.data?payload.data:payload));
+ if(!root||typeof root!=='object')throw new Error('Worker nevrátil rozpoznaná data tiketu.');
+ const matches=Array.isArray(root.matches)?root.matches:(Array.isArray(root.selections)?root.selections:(Array.isArray(root.events)?root.events:[]));
+ if(!matches.length)throw new Error('Na screenshotu se nepodařilo najít žádný zápas.');
+ const imported=matches.map(normalizeImportedMatch).filter(m=>m.name||m.pick);
+ if(!imported.length)throw new Error('Rozpoznaná data neobsahují názvy zápasů ani tipy.');
+ draft.matches=imported;
+ const date=String(firstValue(root,['date','ticketDate','createdAt'],draft.date)||draft.date).slice(0,10);if(/^\d{4}-\d{2}-\d{2}$/.test(date))draft.date=date;
+ const stake=Number(String(firstValue(root,['stake','amount','vklad'],draft.stake)).replace(/[^0-9,.-]/g,'').replace(',','.'));if(Number.isFinite(stake))draft.stake=stake;
+ const note=firstValue(root,['note','bookmaker','ticketId'],'');if(note&&!draft.note)draft.note=String(note);
+ renderDraft();
+ screenshotStatus('Tiket byl rozpoznán. Zkontroluj údaje a potom použij „Uložit tiket“.','ok');
+}
+async function importTicketScreenshot(){
+ if(!screenshotImportDataUrl)return screenshotStatus('Nejdřív vyber screenshot.','err');
+ const btn=document.getElementById('ticket-screenshot-send');if(btn){btn.disabled=true;btn.textContent='Rozpoznávám…'}
+ screenshotStatus('Odesílám screenshot ke zpracování…');
+ try{
+  const res=await fetch(SCREENSHOT_WORKER_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({image:screenshotImportDataUrl})});
+  const text=await res.text();let payload;try{payload=JSON.parse(text)}catch{throw new Error('Worker vrátil neplatnou odpověď ('+res.status+').')}
+  if(!res.ok)throw new Error(payload.error||payload.message||('Worker vrátil chybu '+res.status+'.'));
+  applyImportedTicket(payload);
+ }catch(err){screenshotStatus('Import se nepodařil: '+(err&&err.message?err.message:String(err)),'err')}
+ finally{const b=document.getElementById('ticket-screenshot-send');if(b){b.disabled=false;b.textContent='Rozpoznat tiket'}}
+}
+
 function field(label,html){return `<div><label>${label}</label>${html}</div>`}
 function sportOptions(selected='Fotbal'){
  return SPORTS.map(s=>`<option value="${esc(s)}" ${s===selected?'selected':''}>${esc(s)}</option>`).join('');

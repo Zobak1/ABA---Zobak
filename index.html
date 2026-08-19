@@ -1810,7 +1810,7 @@ body.codex-open{
 .screenshot-preview{margin-top:10px;max-width:280px;max-height:220px;border-radius:10px;border:1px solid var(--line);display:none}
 .screenshot-status{margin-top:9px;color:var(--muted);font-size:13px}.screenshot-status.ok{color:var(--pos)}.screenshot-status.err{color:var(--neg)}
 
-/* ABA v1.6.4 — fotbalový typ 1/X/2 z importu */
+/* ABA v1.6.5 — fotbalový typ 1/X/2 z importu */
 .match-card{overflow:hidden;contain:layout paint;}
 .match-card .grid3,.ticket-meta2{width:100%;max-width:100%;}
 .match-card .grid3 > div,.ticket-meta2-field{min-width:0;max-width:100%;overflow:hidden;}
@@ -1824,6 +1824,15 @@ body.codex-open{
 }
 @media (max-width:760px){
  .match-card .grid3,.ticket-meta2{display:grid!important;grid-template-columns:minmax(0,1fr)!important;gap:8px!important;}
+}
+
+/* ABA v1.6.5 — stabilní iPad layout; Datum utkání odstraněno */
+.ticket-meta-single{grid-template-columns:minmax(0,1fr)!important;}
+.ticket-meta-single .ticket-meta2-field{grid-column:1 / -1!important;}
+@media (min-width:761px) and (max-width:1200px){
+ .ticket-meta-single{grid-template-columns:minmax(0,1fr)!important;}
+ .match-card{overflow:visible;contain:none;}
+ .match-card .grid3,.ticket-meta2{align-items:start;}
 }
 
 </style>
@@ -1843,7 +1852,7 @@ body.codex-open{
     <img src="icon-512.png?v=0111" alt="ABA – Angel Bet Analytics">
     <div id="abaSplashTitle">ABA</div>
     <div id="abaSplashSub">ANGEL BET ANALYTICS</div>
-    <div id="abaSplashVersion">v1.6.4</div>
+    <div id="abaSplashVersion">v1.6.5</div>
   </div>
 </div>
 
@@ -1915,7 +1924,7 @@ body.codex-open{
 
 <header>
   <strong>ABA – Angel Bet Analytics</strong>
-  <div style="display:flex;align-items:center;gap:10px"><span id="versionBadge" class="small">v1.6.4</span><span>Zobák</span><button class="secondary" onclick="logout()">Odhlásit</button></div>
+  <div style="display:flex;align-items:center;gap:10px"><span id="versionBadge" class="small">v1.6.5</span><span>Zobák</span><button class="secondary" onclick="logout()">Odhlásit</button></div>
 </header>
 <div class="layout">
 <nav>
@@ -3431,11 +3440,7 @@ function matchEditor(m,i){
  ${field('Typ sázky',`<select onchange="setBetType(${i},this.value)">${betTypeOptions(m.betCategory,m.betType)}</select>`)}
  ${field('Země / soutěž',`<select onchange="setCompetition(${i},this.value)">${competitionOptions(m.country,m.league)}</select>`)}
  </div>
- <div class="ticket-meta2" style="margin-top:8px">
-   <div class="ticket-meta2-field">
-     <label>Datum utkání</label>
-     <input type="date" value="${esc(m.eventDate||'')}" oninput="setMatch(${i},'eventDate',this.value)">
-   </div>
+ <div class="ticket-meta2 ticket-meta-single" style="margin-top:8px">
    <div class="ticket-meta2-field">
      <label>Evropský pohár v týdnu</label>
      <select onchange="setMatch(${i},'euroLoad',this.value)">
@@ -3576,7 +3581,6 @@ function matchDetail(t,i){
  ${field('Země / soutěž',`<select onchange="editCompetition('${t.id}',${i},this.value)">${competitionOptions(m.country,m.league)}</select>`)}
  </div>
  <div class="grid3" style="margin-top:8px">
- ${field('Datum utkání',`<input type="date" value="${esc(m.eventDate||'')}" onchange="editMatch('${t.id}',${i},'eventDate',this.value)">`)}
  ${field('Evropský pohár v týdnu',`<select onchange="editMatch('${t.id}',${i},'euroLoad',this.value)">
    <option value="none" ${m.euroLoad==='none'?'selected':''}>Nikdo</option>
    <option value="home" ${m.euroLoad==='home'?'selected':''}>🏆 Domácí tým</option>

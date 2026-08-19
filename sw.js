@@ -1,4 +1,4 @@
-const CACHE='aba-pwa-v1-6-4-football-type-fix';
+const CACHE='aba-pwa-v1-6-5-layout-no-event-date';
 const ASSETS=[
   './',
   './index.html',

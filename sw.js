@@ -1,4 +1,4 @@
-const CACHE='aba-pwa-v1-6-1-screenshot-import';
+const CACHE='aba-pwa-v1-6-2-import-fix';
 const ASSETS=[
   './',
   './index.html',

@@ -1,4 +1,4 @@
-const CACHE='aba-pwa-v1-5-4-ticket-meta2';
+const CACHE='aba-pwa-v1-6-0-tickets-analyses';
 const ASSETS=[
   './',
   './index.html',

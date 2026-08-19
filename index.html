@@ -1820,7 +1820,7 @@ body.codex-open{
     <img src="icon-512.png?v=0111" alt="ABA – Angel Bet Analytics">
     <div id="abaSplashTitle">ABA</div>
     <div id="abaSplashSub">ANGEL BET ANALYTICS</div>
-    <div id="abaSplashVersion">v1.5.4</div>
+    <div id="abaSplashVersion">v1.6.0</div>
   </div>
 </div>
 
@@ -1892,7 +1892,7 @@ body.codex-open{
 
 <header>
   <strong>ABA – Angel Bet Analytics</strong>
-  <div style="display:flex;align-items:center;gap:10px"><span id="versionBadge" class="small">v1.5.4</span><span>Zobák</span><button class="secondary" onclick="logout()">Odhlásit</button></div>
+  <div style="display:flex;align-items:center;gap:10px"><span id="versionBadge" class="small">v1.6.0</span><span>Zobák</span><button class="secondary" onclick="logout()">Odhlásit</button></div>
 </header>
 <div class="layout">
 <nav>
@@ -1920,7 +1920,7 @@ body.codex-open{
 </section>
 
 <script>
-const APP_VERSION='1.5.4';
+const APP_VERSION='1.6.0';
 const KEY='abu_zobak_v1';
 const AUTH_KEY='abu_auth_v1';
 const BACKUP_KEY='abu_internal_backups_v1';
@@ -2143,6 +2143,33 @@ const VERIFIED_TICKETS_20260817=[
     {name:'Iga Swiatek – Maria Sakkari',pick:'Iga Swiatek vyhraje',odds:1.13,result:'2:1',status:'Vyšla',sport:'Tenis',country:'',league:'Tenis',euroLoad:'none'},
     {name:'BK Häcken – Halmstads BK',pick:'BK Häcken vyhraje',odds:1.33,result:'1:0',status:'Vyšla',sport:'Fotbal',country:'Švédsko',league:'Allsvenskan',euroLoad:'none'},
     {name:'Casa Pia AC – SL Benfica',pick:'SL Benfica vyhraje',odds:1.22,result:'0:7',status:'Vyšla',sport:'Fotbal',country:'Portugalsko',league:'Primeira Liga',euroLoad:'none'}]}
+];
+
+const VERIFIED_TICKETS_20260818=[
+  {id:'2026 - 000057',date:'2026-08-18',stake:100000,totalOdds:4.2408339264,payout:0,status:'Proherní',note:'Betano ID 20008571525.',matches:[
+    {name:'Andrey Rublev – Nuno Borges',pick:'Andrey Rublev vyhraje',odds:1.52,result:'0:2',status:'Nevyšla',sport:'Tenis',country:'',league:'Tenis',euroLoad:'none'},
+    {name:'Michael Zheng – Lorenzo Musetti',pick:'Lorenzo Musetti vyhraje',odds:1.53,result:'0:2',status:'Vyšla',sport:'Tenis',country:'',league:'Tenis',euroLoad:'none'},
+    {name:'Taylor Fritz – Daniel Merida Aguilar',pick:'Taylor Fritz vyhraje',odds:1.24,result:'2:0',status:'Vyšla',sport:'Tenis',country:'',league:'Tenis',euroLoad:'none'},
+    {name:'Xiyu Wang – Elina Svitolina',pick:'Elina Svitolina vyhraje',odds:1.29,result:'',status:'Vrácena',sport:'Tenis',country:'',league:'Tenis',euroLoad:'none'},
+    {name:'Coco Gauff – Ann Li',pick:'Coco Gauff vyhraje',odds:1.14,result:'2:0',status:'Vyšla',sport:'Tenis',country:'',league:'Tenis',euroLoad:'none'}]},
+  {id:'2026 - 000058',date:'2026-08-18',stake:100000,totalOdds:3.22503285888,payout:250002.55,status:'Výherní',note:'Betano ID 20008581408. Výhra; některé položky vyplaceny předčasně. Svitolina vrácena.',matches:[
+    {name:'Michael Zheng – Lorenzo Musetti',pick:'Lorenzo Musetti vyhraje',odds:1.47,result:'0:2',status:'Vyšla',sport:'Tenis',country:'',league:'Tenis',euroLoad:'none'},
+    {name:'Taylor Fritz – Daniel Merida Aguilar',pick:'Taylor Fritz vyhraje',odds:1.20,result:'2:0',status:'Vyšla',sport:'Tenis',country:'',league:'Tenis',euroLoad:'none'},
+    {name:'Xiyu Wang – Elina Svitolina',pick:'Elina Svitolina vyhraje',odds:1.29,result:'',status:'Vrácena',sport:'Tenis',country:'',league:'Tenis',euroLoad:'none'},
+    {name:'Coco Gauff – Ann Li',pick:'Coco Gauff vyhraje',odds:1.14,result:'2:0',status:'Vyšla',sport:'Tenis',country:'',league:'Tenis',euroLoad:'none'},
+    {name:'Janice Tjen – Mirra Andreeva',pick:'Mirra Andreeva vyhraje',odds:1.12,result:'0:2',status:'Vyšla',sport:'Tenis',country:'',league:'Tenis',euroLoad:'none'},
+    {name:'Marta Kostyuk – Sloane Stephens',pick:'Marta Kostyuk vyhraje',odds:1.11,result:'2:0',status:'Vyšla',sport:'Tenis',country:'',league:'Tenis',euroLoad:'none'}]},
+  {id:'2026 - 000059',date:'2026-08-18',stake:919,totalOdds:23.4432,payout:21544.30,status:'Výherní',note:'Betano ID 20008591228. Výplata včetně Bonus +5 % (1 031,27 Kč).',matches:[
+    {name:'PFC Levski Sofia – AEK Atény',pick:'Remíza',odds:2.22,result:'0:0',status:'Vyšla',sport:'Fotbal',country:'Evropské poháry',league:'',euroLoad:'none'},
+    {name:'Fenerbahçe SK – Olympique Lyon',pick:'Remíza',odds:3.30,result:'1:1',status:'Vyšla',sport:'Fotbal',country:'Evropské poháry',league:'',euroLoad:'none'},
+    {name:'GNK Dinamo Zagreb – Viking FK',pick:'Remíza',odds:3.20,result:'2:2',status:'Vyšla',sport:'Fotbal',country:'Evropské poháry',league:'',euroLoad:'none'}]}
+];
+
+const VERIFIED_ANALYSES_20260819=[
+ {abaId:'ABA-20260819-FOT-ATLETICO-MALAGA',protocolVersion:'1.0',date:'2026-08-19',match:'Atlético Madrid – Málaga',country:'Španělsko',competition:'Španělsko – Španělská liga',recommendation:'Atlético Madrid vyhraje',market:'Fotbal – vítěz',probability:78,confidence:79,expectedScore:'2:0 / 2:1',risks:'Atlético nastoupí bez Juliána Álvareze. Alexander Sørloth je zraněný. Ofenzivní sestava Atlética proto nebude nejsilnější možná. Jde o první ligové utkání sezony, což zvyšuje nejistotu. Málaga může od začátku bránit hluboko a snažit se zápas zpomalit.',verdict:'Vsadit',text:'Atlético vstupuje do nové sezony doma proti nováčkovi z Málagy a rozdíl v individuální kvalitě obou kádrů je výrazný. Hlavní výhodou Atlética je domácí prostředí, kvalitnější obrana a záloha a výrazně větší množství hráčů schopných rozhodnout utkání. Největším negativem tipu jsou absence v útoku Atlética, proto nedoporučujeme handicap ani kombinaci s vyšším počtem gólů. Čistá domácí výhra za kurz 1,38 poskytuje přijatelný poměr rizika a ceny.'},
+ {abaId:'ABA-20260819-TEN-RYBAKINA-SHNAIDER',protocolVersion:'1.0',date:'2026-08-19',match:'Elena Rybakina – Diana Shnaider',country:'USA',competition:'USA – WTA Cincinnati',recommendation:'Elena Rybakina vyhraje',market:'Tenis – vítěz',probability:78,confidence:81,expectedScore:'2:0 / 2:1',risks:'Shnaider je velmi nebezpečná agresivní hráčka. Při poklesu procenta prvního servisu Rybakiny se rozdíl výrazně zmenšuje. Ženský tenis přináší vyšší zápasovou volatilitu.',verdict:'Vsadit',text:'Rybakina je jednou z nejsilnějších hráček současného ženského hardu. Její největší zbraní je servis a první agresivní úder po podání. Shnaider představuje nebezpečnou soupeřku, ale Rybakina má výhodu v kvalitě servisu, zkušenostech z velkých utkání a schopnosti získávat levné body v rozhodujících situacích. Kurz 1,32 přijímáme.'},
+ {abaId:'ABA-20260819-TEN-MUSETTI-FARIA',protocolVersion:'1.0',date:'2026-08-19',match:'Lorenzo Musetti – Jaime Faria',country:'USA',competition:'USA – ATP Cincinnati',recommendation:'Lorenzo Musetti vyhraje',market:'Tenis – vítěz',probability:83,confidence:85,expectedScore:'2:0 / 2:1',risks:'Faria hraje povedený turnaj a nelze ho hodnotit pouze podle žebříčku. Hard není Musettiho absolutně nejsilnější povrch. Případný slabší servisní den Musettiho může zápas výrazně prodloužit.',verdict:'Vsadit',text:'Musetti je jednou z nejsilnějších položek dnešního tiketu. V Cincinnati působí velmi dobře a proti Fariovi má výraznou převahu ve zkušenostech, variabilitě hry a schopnosti měnit tempo výměn. Pro naši sázku potřebujeme pouze vítězství a jeho schopnost řešit komplikované zápasy je významnou výhodou. Kurz 1,33 považujeme za přijatelný.'},
+ {abaId:'ABA-20260819-TEN-MENSIK-TIRANTE',protocolVersion:'1.0',date:'2026-08-19',match:'Jakub Menšík – Thiago Agustín Tirante',country:'USA',competition:'USA – ATP Cincinnati',recommendation:'Jakub Menšík vyhraje',market:'Tenis – vítěz',probability:80,confidence:82,expectedScore:'2:0 / 2:1',risks:'Tirante je během tohoto turnaje ve velmi dobré formě. Menšíkova hra je do značné míry závislá na kvalitě prvního servisu. Kurz 1,45 ukazuje respekt k aktuální formě Tiranteho.',verdict:'Vsadit',text:'Menšík je kvalitativně lepším hráčem a na rychlém hardu mu podmínky velmi dobře vyhovují. Jeho největšími zbraněmi jsou servis, razance prvního úderu a schopnost získávat krátké body. Tirante je ve velmi dobré formě, ale pokud Menšík udrží vysoké procento prvního servisu, měl by mít ve většině vlastních servisních gamů jasnou výhodu. Kurz 1,45 je velmi zajímavý z hlediska poměru pravděpodobnost/kurz.'}
 ];
 
 const defaultData={
@@ -2594,6 +2621,27 @@ function migrateData(raw){
   if(!d.settings.withdrawalUpgrade20260818){
     d.settings.withdrawalsTotal=Number(d.settings.withdrawalsTotal||0)+100000;
     d.settings.withdrawalUpgrade20260818=true;
+  }
+
+  // v1.6.0: import tiketů z 18. 8. 2026 a čtyř samostatných analýz pro 19. 8. 2026.
+  if(!d.settings.ticketLedgerUpgrade20260818V160){
+    const getBid160=t=>String(t?.note||'').match(/Betano ID\s+(\d+)/)?.[1]||'';
+    VERIFIED_TICKETS_20260818.forEach(template=>{
+      const verified=structuredClone(template), bid=getBid160(verified);
+      let index=bid?d.tickets.findIndex(t=>getBid160(t)===bid):-1;
+      if(index<0)index=d.tickets.findIndex(t=>String(t.id||'')===String(verified.id));
+      if(index>=0)d.tickets[index]=verified; else d.tickets.push(verified);
+    });
+    d.tickets.sort((a,b)=>String(a.date||'').localeCompare(String(b.date||''))||String(a.id||'').localeCompare(String(b.id||'')));
+    d.settings.ticketLedgerUpgrade20260818V160=true;
+  }
+  if(!d.settings.analysisUpgrade20260819V160){
+    const existing=new Set((d.analyses||[]).map(a=>String(a.abaId||a.ABA_ID||'')));
+    VERIFIED_ANALYSES_20260819.forEach((template,i)=>{
+      if(existing.has(template.abaId))return;
+      d.analyses.unshift({...structuredClone(template),id:Date.now()+i,alternativeTips:[],linkedTicketId:null,evaluation:'Nehodnoceno',actualScore:'',postMatchNotes:'',createdAt:new Date().toISOString()});
+    });
+    d.settings.analysisUpgrade20260819V160=true;
   }
 
   // v1.1.1: oprava analytických metadat. Změna se provede pouze jednou a

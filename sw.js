@@ -1,4 +1,4 @@
-const CACHE='aba-pwa-v1-6-2-import-fix';
+const CACHE='aba-pwa-v1-6-4-football-type-fix';
 const ASSETS=[
   './',
   './index.html',

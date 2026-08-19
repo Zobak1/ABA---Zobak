@@ -1810,7 +1810,7 @@ body.codex-open{
 .screenshot-preview{margin-top:10px;max-width:280px;max-height:220px;border-radius:10px;border:1px solid var(--line);display:none}
 .screenshot-status{margin-top:9px;color:var(--muted);font-size:13px}.screenshot-status.ok{color:var(--pos)}.screenshot-status.err{color:var(--neg)}
 
-/* ABA v1.6.3 — kompaktní iPad layout bez překrývání */
+/* ABA v1.6.4 — fotbalový typ 1/X/2 z importu */
 .match-card{overflow:hidden;contain:layout paint;}
 .match-card .grid3,.ticket-meta2{width:100%;max-width:100%;}
 .match-card .grid3 > div,.ticket-meta2-field{min-width:0;max-width:100%;overflow:hidden;}
@@ -1843,7 +1843,7 @@ body.codex-open{
     <img src="icon-512.png?v=0111" alt="ABA – Angel Bet Analytics">
     <div id="abaSplashTitle">ABA</div>
     <div id="abaSplashSub">ANGEL BET ANALYTICS</div>
-    <div id="abaSplashVersion">v1.6.3</div>
+    <div id="abaSplashVersion">v1.6.4</div>
   </div>
 </div>
 
@@ -1915,7 +1915,7 @@ body.codex-open{
 
 <header>
   <strong>ABA – Angel Bet Analytics</strong>
-  <div style="display:flex;align-items:center;gap:10px"><span id="versionBadge" class="small">v1.6.3</span><span>Zobák</span><button class="secondary" onclick="logout()">Odhlásit</button></div>
+  <div style="display:flex;align-items:center;gap:10px"><span id="versionBadge" class="small">v1.6.4</span><span>Zobák</span><button class="secondary" onclick="logout()">Odhlásit</button></div>
 </header>
 <div class="layout">
 <nav>
@@ -3148,9 +3148,13 @@ function inferImportedBetType(sport,name,pick,market=''){
    if(players[1] && teamNamesMatch(p,players[1]))return {betCategory:'Tenis – vítěz',betType:'2'};
    return {betCategory:'Tenis – vítěz',betType:''};
  }
- if(sport==='Fotbal' && /vítěz|vyhra|výhra|winner|moneyline/.test(text)){
+ if(sport==='Fotbal' && /vítěz|vyhra|výhra|winner|moneyline|výsledek zápasu|match result|1x2/.test(text)){
    const teams=splitMatchTeams(name);
-   const p=String(pick||'');
+   const p=String(pick||'').trim();
+   const pl=p.toLowerCase();
+   if(/(^|\s)(x|remíza|remiza|draw)(\s|$)/.test(pl))return {betCategory:'Výsledek zápasu',betType:'X – remíza'};
+   if(/^1$/.test(pl))return {betCategory:'Výsledek zápasu',betType:'1 – výhra domácích'};
+   if(/^2$/.test(pl))return {betCategory:'Výsledek zápasu',betType:'2 – výhra hostů'};
    if(teams[0] && teamNamesMatch(p,teams[0]))return {betCategory:'Výsledek zápasu',betType:'1 – výhra domácích'};
    if(teams[1] && teamNamesMatch(p,teams[1]))return {betCategory:'Výsledek zápasu',betType:'2 – výhra hostů'};
  }

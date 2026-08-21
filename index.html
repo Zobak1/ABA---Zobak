@@ -1683,6 +1683,7 @@ body.codex-open{
 .league-folder-country{display:block;font-size:12px;color:var(--muted);margin-top:3px}
 .league-folder-count{display:block;font-size:11px;color:var(--muted);margin-top:5px}
 .league-team-detail{margin-top:18px}
+.league-team-detail{scroll-margin-top:78px}
 .league-team-head{display:flex;align-items:flex-end;justify-content:space-between;gap:14px;margin-bottom:10px}
 .league-team-head h3{margin:0;color:var(--teal)}
 .team-success-value{font-weight:780;white-space:nowrap}
@@ -1881,7 +1882,7 @@ body.codex-open{
     <img src="icon-512.png?v=0111" alt="ABA – Angel Bet Analytics">
     <div id="abaSplashTitle">ABA</div>
     <div id="abaSplashSub">ANGEL BET ANALYTICS</div>
-    <div id="abaSplashVersion">v1.7.1</div>
+    <div id="abaSplashVersion">v1.7.2</div>
   </div>
 </div>
 
@@ -1953,7 +1954,7 @@ body.codex-open{
 
 <header>
   <strong>ABA – Angel Bet Analytics</strong>
-  <div style="display:flex;align-items:center;gap:10px"><span id="versionBadge" class="small">v1.7.1</span><span>Zobák</span><button class="secondary" onclick="logout()">Odhlásit</button></div>
+  <div style="display:flex;align-items:center;gap:10px"><span id="versionBadge" class="small">v1.7.2</span><span>Zobák</span><button class="secondary" onclick="logout()">Odhlásit</button></div>
 </header>
 <div class="layout">
 <nav>
@@ -1981,7 +1982,7 @@ body.codex-open{
 </section>
 
 <script>
-const APP_VERSION='1.7.1';
+const APP_VERSION='1.7.2';
 const KEY='abu_zobak_v1';
 const AUTH_KEY='abu_auth_v1';
 const BACKUP_KEY='abu_internal_backups_v1';
@@ -4015,8 +4016,12 @@ let openLeagueDirectoryKey=null;
 function openLeagueDirectory(index){
  const league=leagueDirectoryStats()[Number(index)];
  if(!league)return;
- openLeagueDirectoryKey=openLeagueDirectoryKey===league.key?null:league.key;
+ const opening=openLeagueDirectoryKey!==league.key;
+ openLeagueDirectoryKey=opening?league.key:null;
  renderLeagueTeams();
+ if(opening)requestAnimationFrame(()=>{
+   document.getElementById('leagueTeamDetail')?.scrollIntoView({behavior:'smooth',block:'start'});
+ });
 }
 
 function renderLeagueTeams(){
@@ -4029,7 +4034,7 @@ function renderLeagueTeams(){
    <span class="league-folder-icon">📁</span>
    <span><span class="league-folder-title">${esc(league.name)}</span><span class="league-folder-country">${leagueCountryFlag(league.country)} ${esc(league.country)}</span><span class="league-folder-count">${league.teams.length} ${league.teams.length===1?'tým':'týmů'}</span></span>
  </button>`).join('');
- const detail=selected?`<div class="league-team-detail">
+ const detail=selected?`<div id="leagueTeamDetail" class="league-team-detail">
    <div class="league-team-head"><div><h3>${esc(selected.name)}</h3><div class="small">${leagueCountryFlag(selected.country)} ${esc(selected.country)} · týmy jsou seřazené abecedně</div></div><div class="small">Úspěšnost vychází ze všech tipů v utkáních daného týmu, ne z výsledku celého kombinovaného tiketu.</div></div>
    <div class="table-wrap"><table><thead><tr><th>Tým</th><th>Tikety</th><th>Unikátní zápasy</th><th>Tipy</th><th>Úspěšné</th><th>Neúspěšné</th><th>Úspěšnost</th></tr></thead><tbody>
    ${selected.teams.map(team=>{const color=analyticsColor(team.success,team.evaluated);return `<tr><td><span class="status-dot status-${color}"></span><strong>${esc(team.name)}</strong></td><td>${team.tickets}</td><td>${team.uniqueMatches}</td><td>${team.tips}</td><td class="pos">${team.wins}</td><td class="neg">${team.losses}</td><td class="team-success-value team-success-${color}">${team.evaluated?team.success.toFixed(1)+' %':'—'}</td></tr>`}).join('')}

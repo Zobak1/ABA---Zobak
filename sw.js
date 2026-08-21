@@ -1,4 +1,4 @@
-const CACHE='aba-pwa-v1-7-1-country-teams-bet-types';
+const CACHE='aba-pwa-v1-7-2-league-auto-scroll';
 const ASSETS=[
   './',
   './index.html',

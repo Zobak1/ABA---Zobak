@@ -1,4 +1,4 @@
-const CACHE='aba-pwa-v1-6-5-layout-no-event-date';
+const CACHE='aba-pwa-v1-7-0-compact-statistics';
 const ASSETS=[
   './',
   './index.html',

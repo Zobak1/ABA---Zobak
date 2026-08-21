@@ -70,6 +70,29 @@ th{color:var(--muted);font-weight:600;background:#FAFBFC}
 .country-tile.red{border-left:8px solid #B23A3A}
 .country-tile.gray{border-left:8px solid #90A4AE}
 .analytics-section{margin-top:26px}
+.stats-summary{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:9px;margin-bottom:16px}
+.stats-summary .card{padding:11px 12px;border-radius:11px;min-width:0}
+.stats-summary .card .k{font-size:11px;white-space:nowrap}
+.stats-summary .card .v{font-size:18px;margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.stats-summary .card:last-child .v{font-size:15px}
+.stats-head{display:flex;align-items:end;justify-content:space-between;gap:14px;margin-bottom:14px}
+.stats-head h2{margin:0}
+.stats-period{display:flex;align-items:center;gap:8px;min-width:255px}
+.stats-period label{margin:0;white-space:nowrap}
+.stats-period select{padding:9px 34px 9px 11px}
+.stats-accordion{display:grid;gap:9px}
+.stats-accordion-item{background:linear-gradient(180deg,var(--card),var(--card2));border:1px solid var(--line);border-radius:13px;overflow:hidden}
+.stats-accordion-toggle{width:100%;border:0;background:transparent;color:var(--text);display:grid;grid-template-columns:38px minmax(0,1fr) 28px;align-items:center;gap:11px;padding:13px 16px;text-align:left}
+.stats-accordion-toggle:hover{background:#0C202B}
+.stats-accordion-number{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;background:#0B2C34;color:var(--teal);font-weight:700}
+.stats-accordion-title{font-size:17px;font-weight:700}
+.stats-accordion-subtitle{display:block;color:var(--muted);font-size:12px;font-weight:400;margin-top:2px}
+.stats-accordion-chevron{color:var(--teal);font-size:23px;text-align:center;transition:transform .18s ease}
+.stats-accordion-toggle[aria-expanded="true"] .stats-accordion-chevron{transform:rotate(180deg)}
+.stats-accordion-content{padding:0 14px 14px}
+.stats-accordion-content.hidden{display:none!important}
+.stats-month-filter{max-width:300px;margin:2px 0 10px}
+.stats-removed{display:none!important}
 .filter-panel{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:18px}
 .filter-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
 .analytics-table td,.analytics-table th{white-space:nowrap}
@@ -77,6 +100,8 @@ th{color:var(--muted);font-weight:600;background:#FAFBFC}
 .status-green{background:#2E7D32}.status-yellow{background:#D5A100}.status-red{background:#B23A3A}.status-gray{background:#90A4AE}
 @media(max-width:900px){.filter-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:560px){.filter-grid{grid-template-columns:1fr}}
+@media(max-width:1100px){.stats-summary{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media(max-width:700px){.stats-summary{grid-template-columns:repeat(2,minmax(0,1fr))}.stats-head{align-items:stretch;flex-direction:column}.stats-period{min-width:0}.stats-accordion-content{padding:0 8px 10px}}
 .chart-box{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px;overflow:hidden}
 .simple-bar{height:14px;background:#E8EDF1;border-radius:8px;overflow:hidden}
 .simple-bar>span{display:block;height:100%;border-radius:8px}
@@ -1852,7 +1877,7 @@ body.codex-open{
     <img src="icon-512.png?v=0111" alt="ABA – Angel Bet Analytics">
     <div id="abaSplashTitle">ABA</div>
     <div id="abaSplashSub">ANGEL BET ANALYTICS</div>
-    <div id="abaSplashVersion">v1.6.5</div>
+    <div id="abaSplashVersion">v1.7.0</div>
   </div>
 </div>
 
@@ -1924,7 +1949,7 @@ body.codex-open{
 
 <header>
   <strong>ABA – Angel Bet Analytics</strong>
-  <div style="display:flex;align-items:center;gap:10px"><span id="versionBadge" class="small">v1.6.5</span><span>Zobák</span><button class="secondary" onclick="logout()">Odhlásit</button></div>
+  <div style="display:flex;align-items:center;gap:10px"><span id="versionBadge" class="small">v1.7.0</span><span>Zobák</span><button class="secondary" onclick="logout()">Odhlásit</button></div>
 </header>
 <div class="layout">
 <nav>
@@ -1952,7 +1977,7 @@ body.codex-open{
 </section>
 
 <script>
-const APP_VERSION='1.6.2';
+const APP_VERSION='1.7.0';
 const KEY='abu_zobak_v1';
 const AUTH_KEY='abu_auth_v1';
 const BACKUP_KEY='abu_internal_backups_v1';
@@ -4169,7 +4194,7 @@ function aggregateByCountry(tickets){
    if(m.status==='Nevyšla')x.losses++;
    if(m.status==='Vrácena')x.voids++;
  });
- const rows=finalizeTipAggregate(Object.values(map));
+ const rows=finalizeTipAggregate(Object.values(map)).sort((a,b)=>a.name.localeCompare(b.name,'cs'));
  return rows.map(x=>({...x,league:[...x.leagues].sort((a,b)=>a.localeCompare(b,'cs')).join(', ')})).map(x=>{delete x.leagues;return x});
 }
 function aggregateByLeague(tickets){
@@ -4203,6 +4228,8 @@ function aggregateTicketFinancials(tickets){
      addAllocatedFinancial(map,'C:'+country,stakeShare,profitShare,t.id);
      addAllocatedFinancial(map,'L:'+country+'||'+league,stakeShare,profitShare,t.id);
      addAllocatedFinancial(map,'B:'+(m.betCategory||'Jiné')+'||'+(m.betType||'Jiný typ'),stakeShare,profitShare,t.id);
+     const canonical=canonicalStatsBetType(m);
+     if(canonical)addAllocatedFinancial(map,'BT:'+canonical.key,stakeShare,profitShare,t.id);
    });
  });
  Object.values(map).forEach(x=>{x.tickets=x.ticketIds.size;delete x.ticketIds});
@@ -4221,16 +4248,58 @@ function roiValue(fin){
 function aggregateByBetType(tickets){
  const map={};
  tickets.forEach(t=>t.matches.forEach(m=>{
-   if(!m.betType||!['Vyšla','Nevyšla','Vrácena'].includes(m.status))return;
-   const key=(m.betCategory||'Jiné')+'||'+m.betType;
-   if(!map[key])map[key]={key,category:m.betCategory||'Jiné',name:m.betType,wins:0,losses:0,voids:0,total:0,fixtureKeys:new Set(),ticketIds:new Set()};
+   if(!['Vyšla','Nevyšla','Vrácena'].includes(m.status))return;
+   const canonical=canonicalStatsBetType(m);
+   if(!canonical)return;
+   const key=canonical.key;
+   if(!map[key])map[key]={key,category:canonical.category,name:canonical.name,order:canonical.order,wins:0,losses:0,voids:0,total:0,fixtureKeys:new Set(),ticketIds:new Set()};
    const x=map[key];
    x.total++;x.fixtureKeys.add(analyticsFixtureKey(t,m));x.ticketIds.add(String(t.id||''));
    if(m.status==='Vyšla')x.wins++;
    if(m.status==='Nevyšla')x.losses++;
    if(m.status==='Vrácena')x.voids++;
  }));
- return finalizeTipAggregate(Object.values(map));
+ return finalizeTipAggregate(Object.values(map)).sort((a,b)=>a.order-b.order);
+}
+
+function canonicalStatsBetType(match){
+ const sport=matchSport(match);
+ const pick=String(match?.pick||'').trim().toLowerCase();
+ const source=normalizeTeamName([match?.betCategory,match?.betType,match?.pick].filter(Boolean).join(' '));
+ if(sport==='Tenis'){
+   if(pick==='1')return {key:'tenis-1',category:'Tenis',name:'Tenis 1 – výhra',order:16};
+   if(pick==='2')return {key:'tenis-2',category:'Tenis',name:'Tenis 2 – výhra',order:17};
+   return null;
+ }
+ if(sport!=='Fotbal')return null;
+
+ const progression=source.includes('postup');
+ if(progression){
+   if(pick==='1'||source.includes('1 postup')||source.includes('domaci'))return {key:'postup-1',category:'Postup',name:'1 – postup',order:14};
+   if(pick==='2'||source.includes('2 postup')||source.includes('host'))return {key:'postup-2',category:'Postup',name:'2 – postup',order:15};
+   const teams=splitMatchTeams(match?.name||'');
+   if(teams[0]&&teamNamesMatch([match?.betType,match?.pick].join(' '),teams[0]))return {key:'postup-1',category:'Postup',name:'1 – postup',order:14};
+   if(teams[1]&&teamNamesMatch([match?.betType,match?.pick].join(' '),teams[1]))return {key:'postup-2',category:'Postup',name:'2 – postup',order:15};
+   return null;
+ }
+
+ const goalMatch=source.match(/\b(over|under)\s*(0|1|2|3)\s*(?:5| 5)\b/);
+ if(goalMatch){
+   const direction=goalMatch[1];
+   const value=goalMatch[2]+',5';
+   const allowedOrder={
+     'over-0,5':6,'over-1,5':7,'over-2,5':8,'over-3,5':9,
+     'under-0,5':10,'under-1,5':11,'under-2,5':12,'under-3,5':13
+   };
+   const key=direction+'-'+value;
+   if(allowedOrder[key])return {key,category:'Góly',name:(direction==='over'?'Over ':'Under ')+value,order:allowedOrder[key]};
+ }
+ if(pick==='1x'||source.includes('dvojita sance 1x'))return {key:'1x',category:'Dvojitá šance',name:'1X',order:4};
+ if(pick==='x2'||source.includes('dvojita sance x2'))return {key:'x2',category:'Dvojitá šance',name:'X2',order:5};
+ if(pick==='1')return {key:'1',category:'Výsledek zápasu',name:'1',order:1};
+ if(pick==='x')return {key:'x',category:'Výsledek zápasu',name:'X',order:2};
+ if(pick==='2')return {key:'2',category:'Výsledek zápasu',name:'2',order:3};
+ return null;
 }
 
 
@@ -4375,7 +4444,7 @@ function aggregateDirectTeamBets(tickets){
  return [...map.values()].map(x=>{
    const evaluated=x.wins+x.losses;
    return {...x,success:evaluated?x.wins/evaluated*100:0};
- }).sort((a,b)=>b.total-a.total||b.success-a.success||a.name.localeCompare(b.name,'cs'));
+ }).sort((a,b)=>a.name.localeCompare(b.name,'cs'));
 }
 
 function aggregateGeneralMarkets(tickets){
@@ -4491,7 +4560,7 @@ function renderAnalyticsTables(){
  document.getElementById('betTypeAnalytics').innerHTML=`<div class="table-wrap"><table class="analytics-table"><thead><tr>
  <th>Kategorie</th><th>Typ sázky</th><th>Unikátní zápasy</th><th>Tipy</th><th>Úspěšné</th><th>Neúspěšné</th><th>Úspěšnost tipů</th><th>Přiřazené ROI†</th><th>Přiřazený P/L†</th>
  </tr></thead><tbody>${betTypes.length?betTypes.map(x=>{
-   const fin=financials['B:'+x.key]||{stake:0,profit:0};
+   const fin=financials['BT:'+x.key]||{stake:0,profit:0};
    const color=analyticsColor(x.success,x.wins+x.losses);
    return `<tr><td>${esc(x.category)}</td><td><span class="status-dot status-${color}"></span>${esc(x.name)}</td><td>${x.uniqueMatches}</td><td>${x.total}</td><td>${x.wins}</td><td>${x.losses}</td><td>${x.success.toFixed(1)} %</td><td class="${roiValue(fin)>=0?'pos':'neg'}">${roiValue(fin).toFixed(2)} %</td><td class="${fin.profit>=0?'pos':'neg'}">${fin.profit>=0?'+':''}${moneyExact(fin.profit)}</td></tr>`;
  }).join(''):`<tr><td colspan="9">Pro zvolené období zatím nejsou data.</td></tr>`}</tbody></table></div>
@@ -4540,56 +4609,52 @@ function toggleCustomDates(){
  document.getElementById('customDates').style.display=custom?'grid':'none';
  renderAnalyticsTables();
 }
+function toggleStatsSection(sectionId){
+ const selected=document.getElementById('stats-section-'+sectionId);
+ const selectedButton=document.querySelector(`.stats-accordion-toggle[data-stats-section="${sectionId}"]`);
+ if(!selected||!selectedButton)return;
+ const willOpen=selected.classList.contains('hidden');
+ document.querySelectorAll('.stats-accordion-content').forEach(x=>x.classList.add('hidden'));
+ document.querySelectorAll('.stats-accordion-toggle').forEach(x=>x.setAttribute('aria-expanded','false'));
+ if(willOpen){selected.classList.remove('hidden');selectedButton.setAttribute('aria-expanded','true')}
+}
+function statsAccordionItem(number,title,subtitle,content){
+ return `<div class="stats-accordion-item">
+   <button type="button" class="stats-accordion-toggle" data-stats-section="${number}" aria-expanded="false" onclick="toggleStatsSection('${number}')">
+     <span class="stats-accordion-number">${number}</span>
+     <span><span class="stats-accordion-title">${title}</span><span class="stats-accordion-subtitle">${subtitle}</span></span>
+     <span class="stats-accordion-chevron">⌄</span>
+   </button>
+   <div id="stats-section-${number}" class="stats-accordion-content hidden">${content}</div>
+ </div>`;
+}
 function renderStats(){
  const s=summary(),el=document.getElementById('view-stats');
  const allTips=analyticsRows(data.tickets).filter(row=>['Vyšla','Nevyšla','Vrácena'].includes(row.match.status));
  const uniqueMatches=new Set(allTips.map(row=>row.fixtureKey)).size;
- el.innerHTML=`<h2>Statistiky</h2>
- <div class="cards">${card('Počet tiketů',data.tickets.length)}${card('Jednotlivé tipy',allTips.length)}${card('Unikátní zápasy',uniqueMatches)}${card('Otevřené tikety',s.open)}${card('Úspěšnost tiketů',s.success.toFixed(1)+' %')}${card('Celkové ROI',s.roi.toFixed(2)+' %')}${card('Celkový profit',moneyExact(s.profit),s.profit>=0?'pos':'neg')}</div>
-
- <div class="analytics-section">
-   <h2 style="font-size:18px">Období analýzy podle data podání tiketu</h2>
-   <div class="filter-panel">
-     <div class="filter-grid">
-       ${field('Období',`<select id="periodFilter" onchange="toggleCustomDates()">
+ el.innerHTML=`<div class="stats-head"><h2>Statistiky</h2>
+   <div class="stats-period">${field('Období',`<select id="periodFilter" onchange="toggleCustomDates()">
          <option value="all">Celá historie</option>
          <option value="30">Posledních 30 dní</option>
          <option value="90">Posledních 90 dní</option>
          <option value="year">Tento rok</option>
          <option value="custom">Vlastní období</option>
-       </select>`)}
-     </div>
-     <div id="customDates" class="filter-grid" style="display:none;margin-top:10px">
+       </select>`)}</div></div>
+ <div id="customDates" class="filter-grid" style="display:none;margin-bottom:12px">
        ${field('Od',`<input id="periodFrom" type="date" onchange="renderAnalyticsTables()">`)}
        ${field('Do',`<input id="periodTo" type="date" onchange="renderAnalyticsTables()">`)}
-     </div>
-   </div>
  </div>
-
- <div class="analytics-section"><h2 style="font-size:18px">1. Analýza podle sportů</h2><div id="sportAnalytics"></div></div>
- <div class="analytics-section"><h2 style="font-size:18px">2. Analýza podle zemí</h2><div id="countryAnalytics"></div></div>
- <div class="analytics-section"><h2 style="font-size:18px">3. Analýza podle soutěží</h2><div id="leagueAnalytics"></div></div>
- <div class="analytics-section"><h2 style="font-size:18px">4. Analýza podle dnů podání tiketů</h2><div id="dayAnalytics"></div></div>
- <div class="analytics-section"><h2 style="font-size:18px">4B. Analýza podle dnů utkání</h2><div id="matchDayAnalytics"></div></div>
- <div class="analytics-section"><h2 style="font-size:18px">5. Analýza podle měsíců</h2>
-   <div class="filter-panel" style="margin-bottom:10px">
-     <div class="filter-grid">
-       ${field('Rok',`<select id="monthYearFilter" onchange="renderMonthAnalytics()">${availableYears().map(y=>`<option value="${y}">${y}</option>`).join('')}</select>`)}
-     </div>
-   </div>
-   <div id="monthAnalytics"></div>
+ <div class="stats-summary">${card('Tikety',data.tickets.length)}${card('Tipy',allTips.length)}${card('Zápasy',uniqueMatches)}${card('Otevřené',s.open)}${card('Úspěšnost',s.success.toFixed(1)+' %')}${card('ROI',s.roi.toFixed(2)+' %')}${card('Profit',moneyExact(s.profit),s.profit>=0?'pos':'neg')}</div>
+ <div class="small" style="margin-bottom:9px">Kliknutím otevřeš vybranou statistiku. Ostatní zůstanou zavřené.</div>
+ <div class="stats-accordion">
+   ${statsAccordionItem('1','Analýza podle sportů','Fotbal a tenis','<div id="sportAnalytics"></div>')}
+   ${statsAccordionItem('2','Analýza podle zemí','Abecední přehled zemí','<div id="countryAnalytics"></div>')}
+   ${statsAccordionItem('4','Analýza podle dnů podání tiketů','Pondělí až neděle','<div id="dayAnalytics"></div>')}
+   ${statsAccordionItem('5','Analýza podle měsíců','Výsledky vybraného roku',`<div class="stats-month-filter">${field('Rok',`<select id="monthYearFilter" onchange="renderMonthAnalytics()">${availableYears().map(y=>`<option value="${y}">${y}</option>`).join('')}</select>`)}</div><div id="monthAnalytics"></div>`)}
+   ${statsAccordionItem('6','Analýza podle typu sázky','1, X, 2, dvojité šance, góly, postup a tenis','<div id="betTypeAnalytics"></div>')}
+   ${statsAccordionItem('7','Vsazené fotbalové týmy','Abecední seznam týmů a vyhledávání','<div class="team-bet-tools"><input id="teamBetSearch" placeholder="Hledat tým…" oninput="renderTeamBetStats()"><div id="teamBetCount" class="team-bet-count"></div></div><div id="teamBetAnalytics"></div>')}
  </div>
- <div class="analytics-section"><h2 style="font-size:18px">6. Analýza podle typu sázky</h2><div id="betTypeAnalytics"></div></div>
- <div class="analytics-section">
-   <h2 style="font-size:18px">7. Vsazené fotbalové týmy</h2>
-   <div class="team-bet-tools">
-     <input id="teamBetSearch" placeholder="Hledat tým…" oninput="renderTeamBetStats()">
-     <div id="teamBetCount" class="team-bet-count"></div>
-   </div>
-   <div id="teamBetAnalytics"></div>
- </div>
- <div class="analytics-section"><h2 style="font-size:18px">8. Obecné fotbalové trhy</h2><div id="generalMarketAnalytics"></div></div>
- <div class="analytics-section"><h2 style="font-size:18px">Vývoj bankrollu</h2>${bankrollChart()}</div>`;
+ <div class="stats-removed"><div id="leagueAnalytics"></div><div id="matchDayAnalytics"></div></div>`;
  renderAnalyticsTables();
 }
 

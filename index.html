@@ -1882,7 +1882,7 @@ body.codex-open{
     <img src="icon-512.png?v=0111" alt="ABA – Angel Bet Analytics">
     <div id="abaSplashTitle">ABA</div>
     <div id="abaSplashSub">ANGEL BET ANALYTICS</div>
-    <div id="abaSplashVersion">v1.7.2</div>
+    <div id="abaSplashVersion">v1.7.3</div>
   </div>
 </div>
 
@@ -1954,7 +1954,7 @@ body.codex-open{
 
 <header>
   <strong>ABA – Angel Bet Analytics</strong>
-  <div style="display:flex;align-items:center;gap:10px"><span id="versionBadge" class="small">v1.7.2</span><span>Zobák</span><button class="secondary" onclick="logout()">Odhlásit</button></div>
+  <div style="display:flex;align-items:center;gap:10px"><span id="versionBadge" class="small">v1.7.3</span><span>Zobák</span><button class="secondary" onclick="logout()">Odhlásit</button></div>
 </header>
 <div class="layout">
 <nav>
@@ -1982,7 +1982,7 @@ body.codex-open{
 </section>
 
 <script>
-const APP_VERSION='1.7.2';
+const APP_VERSION='1.7.3';
 const KEY='abu_zobak_v1';
 const AUTH_KEY='abu_auth_v1';
 const BACKUP_KEY='abu_internal_backups_v1';
@@ -2753,6 +2753,33 @@ function migrateData(raw){
     d.settings.analyticsRepair20260813V111=true;
   }
 
+  // v1.7.3: přesné zařazení historických fotbalových utkání bez soutěže.
+  // Oprava mění pouze analytická metadata; finance, výsledky a tipy zůstávají beze změny.
+  if(!d.settings.leagueAssignmentRepair20260821V173){
+    const assignments=[
+      {match:'Racing Santander – Villarreal CF',country:'Španělsko',league:'La Liga'},
+      {match:'UD Las Palmas – Albacete Balompie',country:'Španělsko',league:'La Liga 2'},
+      {match:'PFC Levski Sofia – AEK Atény',country:'Evropské poháry',league:'Liga mistrů'},
+      {match:'Fenerbahçe SK – Olympique Lyon',country:'Evropské poháry',league:'Liga mistrů'},
+      {match:'GNK Dinamo Zagreb – Viking FK',country:'Evropské poháry',league:'Liga mistrů'},
+      {match:'Atletico Madrid - Malaga CF',country:'Španělsko',league:'La Liga'},
+      {match:'SK Slovan Bratislava - NK Celje',country:'Evropské poháry',league:'Liga mistrů'},
+      {match:'SL Benfica - Aarhus GF',country:'Evropské poháry',league:'Evropská liga'},
+      {match:'Rangers FC - FK Jablonec',country:'Evropské poháry',league:'Konferenční liga'},
+      {match:'Jagiellonia Bialystok - FC Iberia 1999 Tbilisi',country:'Evropské poháry',league:'Evropská liga'},
+      {match:'Besiktas JK - FK Kauno Zalgiris',country:'Evropské poháry',league:'Evropská liga'},
+      {match:'Atalanta - Hapoel Tel Aviv FC',country:'Evropské poháry',league:'Konferenční liga'}
+    ];
+    const assignmentMap=new Map(assignments.map(x=>[normalizeTeamName(x.match),x]));
+    d.tickets.forEach(ticket=>(ticket.matches||[]).forEach(match=>{
+      const assignment=assignmentMap.get(normalizeTeamName(match.name));
+      if(!assignment)return;
+      match.country=assignment.country;
+      match.league=assignment.league;
+    }));
+    d.settings.leagueAssignmentRepair20260821V173=true;
+  }
+
   d.tickets.forEach(t=>{
     if(!Array.isArray(t.matches))t.matches=[];
     if(t.payout===undefined)t.payout=0;
@@ -2776,7 +2803,7 @@ function migrateData(raw){
       if(!m.status)m.status='Čeká';
     });
   });
-  d.schemaVersion=23;
+  d.schemaVersion=24;
   return d;
 }
 function loadData(){
@@ -2803,7 +2830,7 @@ function createInternalBackup(snapshot){
   }catch(e){}
 }
 function saveData(){
-  data.schemaVersion=23;
+  data.schemaVersion=24;
   const previous=localStorage.getItem(KEY);
   if(previous){
     try{createInternalBackup(JSON.parse(previous))}catch(e){}
@@ -3980,7 +4007,7 @@ function leagueDirectoryStats(){
      const leagueKey=`${country}||${leagueName}`;
      if(!leagues.has(leagueKey))leagues.set(leagueKey,{key:leagueKey,country,name:leagueName,teams:new Map()});
      const league=leagues.get(leagueKey);
-     [home,away].filter(Boolean).forEach(teamName=>{
+     [home,away].filter(Boolean).map(canonicalBetTeam).forEach(teamName=>{
        const teamKey=normalizeTeamName(teamName)||teamName.toLowerCase();
        if(!league.teams.has(teamKey))league.teams.set(teamKey,{name:teamName,ticketIds:new Set(),fixtureKeys:new Set(),tips:0,wins:0,losses:0,voids:0,pending:0});
        const team=league.teams.get(teamKey);
@@ -4409,6 +4436,20 @@ function canonicalBetTeam(team){
    'hammarby if':'Hammarby',
    'hammarby':'Hammarby',
    'lech poznan':'Lech Poznań'
+   ,'atletico madrid':'Atlético Madrid'
+   ,'malaga':'Málaga'
+   ,'aarhus gf':'Aarhus GF'
+   ,'agf aarhus':'Aarhus GF'
+   ,'jagiellonia bialystok':'Jagiellonia Białystok'
+   ,'iberia 1999 tbilisi':'Iberia 1999 Tbilisi'
+   ,'kauno zalgiris':'Kauno Žalgiris'
+   ,'hapoel tel aviv':'Hapoel Tel Aviv'
+   ,'rangers':'Rangers FC'
+   ,'celje':'Celje'
+   ,'aek ateny':'AEK Atény'
+   ,'fenerbahce':'Fenerbahçe'
+   ,'olympique lyon':'Olympique Lyon'
+   ,'viking':'Viking FK'
  };
  return aliases[key]||raw;
 }

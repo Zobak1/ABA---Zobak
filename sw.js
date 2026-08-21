@@ -1,4 +1,4 @@
-const CACHE='aba-pwa-v1-7-2-league-auto-scroll';
+const CACHE='aba-pwa-v1-7-3-league-assignments';
 const ASSETS=[
   './',
   './index.html',

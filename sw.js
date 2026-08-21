@@ -1,4 +1,4 @@
-const CACHE='aba-pwa-v1-7-0-compact-statistics';
+const CACHE='aba-pwa-v1-7-1-country-teams-bet-types';
 const ASSETS=[
   './',
   './index.html',

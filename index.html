@@ -1659,26 +1659,27 @@ body.codex-open{
 /* ABA 1.1.1 — přesné analytické jednotky a kontrolované finanční rozdělení */
 .league-folder-grid{
   display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(225px,1fr));
-  gap:12px;
-  margin-top:16px;
+  grid-template-columns:repeat(auto-fit,minmax(205px,1fr));
+  gap:10px;
+  margin-top:14px;
 }
 .league-folder{
   width:100%;
   display:grid;
-  grid-template-columns:42px minmax(0,1fr);
+  grid-template-columns:38px minmax(0,1fr);
   align-items:center;
-  gap:11px;
+  gap:10px;
   text-align:left;
   color:var(--text);
   background:linear-gradient(180deg,var(--card),var(--card2));
   border:1px solid var(--line);
-  border-radius:14px;
-  padding:14px;
+  border-radius:12px;
+  padding:11px 12px;
   box-shadow:0 8px 22px rgba(0,0,0,.16);
 }
 .league-folder:hover,.league-folder.active{border-color:var(--teal);background:rgba(13,180,188,.09)}
-.league-folder-icon{font-size:30px;line-height:1}
+.league-folder-icon{width:36px;height:36px;border-radius:10px;display:grid;place-items:center;color:var(--teal);background:rgba(0,214,214,.09);border:1px solid rgba(0,214,214,.2)}
+.league-folder-svg{width:23px;height:23px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .league-folder-title{display:block;font-weight:780;color:var(--teal);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .league-folder-country{display:block;font-size:12px;color:var(--muted);margin-top:3px}
 .league-folder-count{display:block;font-size:11px;color:var(--muted);margin-top:5px}
@@ -1882,7 +1883,7 @@ body.codex-open{
     <img src="icon-512.png?v=0111" alt="ABA – Angel Bet Analytics">
     <div id="abaSplashTitle">ABA</div>
     <div id="abaSplashSub">ANGEL BET ANALYTICS</div>
-    <div id="abaSplashVersion">v1.7.3</div>
+    <div id="abaSplashVersion">v1.7.4</div>
   </div>
 </div>
 
@@ -1954,7 +1955,7 @@ body.codex-open{
 
 <header>
   <strong>ABA – Angel Bet Analytics</strong>
-  <div style="display:flex;align-items:center;gap:10px"><span id="versionBadge" class="small">v1.7.3</span><span>Zobák</span><button class="secondary" onclick="logout()">Odhlásit</button></div>
+  <div style="display:flex;align-items:center;gap:10px"><span id="versionBadge" class="small">v1.7.4</span><span>Zobák</span><button class="secondary" onclick="logout()">Odhlásit</button></div>
 </header>
 <div class="layout">
 <nav>
@@ -1982,7 +1983,7 @@ body.codex-open{
 </section>
 
 <script>
-const APP_VERSION='1.7.3';
+const APP_VERSION='1.7.4';
 const KEY='abu_zobak_v1';
 const AUTH_KEY='abu_auth_v1';
 const BACKUP_KEY='abu_internal_backups_v1';
@@ -4039,6 +4040,11 @@ function leagueCountryFlag(country){
  return COMPETITIONS.find(item=>item.country===country)?.flag||'🏳️';
 }
 
+function leagueFolderIcon(league){
+ if(league?.country==='Evropské poháry')return `<svg class="league-folder-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 4h8v4c0 3-1.8 5-4 5s-4-2-4-5V4Z"/><path d="M8 6H5v1c0 2 1.2 3.5 3.3 4M16 6h3v1c0 2-1.2 3.5-3.3 4M12 13v4M8.5 20h7M10 17h4"/></svg>`;
+ return `<svg class="league-folder-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8 19 5v6.2c0 4.5-2.8 8.2-7 10-4.2-1.8-7-5.5-7-10V5l7-2.2Z"/><circle cx="12" cy="11" r="3.3"/><path d="m12 7.7 1.8 1.3-.7 2.1h-2.2L10.2 9 12 7.7ZM8.9 11.1l-1.4 1.6M15.1 11.1l1.4 1.6M10.1 13.7l-.7 2M13.9 13.7l.7 2"/></svg>`;
+}
+
 let openLeagueDirectoryKey=null;
 function openLeagueDirectory(index){
  const league=leagueDirectoryStats()[Number(index)];
@@ -4058,7 +4064,7 @@ function renderLeagueTeams(){
  if(openLeagueDirectoryKey&&!leagues.some(league=>league.key===openLeagueDirectoryKey))openLeagueDirectoryKey=null;
  const selected=leagues.find(league=>league.key===openLeagueDirectoryKey)||null;
  const folders=leagues.map((league,index)=>`<button type="button" class="league-folder ${selected?.key===league.key?'active':''}" onclick="openLeagueDirectory(${index})" aria-expanded="${selected?.key===league.key?'true':'false'}">
-   <span class="league-folder-icon">📁</span>
+   <span class="league-folder-icon">${leagueFolderIcon(league)}</span>
    <span><span class="league-folder-title">${esc(league.name)}</span><span class="league-folder-country">${leagueCountryFlag(league.country)} ${esc(league.country)}</span><span class="league-folder-count">${league.teams.length} ${league.teams.length===1?'tým':'týmů'}</span></span>
  </button>`).join('');
  const detail=selected?`<div id="leagueTeamDetail" class="league-team-detail">

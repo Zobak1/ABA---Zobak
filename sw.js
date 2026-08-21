@@ -1,4 +1,4 @@
-const CACHE='aba-pwa-v1-7-3-league-assignments';
+const CACHE='aba-pwa-v1-7-4-league-icons';
 const ASSETS=[
   './',
   './index.html',

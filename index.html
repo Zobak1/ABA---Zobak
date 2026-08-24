@@ -1883,7 +1883,7 @@ body.codex-open{
     <img src="icon-512.png?v=0111" alt="ABA – Angel Bet Analytics">
     <div id="abaSplashTitle">ABA</div>
     <div id="abaSplashSub">ANGEL BET ANALYTICS</div>
-    <div id="abaSplashVersion">v1.8.0</div>
+    <div id="abaSplashVersion">v1.8.2</div>
   </div>
 </div>
 
@@ -1955,7 +1955,7 @@ body.codex-open{
 
 <header>
   <strong>ABA – Angel Bet Analytics</strong>
-  <div style="display:flex;align-items:center;gap:10px"><span id="versionBadge" class="small">v1.8.0</span><span>Zobák</span><button class="secondary" onclick="logout()">Odhlásit</button></div>
+  <div style="display:flex;align-items:center;gap:10px"><span id="versionBadge" class="small">v1.8.2</span><span>Zobák</span><button class="secondary" onclick="logout()">Odhlásit</button></div>
 </header>
 <div class="layout">
 <nav>
@@ -1965,7 +1965,9 @@ body.codex-open{
   <button data-view="history"><svg class="nav-svg" viewBox="0 0 24 24"><rect x="4" y="3" width="14" height="18" rx="2"/><path d="M8 7h6M8 11h6"/><circle cx="17.5" cy="16.5" r="3.5"/><path d="M17.5 14.5v2.2l1.4.8"/></svg><span>Historie tiketů</span></button>
   <button data-view="watchlist"><svg class="nav-svg" viewBox="0 0 24 24"><path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2L12 17.3l-5.6 2.9 1.1-6.2L3 9.6l6.2-.9z"/></svg><span>Zvažované zápasy</span></button>
   <button data-view="analyses"><svg class="nav-svg" viewBox="0 0 24 24"><path d="M4 4h16v16H4z"/><path d="M8 9h8M8 13h5M8 17h7"/><path d="m15 13 2 2 3-4"/></svg><span>Analýzy</span></button>
-  <button data-view="teams"><svg class="nav-svg" viewBox="0 0 24 24"><path d="M3 6h7l2 2h9v11H3z"/><path d="M7 13h10M7 16h7"/></svg><span>Ligy a týmy</span></button>
+  <button data-view="football-leagues"><svg class="nav-svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m12 7 3 2.2-1.1 3.5h-3.8L9 9.2 12 7ZM9 9.2 5.8 8M15 9.2 18.2 8M10.1 12.7 7.8 16M13.9 12.7l2.3 3.3M7.8 16l.2 3M16.2 16l-.2 3"/></svg><span>Fotbalové ligy</span></button>
+  <button data-view="hockey-leagues"><svg class="nav-svg" viewBox="0 0 24 24"><ellipse cx="12" cy="8" rx="8" ry="3"/><path d="M4 8v7c0 1.7 3.6 3 8 3s8-1.3 8-3V8M4 14c0 1.7 3.6 3 8 3s8-1.3 8-3"/></svg><span>Hokejové ligy</span></button>
+  <button data-view="tennis"><svg class="nav-svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M6 5.8c3.1 2.1 4.3 5 3.5 8.4-.4 1.8-1.4 3.2-2.9 4.3M18 5.8c-3.1 2.1-4.3 5-3.5 8.4.4 1.8 1.4 3.2 2.9 4.3"/></svg><span>Tenis</span></button>
   <button data-view="stats"><svg class="nav-svg" viewBox="0 0 24 24"><path d="M5 20V10M10 20V5M15 20v-8M20 20V3"/></svg><span>Statistiky</span></button>
   <button data-view="settings"><svg class="nav-svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1-2.8 2.8-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.5V21h-4v-.1a1.7 1.7 0 0 0-1-1.5 1.7 1.7 0 0 0-1.9.3l-.1.1L4.2 17l.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.5-1H3v-4h.1a1.7 1.7 0 0 0 1.5-1 1.7 1.7 0 0 0-.3-1.9L4.2 7 7 4.2l.1.1a1.7 1.7 0 0 0 1.9.3 1.7 1.7 0 0 0 1-1.5V3h4v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.9-.3l.1-.1L19.8 7l-.1.1a1.7 1.7 0 0 0-.3 1.9 1.7 1.7 0 0 0 1.5 1h.1v4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg><span>Nastavení</span></button>
 </nav>
@@ -1975,7 +1977,9 @@ body.codex-open{
   <section id="view-history" class="hidden"></section>
   <section id="view-watchlist" class="hidden"></section>
   <section id="view-analyses" class="hidden"></section>
-  <section id="view-teams" class="hidden"></section>
+  <section id="view-football-leagues" class="hidden"></section>
+  <section id="view-hockey-leagues" class="hidden"></section>
+  <section id="view-tennis" class="hidden"></section>
   <section id="view-stats" class="hidden"></section>
   <section id="view-settings" class="hidden"></section>
 </main>
@@ -1983,7 +1987,7 @@ body.codex-open{
 </section>
 
 <script>
-const APP_VERSION='1.8.0';
+const APP_VERSION='1.8.2';
 const KEY='abu_zobak_v1';
 const AUTH_KEY='abu_auth_v1';
 const BACKUP_KEY='abu_internal_backups_v1';
@@ -2839,7 +2843,7 @@ function migrateData(raw){
       if(!m.status)m.status='Čeká';
     });
   });
-  d.schemaVersion=26;
+  d.schemaVersion=28;
   return d;
 }
 function loadData(){
@@ -2866,7 +2870,7 @@ function createInternalBackup(snapshot){
   }catch(e){}
 }
 function saveData(){
-  data.schemaVersion=26;
+  data.schemaVersion=28;
   const previous=localStorage.getItem(KEY);
   if(previous){
     try{createInternalBackup(JSON.parse(previous))}catch(e){}
@@ -2960,7 +2964,7 @@ function showView(v){
   document.querySelectorAll('main>section').forEach(s=>s.classList.add('hidden'));
   document.getElementById('view-'+v).classList.remove('hidden');
   document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('active',b.dataset.view===v));
-  if(v==='dashboard')renderDashboard(); if(v==='history')renderHistory(); if(v==='watchlist')renderWatchlist(); if(v==='analyses')renderAnalyses(); if(v==='teams')renderLeagueTeams(); if(v==='stats')renderStats(); if(v==='settings')renderSettings(); if(v==='new')startDraft();
+  if(v==='dashboard')renderDashboard(); if(v==='history')renderHistory(); if(v==='watchlist')renderWatchlist(); if(v==='analyses')renderAnalyses(); if(v==='football-leagues')renderLeagueTeams('Fotbal'); if(v==='hockey-leagues')renderLeagueTeams('Lední hokej'); if(v==='tennis')renderTennisDirectory(); if(v==='stats')renderStats(); if(v==='settings')renderSettings(); if(v==='new')startDraft();
 }
 function ticketOutcome(t){
   if(!t)return 'open';
@@ -4113,38 +4117,72 @@ function leagueFolderIcon(league){
  return `<svg class="league-folder-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8 19 5v6.2c0 4.5-2.8 8.2-7 10-4.2-1.8-7-5.5-7-10V5l7-2.2Z"/><circle cx="12" cy="11" r="3.3"/><path d="m12 7.7 1.8 1.3-.7 2.1h-2.2L10.2 9 12 7.7ZM8.9 11.1l-1.4 1.6M15.1 11.1l1.4 1.6M10.1 13.7l-.7 2M13.9 13.7l.7 2"/></svg>`;
 }
 
-let openLeagueDirectoryKey=null;
-function openLeagueDirectory(index){
- const league=leagueDirectoryStats()[Number(index)];
+const openLeagueDirectoryKeys={'Fotbal':null,'Lední hokej':null};
+function openLeagueDirectory(sport,index){
+ const leagues=leagueDirectoryStats().filter(league=>league.sport===sport);
+ const league=leagues[Number(index)];
  if(!league)return;
- const opening=openLeagueDirectoryKey!==league.key;
- openLeagueDirectoryKey=opening?league.key:null;
- renderLeagueTeams();
+ const opening=openLeagueDirectoryKeys[sport]!==league.key;
+ openLeagueDirectoryKeys[sport]=opening?league.key:null;
+ renderLeagueTeams(sport);
  if(opening)requestAnimationFrame(()=>{
-   document.getElementById('leagueTeamDetail')?.scrollIntoView({behavior:'smooth',block:'start'});
+   document.getElementById(sport==='Lední hokej'?'hockeyLeagueTeamDetail':'footballLeagueTeamDetail')?.scrollIntoView({behavior:'smooth',block:'start'});
  });
 }
 
-function renderLeagueTeams(){
- const el=document.getElementById('view-teams');
+function renderLeagueTeams(sport='Fotbal'){
+ const isHockey=sport==='Lední hokej';
+ const el=document.getElementById(isHockey?'view-hockey-leagues':'view-football-leagues');
  if(!el)return;
- const leagues=leagueDirectoryStats();
- if(openLeagueDirectoryKey&&!leagues.some(league=>league.key===openLeagueDirectoryKey))openLeagueDirectoryKey=null;
- const selected=leagues.find(league=>league.key===openLeagueDirectoryKey)||null;
- const folders=leagues.map((league,index)=>`<button type="button" class="league-folder ${selected?.key===league.key?'active':''}" onclick="openLeagueDirectory(${index})" aria-expanded="${selected?.key===league.key?'true':'false'}">
+ const leagues=leagueDirectoryStats().filter(league=>league.sport===sport);
+ if(openLeagueDirectoryKeys[sport]&&!leagues.some(league=>league.key===openLeagueDirectoryKeys[sport]))openLeagueDirectoryKeys[sport]=null;
+ const selected=leagues.find(league=>league.key===openLeagueDirectoryKeys[sport])||null;
+ const folders=leagues.map((league,index)=>`<button type="button" class="league-folder ${selected?.key===league.key?'active':''}" onclick="openLeagueDirectory('${sport}',${index})" aria-expanded="${selected?.key===league.key?'true':'false'}">
    <span class="league-folder-icon">${leagueFolderIcon(league)}</span>
    <span><span class="league-folder-title">${esc(league.name)}</span><span class="league-folder-country">${league.sport==='Lední hokej'?'🏒':leagueCountryFlag(league.country)} ${esc(league.country)}</span><span class="league-folder-count">${league.teams.length} ${league.teams.length===1?'tým':'týmů'}</span></span>
  </button>`).join('');
- const detail=selected?`<div id="leagueTeamDetail" class="league-team-detail">
+ const detail=selected?`<div id="${isHockey?'hockeyLeagueTeamDetail':'footballLeagueTeamDetail'}" class="league-team-detail">
    <div class="league-team-head"><div><h3>${esc(selected.name)}</h3><div class="small">${selected.sport==='Lední hokej'?'🏒 Lední hokej · ':leagueCountryFlag(selected.country)+' '}${esc(selected.country)} · týmy jsou seřazené abecedně</div></div><div class="small">Úspěšnost vychází ze všech tipů v utkáních daného týmu, ne z výsledku celého kombinovaného tiketu.</div></div>
    <div class="table-wrap"><table><thead><tr><th>Tým</th><th>Tikety</th><th>Unikátní zápasy</th><th>Tipy</th><th>Úspěšné</th><th>Neúspěšné</th><th>Úspěšnost</th></tr></thead><tbody>
    ${selected.teams.map(team=>{const color=analyticsColor(team.success,team.evaluated);return `<tr><td><span class="status-dot status-${color}"></span><strong>${esc(team.name)}</strong></td><td>${team.tickets}</td><td>${team.uniqueMatches}</td><td>${team.tips}</td><td class="pos">${team.wins}</td><td class="neg">${team.losses}</td><td class="team-success-value team-success-${color}">${team.evaluated?team.success.toFixed(1)+' %':'—'}</td></tr>`}).join('')}
    </tbody></table></div>
    <div class="small" style="margin-top:8px">Stejné utkání použité na více tiketech je jeden unikátní zápas, ale každý skutečně podaný tip se počítá zvlášť. Vrácené tipy nevstupují do procentuální úspěšnosti.</div>
  </div>`:`<div class="filter-panel" style="margin-top:18px">Otevři složku ligy a ABA zobrazí její týmy a výsledky tvých tipů.</div>`;
- el.innerHTML=`<div class="dashboard-title-wrap"><div><h2 style="margin-bottom:4px">Ligy a týmy</h2><div class="small">Vlastní týmové statistiky z fotbalových a hokejových tiketů. Tenis se zde nezobrazuje.</div></div></div>
+ el.innerHTML=`<div class="dashboard-title-wrap"><div><h2 style="margin-bottom:4px">${isHockey?'Hokejové ligy':'Fotbalové ligy'}</h2><div class="small">Vlastní týmové statistiky z uložených ${isHockey?'hokejových':'fotbalových'} tiketů. Týmy i soutěže jsou oddělené podle sportu.</div></div></div>
  <div class="filter-panel"><strong>Jak se statistika počítá</strong><div class="small" style="margin-top:5px">Každý tip se započítá oběma týmům, které v utkání nastoupily. Sloupec „Unikátní zápasy“ odstraní opakování stejného utkání na více tiketech; sloupec „Tipy“ zachová všechny skutečné sázkové pokusy.</div></div>
- ${leagues.length?`<div class="league-folder-grid">${folders}</div>${detail}`:'<div class="filter-panel">Zatím nejsou k dispozici žádné fotbalové ani hokejové zápasy.</div>'}`;
+ ${leagues.length?`<div class="league-folder-grid">${folders}</div>${detail}`:`<div class="filter-panel">Zatím nejsou k dispozici žádné ${isHockey?'hokejové':'fotbalové'} zápasy.</div>`}`;
+}
+
+function tennisDirectoryStats(){
+ const players=new Map();
+ data.tickets.forEach(ticket=>(ticket.matches||[]).forEach(match=>{
+   if(matchSport(match)!=='Tenis')return;
+   const participants=splitMatchTeams(match.name).filter(Boolean);
+   if(participants.length<2)return;
+   participants.forEach(rawName=>{
+     const name=String(rawName||'').trim();
+     const key=normalizeTeamName(name)||name.toLowerCase();
+     if(!players.has(key))players.set(key,{name,ticketIds:new Set(),fixtureKeys:new Set(),tips:0,wins:0,losses:0,voids:0,pending:0});
+     const row=players.get(key);
+     row.ticketIds.add(String(ticket.id||''));row.fixtureKeys.add(analyticsFixtureKey(ticket,match));row.tips++;
+     if(match.status==='Vyšla')row.wins++;
+     else if(match.status==='Nevyšla')row.losses++;
+     else if(match.status==='Vrácena')row.voids++;
+     else row.pending++;
+   });
+ }));
+ return [...players.values()].map(row=>{
+   const evaluated=row.wins+row.losses;
+   return {...row,tickets:row.ticketIds.size,uniqueMatches:row.fixtureKeys.size,evaluated,success:evaluated?row.wins/evaluated*100:0};
+ }).sort((a,b)=>a.name.localeCompare(b.name,'cs'));
+}
+
+function renderTennisDirectory(){
+ const el=document.getElementById('view-tennis');if(!el)return;
+ const rows=tennisDirectoryStats();
+ el.innerHTML=`<div class="dashboard-title-wrap"><div><h2 style="margin-bottom:4px">Tenis</h2><div class="small">Hráči a páry z uložených tenisových tiketů jsou seřazeni abecedně.</div></div></div>
+ <div class="filter-panel"><strong>Jak se statistika počítá</strong><div class="small" style="margin-top:5px">Každý tip se započítá oběma stranám tenisového utkání. Opakované sázky zůstávají vedené jako samostatné tipy.</div></div>
+ ${rows.length?`<div class="table-wrap" style="margin-top:18px"><table><thead><tr><th>Hráč / pár</th><th>Tikety</th><th>Unikátní zápasy</th><th>Tipy</th><th>Úspěšné</th><th>Neúspěšné</th><th>Úspěšnost</th></tr></thead><tbody>${rows.map(row=>{const color=analyticsColor(row.success,row.evaluated);return `<tr><td><span class="status-dot status-${color}"></span><strong>${esc(row.name)}</strong></td><td>${row.tickets}</td><td>${row.uniqueMatches}</td><td>${row.tips}</td><td class="pos">${row.wins}</td><td class="neg">${row.losses}</td><td class="team-success-value team-success-${color}">${row.evaluated?row.success.toFixed(1)+' %':'—'}</td></tr>`}).join('')}</tbody></table></div>`:'<div class="filter-panel" style="margin-top:18px">Zatím nejsou k dispozici žádné tenisové zápasy.</div>'}`;
 }
 
 function countryStats(){
@@ -5543,7 +5581,7 @@ function resetLogin(){
   logout();
 }
 function resetData(){if(confirm('Opravdu obnovit výchozí data?')){data=migrateData(structuredClone(defaultData));saveData();renderAll();showView('dashboard')}}
-function renderAll(){renderDashboard();renderHistory();renderWatchlist();renderAnalyses();renderLeagueTeams();renderStats();renderSettings()}
+function renderAll(){renderDashboard();renderHistory();renderWatchlist();renderAnalyses();renderLeagueTeams('Fotbal');renderLeagueTeams('Lední hokej');renderTennisDirectory();renderStats();renderSettings()}
 if ("serviceWorker" in navigator) {
   let refreshing=false;
   navigator.serviceWorker.addEventListener("controllerchange",()=>{

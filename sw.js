@@ -1,4 +1,4 @@
-const CACHE='aba-pwa-v1-8-0-ice-hockey';
+const CACHE='aba-pwa-v1-8-2-sport-directories';
 const ASSETS=[
   './',
   './index.html',

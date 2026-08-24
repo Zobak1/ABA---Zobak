@@ -1,4 +1,4 @@
-const CACHE='aba-pwa-v1-7-5-withdrawals';
+const CACHE='aba-pwa-v1-8-0-ice-hockey';
 const ASSETS=[
   './',
   './index.html',

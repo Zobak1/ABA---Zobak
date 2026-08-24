@@ -1883,7 +1883,7 @@ body.codex-open{
     <img src="icon-512.png?v=0111" alt="ABA – Angel Bet Analytics">
     <div id="abaSplashTitle">ABA</div>
     <div id="abaSplashSub">ANGEL BET ANALYTICS</div>
-    <div id="abaSplashVersion">v1.7.5</div>
+    <div id="abaSplashVersion">v1.8.0</div>
   </div>
 </div>
 
@@ -1955,7 +1955,7 @@ body.codex-open{
 
 <header>
   <strong>ABA – Angel Bet Analytics</strong>
-  <div style="display:flex;align-items:center;gap:10px"><span id="versionBadge" class="small">v1.7.5</span><span>Zobák</span><button class="secondary" onclick="logout()">Odhlásit</button></div>
+  <div style="display:flex;align-items:center;gap:10px"><span id="versionBadge" class="small">v1.8.0</span><span>Zobák</span><button class="secondary" onclick="logout()">Odhlásit</button></div>
 </header>
 <div class="layout">
 <nav>
@@ -1983,12 +1983,12 @@ body.codex-open{
 </section>
 
 <script>
-const APP_VERSION='1.7.5';
+const APP_VERSION='1.8.0';
 const KEY='abu_zobak_v1';
 const AUTH_KEY='abu_auth_v1';
 const BACKUP_KEY='abu_internal_backups_v1';
 const MAX_INTERNAL_BACKUPS=20;
-const SPORTS=['Fotbal','Tenis','Jiný sport'];
+const SPORTS=['Fotbal','Lední hokej','Tenis','Jiný sport'];
 const COMPETITIONS = [
   {country:'Evropské poháry',league:'Liga mistrů',flag:'🏆'},
   {country:'Evropské poháry',league:'Evropská liga',flag:'🏆'},
@@ -2029,6 +2029,20 @@ const COMPETITIONS = [
   {country:'Švýcarsko',league:'Super League',flag:'🇨🇭'},
   {country:'Turecko',league:'Süper Lig',flag:'🇹🇷'},
   {country:'Ukrajina',league:'Premier League',flag:'🇺🇦'}
+  ,{sport:'Lední hokej',country:'Česko',league:'Extraliga',flag:'🇨🇿'}
+  ,{sport:'Lední hokej',country:'Česko',league:'Maxa liga',flag:'🇨🇿'}
+  ,{sport:'Lední hokej',country:'Dánsko',league:'Metal Ligaen',flag:'🇩🇰'}
+  ,{sport:'Lední hokej',country:'Finsko',league:'Liiga',flag:'🇫🇮'}
+  ,{sport:'Lední hokej',country:'Francie',league:'Ligue Magnus',flag:'🇫🇷'}
+  ,{sport:'Lední hokej',country:'Kanada / USA',league:'NHL',flag:'🏒'}
+  ,{sport:'Lední hokej',country:'Mezinárodní',league:'Mistrovství světa',flag:'🌍'}
+  ,{sport:'Lední hokej',country:'Norsko',league:'EliteHockey Ligaen',flag:'🇳🇴'}
+  ,{sport:'Lední hokej',country:'Německo',league:'DEL',flag:'🇩🇪'}
+  ,{sport:'Lední hokej',country:'Polsko',league:'Polska Hokej Liga',flag:'🇵🇱'}
+  ,{sport:'Lední hokej',country:'Rakousko',league:'ICE Hockey League',flag:'🇦🇹'}
+  ,{sport:'Lední hokej',country:'Slovensko',league:'Extraliga',flag:'🇸🇰'}
+  ,{sport:'Lední hokej',country:'Švédsko',league:'SHL',flag:'🇸🇪'}
+  ,{sport:'Lední hokej',country:'Švýcarsko',league:'National League',flag:'🇨🇭'}
 ];
 
 const BET_TYPES = [
@@ -2059,6 +2073,26 @@ const BET_TYPES = [
   {category:'Tenis – vítěz',type:'1'},
   {category:'Tenis – vítěz',type:'2'},
   {category:'Tenis – bod',type:'Vítěz bodu'},
+  {sport:'Lední hokej',category:'Hokej – výsledek zápasu',type:'1'},
+  {sport:'Lední hokej',category:'Hokej – výsledek zápasu',type:'X'},
+  {sport:'Lední hokej',category:'Hokej – výsledek zápasu',type:'2'},
+  {sport:'Lední hokej',category:'Hokej – dvojitá šance',type:'1X'},
+  {sport:'Lední hokej',category:'Hokej – dvojitá šance',type:'X2'},
+  {sport:'Lední hokej',category:'Hokej – 1. třetina',type:'1'},
+  {sport:'Lední hokej',category:'Hokej – 1. třetina',type:'X'},
+  {sport:'Lední hokej',category:'Hokej – 1. třetina',type:'2'},
+  {sport:'Lední hokej',category:'Hokej – 1. třetina',type:'Over 0,5'},
+  {sport:'Lední hokej',category:'Hokej – 1. třetina',type:'Over 1,5'},
+  {sport:'Lední hokej',category:'Hokej – góly zápasu',type:'Over 2,5'},
+  {sport:'Lední hokej',category:'Hokej – góly zápasu',type:'Over 3,5'},
+  {sport:'Lední hokej',category:'Hokej – góly zápasu',type:'Over 4,5'},
+  {sport:'Lední hokej',category:'Hokej – góly zápasu',type:'Over 5,5'},
+  {sport:'Lední hokej',category:'Hokej – góly zápasu',type:'Under 2,5'},
+  {sport:'Lední hokej',category:'Hokej – góly zápasu',type:'Under 3,5'},
+  {sport:'Lední hokej',category:'Hokej – góly zápasu',type:'Under 4,5'},
+  {sport:'Lední hokej',category:'Hokej – góly zápasu',type:'Under 5,5'},
+  {sport:'Lední hokej',category:'Hokej – postup',type:'1 – postup'},
+  {sport:'Lední hokej',category:'Hokej – postup',type:'2 – postup'},
   {category:'Rohy',type:'Počet rohů – Over'},
   {category:'Rohy',type:'Počet rohů – Under'},
   {category:'Rohy',type:'Více rohů domácí'},
@@ -2805,7 +2839,7 @@ function migrateData(raw){
       if(!m.status)m.status='Čeká';
     });
   });
-  d.schemaVersion=25;
+  d.schemaVersion=26;
   return d;
 }
 function loadData(){
@@ -2832,7 +2866,7 @@ function createInternalBackup(snapshot){
   }catch(e){}
 }
 function saveData(){
-  data.schemaVersion=25;
+  data.schemaVersion=26;
   const previous=localStorage.getItem(KEY);
   if(previous){
     try{createInternalBackup(JSON.parse(previous))}catch(e){}
@@ -3202,13 +3236,27 @@ function normalizeImportedSport(value,name='',pick=''){
  const raw=String(value||'').trim().toLowerCase();
  if(raw==='tennis'||raw==='tenis')return 'Tenis';
  if(raw==='football'||raw==='soccer'||raw==='fotbal')return 'Fotbal';
+ if(raw==='ice hockey'||raw==='hockey'||raw==='lední hokej'||raw==='ledni hokej'||raw==='hokej')return 'Lední hokej';
  // Záloha pro starší/neurčitý výstup AI.
  const text=(String(name||'')+' '+String(pick||'')).toLowerCase();
  if(/\b(atp|wta|set|game|tie[- ]?break)\b/.test(text))return 'Tenis';
+ if(/\b(nhl|extraliga|liiga|shl|del|hokej|hockey|třetina|tretina)\b/.test(text))return 'Lední hokej';
  return raw ? 'Jiný sport' : 'Fotbal';
 }
 function inferImportedBetType(sport,name,pick,market=''){
  const text=(String(pick||'')+' '+String(market||'')).toLowerCase();
+ if(sport==='Lední hokej'){
+   const normalized=text.replace(/\./g,',');
+   const period=/1\s*[.,]?\s*(třetina|tretina)|first period/.test(normalized);
+   const goal=normalized.match(/\b(over|under|více než|méně než)\s*(0|1|2|3|4|5)[,.]5\b/);
+   if(goal){const direction=/under|méně/.test(goal[1])?'Under':'Over';return {betCategory:period?'Hokej – 1. třetina':'Hokej – góly zápasu',betType:`${direction} ${goal[2]},5`}}
+   if(/postup|postoup|to qualify/.test(normalized))return {betCategory:'Hokej – postup',betType:/^\s*1\b|domác|home/.test(normalized)?'1 – postup':'2 – postup'};
+   if(/1x/.test(normalized))return {betCategory:'Hokej – dvojitá šance',betType:'1X'};
+   if(/x2/.test(normalized))return {betCategory:'Hokej – dvojitá šance',betType:'X2'};
+   const teams=splitMatchTeams(name),selection=String(pick||'');
+   const result=/^\s*1\b|domác|home/.test(normalized)||(teams[0]&&teamNamesMatch(selection,teams[0]))?'1':/^\s*x\b|remíz|draw/.test(normalized)?'X':/^\s*2\b|host|away/.test(normalized)||(teams[1]&&teamNamesMatch(selection,teams[1]))?'2':'';
+   if(result)return {betCategory:period?'Hokej – 1. třetina':'Hokej – výsledek zápasu',betType:result};
+ }
  if(sport==='Tenis' && /vítěz|vyhra|výhra|winner|moneyline|match winner/.test(text)){
    const players=splitMatchTeams(name);
    const p=String(pick||'');
@@ -3237,7 +3285,9 @@ function normalizeImportedMatch(m){
  let betCategory=String(firstValue(m,['betCategory','marketCategory'],'')||'');
  let betType=String(firstValue(m,['betType'],'')||'');
  // API vrací obecné názvy trhu; do ABA ukládáme pouze hodnoty, které existují v číselníku.
- const valid=BET_TYPES.some(x=>x.category===betCategory&&x.type===betType);
+ const valid=BET_TYPES.some(x=>x.category===betCategory&&x.type===betType&&(
+   sport==='Lední hokej'?x.sport==='Lední hokej':sport==='Tenis'?x.category.startsWith('Tenis'):x.sport!=='Lední hokej'&&!x.category.startsWith('Tenis')
+ ));
  if(!valid){betCategory=inferred.betCategory;betType=inferred.betType;}
  return {
   name,pick,
@@ -3283,18 +3333,22 @@ function setSport(i,value){
  draft.matches[i].sport=value||'Fotbal';
  if(value==='Tenis'){draft.matches[i].country='';draft.matches[i].league='Tenis'}
  if(value!=='Tenis'&&draft.matches[i].league==='Tenis')draft.matches[i].league='';
+ draft.matches[i].betCategory='';draft.matches[i].betType='';
+ if(value==='Lední hokej'&&!COMPETITIONS.some(x=>x.sport==='Lední hokej'&&x.country===draft.matches[i].country&&x.league===draft.matches[i].league)){
+   draft.matches[i].country='';draft.matches[i].league='';
+ }
  renderDraft();
 }
-function competitionOptions(selectedCountry='',selectedLeague=''){
+function competitionOptions(selectedCountry='',selectedLeague='',sport='Fotbal'){
  const groups={};
- COMPETITIONS.forEach(x=>{
+ COMPETITIONS.filter(x=>sport==='Lední hokej'?x.sport==='Lední hokej':!x.sport).forEach(x=>{
    if(!groups[x.country])groups[x.country]={flag:x.flag||'',leagues:[]};
    groups[x.country].leagues.push(x.league);
  });
  return `<option value="">Vyber stát / soutěž</option>`+Object.entries(groups).map(([country,group])=>
    `<optgroup label="${esc((group.flag?group.flag+' ':'')+country)}">${group.leagues.map(league=>{
       const value=country+'||'+league;
-      const label=country==='Evropské poháry'?'🏆 '+league:country;
+      const label=sport==='Lední hokej'?`${country} – ${league}`:(country==='Evropské poháry'?'🏆 '+league:country);
       return `<option value="${esc(value)}" ${country===selectedCountry&&league===selectedLeague?'selected':''}>${esc(label)}</option>`;
    }).join('')}</optgroup>`).join('');
 }
@@ -3308,9 +3362,14 @@ function setCompetition(i,value){
  const parts=value.split('||'); draft.matches[i].country=parts[0]||''; draft.matches[i].league=parts[1]||'';
 }
 
-function betTypeOptions(selectedCategory='',selectedType=''){
+function betTypeOptions(selectedCategory='',selectedType='',sport='Fotbal'){
  const groups={};
- BET_TYPES.forEach(x=>{if(!groups[x.category])groups[x.category]=[];groups[x.category].push(x.type)});
+ BET_TYPES.filter(x=>{
+   if(sport==='Lední hokej')return x.sport==='Lední hokej';
+   if(sport==='Tenis')return x.category.startsWith('Tenis');
+   if(sport==='Fotbal')return x.sport!=='Lední hokej'&&!x.category.startsWith('Tenis');
+   return x.category==='Jiné';
+ }).forEach(x=>{if(!groups[x.category])groups[x.category]=[];groups[x.category].push(x.type)});
  return `<option value="">Vyber typ sázky</option>`+Object.entries(groups).map(([category,types])=>
    `<optgroup label="${esc(category)}">${types.map(type=>{
       const value=category+'||'+type;
@@ -3496,10 +3555,10 @@ function matchEditor(m,i){
  </div>
  <div class="grid3" style="margin-top:8px">
  ${field('Sport',`<select onchange="setSport(${i},this.value)">${sportOptions(m.sport||'Fotbal')}</select>`)}
- ${field('Typ sázky',`<select onchange="setBetType(${i},this.value)">${betTypeOptions(m.betCategory,m.betType)}</select>`)}
- ${field('Země / soutěž',`<select onchange="setCompetition(${i},this.value)">${competitionOptions(m.country,m.league)}</select>`)}
+ ${field('Typ sázky',`<select onchange="setBetType(${i},this.value)">${betTypeOptions(m.betCategory,m.betType,m.sport||'Fotbal')}</select>`)}
+ ${field('Země / soutěž',`<select onchange="setCompetition(${i},this.value)">${competitionOptions(m.country,m.league,m.sport||'Fotbal')}</select>`)}
  </div>
- <div class="ticket-meta2 ticket-meta-single" style="margin-top:8px">
+ ${m.sport==='Fotbal'?`<div class="ticket-meta2 ticket-meta-single" style="margin-top:8px">
    <div class="ticket-meta2-field">
      <label>Evropský pohár v týdnu</label>
      <select onchange="setMatch(${i},'euroLoad',this.value)">
@@ -3509,7 +3568,7 @@ function matchEditor(m,i){
        <option value="both" ${m.euroLoad==='both'?'selected':''}>🏆 Oba týmy</option>
      </select>
    </div>
- </div>
+ </div>`:''}
  ${field('Poznámka',`<textarea oninput="setMatch(${i},'note',this.value)">${esc(m.note)}</textarea>`)}
  <div class="analysis-ticket-link">
    <label>Propojená analýza</label>
@@ -3925,6 +3984,10 @@ function inferBetClassification(match){
    if(players[1] && teamNamesMatch(pick,players[1]))return {category:'Tenis – vítěz',type:'2'};
    return {category:'Tenis – vítěz',type:''};
  }
+ if(matchSport(match)==='Lední hokej'){
+   const inferred=inferImportedBetType('Lední hokej',match?.name||'',match?.pick||'',match?.betCategory||'');
+   return {category:inferred.betCategory||'Jiné',type:inferred.betType||'Jiný typ'};
+ }
  if(p.includes('dvojitá šance')||p.includes('dvojita sance')){
    const type=p.includes('x2')?'X2':p.includes('1x')?'1X':p.includes('12')?'12':'Jiný typ';
    return {category:'Dvojitá šance',type};
@@ -4006,8 +4069,9 @@ function leagueDirectoryStats(){
      if(!home||!away)return;
      const country=String(match.country||'').trim()||'Nezařazené';
      const leagueName=String(match.league||'').trim()||'Liga neuvedena';
-     const leagueKey=`${country}||${leagueName}`;
-     if(!leagues.has(leagueKey))leagues.set(leagueKey,{key:leagueKey,country,name:leagueName,teams:new Map()});
+     const sport=matchSport(match);
+     const leagueKey=`${sport}||${country}||${leagueName}`;
+     if(!leagues.has(leagueKey))leagues.set(leagueKey,{key:leagueKey,sport,country,name:leagueName,teams:new Map()});
      const league=leagues.get(leagueKey);
      [home,away].filter(Boolean).map(canonicalBetTeam).forEach(teamName=>{
        const teamKey=normalizeTeamName(teamName)||teamName.toLowerCase();
@@ -4030,6 +4094,8 @@ function leagueDirectoryStats(){
    }).sort((a,b)=>a.name.localeCompare(b.name,'cs'));
    return {...league,teams};
  }).sort((a,b)=>{
+   const sport=a.sport.localeCompare(b.sport,'cs');
+   if(sport)return sport;
    const priority=leagueDirectoryPriority(a)-leagueDirectoryPriority(b);
    if(priority)return priority;
    const country=a.country.localeCompare(b.country,'cs');
@@ -4043,6 +4109,7 @@ function leagueCountryFlag(country){
 
 function leagueFolderIcon(league){
  if(league?.country==='Evropské poháry')return `<svg class="league-folder-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 4h8v4c0 3-1.8 5-4 5s-4-2-4-5V4Z"/><path d="M8 6H5v1c0 2 1.2 3.5 3.3 4M16 6h3v1c0 2-1.2 3.5-3.3 4M12 13v4M8.5 20h7M10 17h4"/></svg>`;
+ if(league?.sport==='Lední hokej')return `<svg class="league-folder-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 16.5c3.5 1.3 7.2 1.3 10.7 0l4.8-1.8v3.6l-4.8 1.8c-3.5 1.3-7.2 1.3-10.7 0v-3.6Z"/><ellipse cx="17.4" cy="13.4" rx="3.1" ry="1.3"/><path d="M6 4v9.7M6 13.7c2.1.8 4.1.9 6.3.5"/></svg>`;
  return `<svg class="league-folder-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8 19 5v6.2c0 4.5-2.8 8.2-7 10-4.2-1.8-7-5.5-7-10V5l7-2.2Z"/><circle cx="12" cy="11" r="3.3"/><path d="m12 7.7 1.8 1.3-.7 2.1h-2.2L10.2 9 12 7.7ZM8.9 11.1l-1.4 1.6M15.1 11.1l1.4 1.6M10.1 13.7l-.7 2M13.9 13.7l.7 2"/></svg>`;
 }
 
@@ -4066,18 +4133,18 @@ function renderLeagueTeams(){
  const selected=leagues.find(league=>league.key===openLeagueDirectoryKey)||null;
  const folders=leagues.map((league,index)=>`<button type="button" class="league-folder ${selected?.key===league.key?'active':''}" onclick="openLeagueDirectory(${index})" aria-expanded="${selected?.key===league.key?'true':'false'}">
    <span class="league-folder-icon">${leagueFolderIcon(league)}</span>
-   <span><span class="league-folder-title">${esc(league.name)}</span><span class="league-folder-country">${leagueCountryFlag(league.country)} ${esc(league.country)}</span><span class="league-folder-count">${league.teams.length} ${league.teams.length===1?'tým':'týmů'}</span></span>
+   <span><span class="league-folder-title">${esc(league.name)}</span><span class="league-folder-country">${league.sport==='Lední hokej'?'🏒':leagueCountryFlag(league.country)} ${esc(league.country)}</span><span class="league-folder-count">${league.teams.length} ${league.teams.length===1?'tým':'týmů'}</span></span>
  </button>`).join('');
  const detail=selected?`<div id="leagueTeamDetail" class="league-team-detail">
-   <div class="league-team-head"><div><h3>${esc(selected.name)}</h3><div class="small">${leagueCountryFlag(selected.country)} ${esc(selected.country)} · týmy jsou seřazené abecedně</div></div><div class="small">Úspěšnost vychází ze všech tipů v utkáních daného týmu, ne z výsledku celého kombinovaného tiketu.</div></div>
+   <div class="league-team-head"><div><h3>${esc(selected.name)}</h3><div class="small">${selected.sport==='Lední hokej'?'🏒 Lední hokej · ':leagueCountryFlag(selected.country)+' '}${esc(selected.country)} · týmy jsou seřazené abecedně</div></div><div class="small">Úspěšnost vychází ze všech tipů v utkáních daného týmu, ne z výsledku celého kombinovaného tiketu.</div></div>
    <div class="table-wrap"><table><thead><tr><th>Tým</th><th>Tikety</th><th>Unikátní zápasy</th><th>Tipy</th><th>Úspěšné</th><th>Neúspěšné</th><th>Úspěšnost</th></tr></thead><tbody>
    ${selected.teams.map(team=>{const color=analyticsColor(team.success,team.evaluated);return `<tr><td><span class="status-dot status-${color}"></span><strong>${esc(team.name)}</strong></td><td>${team.tickets}</td><td>${team.uniqueMatches}</td><td>${team.tips}</td><td class="pos">${team.wins}</td><td class="neg">${team.losses}</td><td class="team-success-value team-success-${color}">${team.evaluated?team.success.toFixed(1)+' %':'—'}</td></tr>`}).join('')}
    </tbody></table></div>
    <div class="small" style="margin-top:8px">Stejné utkání použité na více tiketech je jeden unikátní zápas, ale každý skutečně podaný tip se počítá zvlášť. Vrácené tipy nevstupují do procentuální úspěšnosti.</div>
  </div>`:`<div class="filter-panel" style="margin-top:18px">Otevři složku ligy a ABA zobrazí její týmy a výsledky tvých tipů.</div>`;
- el.innerHTML=`<div class="dashboard-title-wrap"><div><h2 style="margin-bottom:4px">Ligy a týmy</h2><div class="small">Vlastní týmové statistiky vytvořené z uložených fotbalových tiketů. Tenis se zde nezobrazuje.</div></div></div>
+ el.innerHTML=`<div class="dashboard-title-wrap"><div><h2 style="margin-bottom:4px">Ligy a týmy</h2><div class="small">Vlastní týmové statistiky z fotbalových a hokejových tiketů. Tenis se zde nezobrazuje.</div></div></div>
  <div class="filter-panel"><strong>Jak se statistika počítá</strong><div class="small" style="margin-top:5px">Každý tip se započítá oběma týmům, které v utkání nastoupily. Sloupec „Unikátní zápasy“ odstraní opakování stejného utkání na více tiketech; sloupec „Tipy“ zachová všechny skutečné sázkové pokusy.</div></div>
- ${leagues.length?`<div class="league-folder-grid">${folders}</div>${detail}`:'<div class="filter-panel">Zatím nejsou k dispozici žádné fotbalové zápasy.</div>'}`;
+ ${leagues.length?`<div class="league-folder-grid">${folders}</div>${detail}`:'<div class="filter-panel">Zatím nejsou k dispozici žádné fotbalové ani hokejové zápasy.</div>'}`;
 }
 
 function countryStats(){
@@ -4326,7 +4393,27 @@ function statsBetTypeCatalog(){
    {key:'postup-1',category:'Postup',name:'1 – postup',order:14},
    {key:'postup-2',category:'Postup',name:'2 – postup',order:15},
    {key:'tenis-1',category:'Tenis',name:'Tenis 1 – výhra',order:16},
-   {key:'tenis-2',category:'Tenis',name:'Tenis 2 – výhra',order:17}
+   {key:'tenis-2',category:'Tenis',name:'Tenis 2 – výhra',order:17},
+   {key:'hokej-1',category:'Hokej – výsledek zápasu',name:'1',order:101},
+   {key:'hokej-x',category:'Hokej – výsledek zápasu',name:'X',order:102},
+   {key:'hokej-2',category:'Hokej – výsledek zápasu',name:'2',order:103},
+   {key:'hokej-1x',category:'Hokej – dvojitá šance',name:'1X',order:104},
+   {key:'hokej-x2',category:'Hokej – dvojitá šance',name:'X2',order:105},
+   {key:'hokej-tretina-1',category:'Hokej – 1. třetina',name:'1. třetina – 1',order:106},
+   {key:'hokej-tretina-x',category:'Hokej – 1. třetina',name:'1. třetina – X',order:107},
+   {key:'hokej-tretina-2',category:'Hokej – 1. třetina',name:'1. třetina – 2',order:108},
+   {key:'hokej-tretina-over-0,5',category:'Hokej – 1. třetina',name:'1. třetina – Over 0,5',order:109},
+   {key:'hokej-tretina-over-1,5',category:'Hokej – 1. třetina',name:'1. třetina – Over 1,5',order:110},
+   {key:'hokej-over-2,5',category:'Hokej – góly zápasu',name:'Over 2,5',order:111},
+   {key:'hokej-over-3,5',category:'Hokej – góly zápasu',name:'Over 3,5',order:112},
+   {key:'hokej-over-4,5',category:'Hokej – góly zápasu',name:'Over 4,5',order:113},
+   {key:'hokej-over-5,5',category:'Hokej – góly zápasu',name:'Over 5,5',order:114},
+   {key:'hokej-under-2,5',category:'Hokej – góly zápasu',name:'Under 2,5',order:115},
+   {key:'hokej-under-3,5',category:'Hokej – góly zápasu',name:'Under 3,5',order:116},
+   {key:'hokej-under-4,5',category:'Hokej – góly zápasu',name:'Under 4,5',order:117},
+   {key:'hokej-under-5,5',category:'Hokej – góly zápasu',name:'Under 5,5',order:118},
+   {key:'hokej-postup-1',category:'Hokej – postup',name:'1 – postup',order:119},
+   {key:'hokej-postup-2',category:'Hokej – postup',name:'2 – postup',order:120}
  ];
 }
 
@@ -4338,6 +4425,31 @@ function canonicalStatsBetType(match){
    const players=splitMatchTeams(match?.name||'');
    if(pick==='1'||(players[0]&&teamNamesMatch(match?.pick||'',players[0])))return statsBetTypeCatalog()[15];
    if(pick==='2'||(players[1]&&teamNamesMatch(match?.pick||'',players[1])))return statsBetTypeCatalog()[16];
+   return null;
+ }
+ if(sport==='Lední hokej'){
+   const catalog=statsBetTypeCatalog();
+   const byKey=key=>catalog.find(x=>x.key===key)||null;
+   const category=normalizeTeamName(match?.betCategory||'');
+   const type=String(match?.betType||'').trim().toLowerCase().replace(/\./g,',');
+   const combined=normalizeTeamName([match?.betCategory,match?.betType,match?.pick].join(' '));
+   const period=category.includes('1 tretina')||combined.includes('1 tretina');
+   const goal=type.match(/^(over|under)\s*([0-5]),5$/i)||combined.match(/\b(over|under)\s*([0-5])\s*5\b/);
+   if(goal){
+     const direction=goal[1].toLowerCase(),value=goal[2]+',5';
+     return byKey(period?`hokej-tretina-${direction}-${value}`:`hokej-${direction}-${value}`);
+   }
+   if(category.includes('postup')||combined.includes('postup'))return byKey(type.startsWith('1')||combined.includes('1 postup')?'hokej-postup-1':'hokej-postup-2');
+   if(period){
+     if(type==='1'||combined.endsWith(' 1'))return byKey('hokej-tretina-1');
+     if(type==='x'||combined.endsWith(' x'))return byKey('hokej-tretina-x');
+     if(type==='2'||combined.endsWith(' 2'))return byKey('hokej-tretina-2');
+   }
+   if(type==='1x'||combined.includes('1x'))return byKey('hokej-1x');
+   if(type==='x2'||combined.includes('x2'))return byKey('hokej-x2');
+   if(type==='1'||pick==='1')return byKey('hokej-1');
+   if(type==='x'||pick==='x')return byKey('hokej-x');
+   if(type==='2'||pick==='2')return byKey('hokej-2');
    return null;
  }
  if(sport!=='Fotbal')return null;
@@ -4765,7 +4877,7 @@ function renderStats(){
    ${statsAccordionItem('2','Analýza podle zemí','Abecední přehled zemí','<div id="countryAnalytics"></div>')}
    ${statsAccordionItem('4','Analýza podle dnů podání tiketů','Pondělí až neděle','<div id="dayAnalytics"></div>')}
    ${statsAccordionItem('5','Analýza podle měsíců','Výsledky vybraného roku',`<div class="stats-month-filter">${field('Rok',`<select id="monthYearFilter" onchange="renderMonthAnalytics()">${availableYears().map(y=>`<option value="${y}">${y}</option>`).join('')}</select>`)}</div><div id="monthAnalytics"></div>`)}
-   ${statsAccordionItem('6','Analýza podle typu sázky','1, X, 2, dvojité šance, góly, postup a tenis','<div id="betTypeAnalytics"></div>')}
+   ${statsAccordionItem('6','Analýza podle typu sázky','Fotbal, lední hokej a tenis','<div id="betTypeAnalytics"></div>')}
    ${statsAccordionItem('7','Vsazené fotbalové týmy','Abecední seznam týmů a vyhledávání','<div class="team-bet-tools"><input id="teamBetSearch" placeholder="Hledat tým…" oninput="renderTeamBetStats()"><div id="teamBetCount" class="team-bet-count"></div></div><div id="teamBetAnalytics"></div>')}
  </div>
  <div class="stats-removed"><div id="leagueAnalytics"></div><div id="matchDayAnalytics"></div></div>`;

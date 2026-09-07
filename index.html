@@ -1955,7 +1955,7 @@ body.codex-open{
 
 <header>
   <strong>ABA – Angel Bet Analytics</strong>
-  <div style="display:flex;align-items:center;gap:10px"><span id="versionBadge" class="small">v1.8.2</span><span>Zobák</span><button class="secondary" onclick="logout()">Odhlásit</button></div>
+  <div style="display:flex;align-items:center;gap:10px"><span id="versionBadge" class="small">v1.8.3</span><span>Zobák</span><button class="secondary" onclick="logout()">Odhlásit</button></div>
 </header>
 <div class="layout">
 <nav>
@@ -5554,28 +5554,37 @@ function deleteWithdrawal(id){
  saveData();renderSettings();
 }
 async function exportData(){
- data.settings.lastBackupAt=new Date().toISOString();
- const serialized=saveData();
- try{await writeDataMirror(serialized,Number(localStorage.getItem(DATA_UPDATED_KEY)||Date.now()))}catch(e){}
- const fileName=`ABA_zaloha_${new Date().toISOString().slice(0,10)}_v${APP_VERSION}.json`;
- const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
- const file=new File([blob],fileName,{type:'application/json'});
- if(navigator.share && navigator.canShare?.({files:[file]})){
-   try{
-     await navigator.share({files:[file],title:'Záloha ABA'});
-     renderSettings();
-     return;
-   }catch(e){
-     if(e?.name==='AbortError'){renderSettings();return}
+ try{
+   data.settings.lastBackupAt=new Date().toISOString();
+   saveData();
+   const fileName=`ABA_zaloha_${new Date().toISOString().slice(0,10)}_v${APP_VERSION}.json`;
+   const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+   const file=new File([blob],fileName,{type:'application/json'});
+
+   // Na iPadu musí systémové Sdílení následovat přímo po klepnutí.
+   // Čekání na IndexedDB před navigator.share zruší tzv. user activation.
+   if(navigator.share){
+     try{
+       await navigator.share({files:[file],title:'Záloha ABA'});
+       renderSettings();
+       return;
+     }catch(e){
+       if(e?.name==='AbortError'){renderSettings();return}
+     }
    }
+
+   const url=URL.createObjectURL(blob);
+   const a=document.createElement('a');
+   a.href=url;
+   a.download=fileName;
+   a.style.display='none';
+   document.body.appendChild(a);
+   a.click();
+   setTimeout(()=>{URL.revokeObjectURL(url);a.remove()},3000);
+   renderSettings();
+ }catch(e){
+   alert('Export zálohy se nepodařilo otevřít. Zavři ABA, znovu ji spusť a zkontroluj verzi 1.8.3.');
  }
- const a=document.createElement('a');
- a.href=URL.createObjectURL(blob);
- a.download=fileName;
- document.body.appendChild(a);
- a.click();
- setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},1000);
- renderSettings();
 }
 function formatBackupDay(iso){
  try{return new Date(iso).toLocaleDateString('cs-CZ',{day:'numeric',month:'numeric',year:'numeric'})}catch(e){return iso}

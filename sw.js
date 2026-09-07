@@ -1,4 +1,4 @@
-const CACHE='aba-pwa-v1-8-4-local-data-authority';
+const CACHE='aba-pwa-v1-8-5-ios-export';
 const ASSETS=[
   './',
   './index.html',

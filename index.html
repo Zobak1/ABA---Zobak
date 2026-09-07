@@ -1955,7 +1955,7 @@ body.codex-open{
 
 <header>
   <strong>ABA – Angel Bet Analytics</strong>
-  <div style="display:flex;align-items:center;gap:10px"><span id="versionBadge" class="small">v1.8.4</span><span>Zobák</span><button class="secondary" onclick="logout()">Odhlásit</button></div>
+  <div style="display:flex;align-items:center;gap:10px"><span id="versionBadge" class="small">v1.8.5</span><span>Zobák</span><button class="secondary" onclick="logout()">Odhlásit</button></div>
 </header>
 <div class="layout">
 <nav>
@@ -1987,7 +1987,7 @@ body.codex-open{
 </section>
 
 <script>
-const APP_VERSION='1.8.4';
+const APP_VERSION='1.8.5';
 const KEY='abu_zobak_v1';
 const AUTH_KEY='abu_auth_v1';
 const BACKUP_KEY='abu_internal_backups_v1';
@@ -5557,17 +5557,20 @@ function deleteWithdrawal(id){
 }
 async function exportData(){
  try{
-   data.settings.lastBackupAt=new Date().toISOString();
-   saveData();
    const fileName=`ABA_zaloha_${new Date().toISOString().slice(0,10)}_v${APP_VERSION}.json`;
-   const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
-   const file=new File([blob],fileName,{type:'application/json'});
+   const backupText=JSON.stringify(data,null,2);
+   // Safari na iPadu odmítá u Web Share některé application/json soubory.
+   // Přípona zůstává .json pro zpětný import, MIME text/plain je pro iOS spolehlivější.
+   const blob=new Blob([backupText],{type:'text/plain;charset=utf-8'});
+   const file=new File([blob],fileName,{type:'text/plain',lastModified:Date.now()});
 
-   // Na iPadu musí systémové Sdílení následovat přímo po klepnutí.
-   // Čekání na IndexedDB před navigator.share zruší tzv. user activation.
-   if(navigator.share){
+   // Sdílení musí následovat přímo po klepnutí, bez čekání na jiné ukládání.
+   const canShareFile=!!navigator.share && (!navigator.canShare || navigator.canShare({files:[file]}));
+   if(canShareFile){
      try{
        await navigator.share({files:[file],title:'Záloha ABA'});
+       data.settings.lastBackupAt=new Date().toISOString();
+       try{saveData()}catch(saveError){}
        renderSettings();
        return;
      }catch(e){
@@ -5575,17 +5578,26 @@ async function exportData(){
      }
    }
 
+   // Náhradní cesta: otevře soubor v náhledu, odkud jej lze na iPadu sdílet.
    const url=URL.createObjectURL(blob);
-   const a=document.createElement('a');
-   a.href=url;
-   a.download=fileName;
-   a.style.display='none';
-   document.body.appendChild(a);
-   a.click();
-   setTimeout(()=>{URL.revokeObjectURL(url);a.remove()},3000);
+   const preview=window.open(url,'_blank');
+   if(!preview){
+     const a=document.createElement('a');
+     a.href=url;
+     a.download=fileName;
+     a.target='_blank';
+     a.rel='noopener';
+     a.style.display='none';
+     document.body.appendChild(a);
+     a.click();
+     setTimeout(()=>a.remove(),3000);
+   }
+   setTimeout(()=>URL.revokeObjectURL(url),60000);
+   data.settings.lastBackupAt=new Date().toISOString();
+   try{saveData()}catch(saveError){}
    renderSettings();
  }catch(e){
-   alert('Export zálohy se nepodařilo otevřít. Zavři ABA, znovu ji spusť a zkontroluj verzi 1.8.4.');
+   alert(`Export zálohy se nepodařilo otevřít (${e?.message||'neznámá chyba'}).`);
  }
 }
 function formatBackupDay(iso){

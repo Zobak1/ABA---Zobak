@@ -1987,10 +1987,13 @@ body.codex-open{
 </section>
 
 <script>
-const APP_VERSION='1.8.2';
+const APP_VERSION='1.8.3';
 const KEY='abu_zobak_v1';
 const AUTH_KEY='abu_auth_v1';
 const BACKUP_KEY='abu_internal_backups_v1';
+const DATA_DB_NAME='aba_data_v1';
+const DATA_DB_STORE='snapshots';
+const DATA_UPDATED_KEY='aba_data_updated_at_v1';
 const MAX_INTERNAL_BACKUPS=20;
 const SPORTS=['Fotbal','Lední hokej','Tenis','Jiný sport'];
 const COMPETITIONS = [
@@ -2843,7 +2846,7 @@ function migrateData(raw){
       if(!m.status)m.status='Čeká';
     });
   });
-  d.schemaVersion=28;
+  d.schemaVersion=29;
   return d;
 }
 function loadData(){
@@ -2852,6 +2855,53 @@ function loadData(){
     if(stored)return migrateData(JSON.parse(stored));
   }catch(e){}
   return migrateData(structuredClone(defaultData));
+}
+function openDataDb(){
+  return new Promise((resolve,reject)=>{
+    if(!('indexedDB' in window)){reject(new Error('IndexedDB není podporováno.'));return}
+    const request=indexedDB.open(DATA_DB_NAME,1);
+    request.onupgradeneeded=()=>{
+      const db=request.result;
+      if(!db.objectStoreNames.contains(DATA_DB_STORE))db.createObjectStore(DATA_DB_STORE);
+    };
+    request.onsuccess=()=>resolve(request.result);
+    request.onerror=()=>reject(request.error||new Error('IndexedDB nelze otevřít.'));
+  });
+}
+async function writeDataMirror(serialized,updatedAt=Date.now()){
+  const db=await openDataDb();
+  return new Promise((resolve,reject)=>{
+    const tx=db.transaction(DATA_DB_STORE,'readwrite');
+    tx.objectStore(DATA_DB_STORE).put({serialized,updatedAt},'main');
+    tx.oncomplete=()=>{db.close();resolve()};
+    tx.onerror=()=>{db.close();reject(tx.error||new Error('Data nelze uložit.'))};
+    tx.onabort=()=>{db.close();reject(tx.error||new Error('Uložení bylo přerušeno.'))};
+  });
+}
+async function readDataMirror(){
+  try{
+    const db=await openDataDb();
+    return await new Promise((resolve,reject)=>{
+      const tx=db.transaction(DATA_DB_STORE,'readonly');
+      const request=tx.objectStore(DATA_DB_STORE).get('main');
+      request.onsuccess=()=>resolve(request.result||null);
+      request.onerror=()=>reject(request.error);
+      tx.oncomplete=()=>db.close();
+    });
+  }catch(e){return null}
+}
+async function restoreLatestPersistedData(){
+  const mirror=await readDataMirror();
+  if(!mirror?.serialized)return;
+  const local=localStorage.getItem(KEY);
+  if(local===mirror.serialized)return;
+  const localUpdatedAt=Number(localStorage.getItem(DATA_UPDATED_KEY)||0);
+  if(local && localUpdatedAt>=Number(mirror.updatedAt||0))return;
+  try{
+    data=migrateData(JSON.parse(mirror.serialized));
+    localStorage.setItem(KEY,mirror.serialized);
+    localStorage.setItem(DATA_UPDATED_KEY,String(mirror.updatedAt||Date.now()));
+  }catch(e){}
 }
 function loadInternalBackups(){
   try{
@@ -2870,12 +2920,17 @@ function createInternalBackup(snapshot){
   }catch(e){}
 }
 function saveData(){
-  data.schemaVersion=28;
+  data.schemaVersion=29;
   const previous=localStorage.getItem(KEY);
   if(previous){
     try{createInternalBackup(JSON.parse(previous))}catch(e){}
   }
-  localStorage.setItem(KEY,JSON.stringify(data));
+  const serialized=JSON.stringify(data);
+  const updatedAt=Date.now();
+  localStorage.setItem(KEY,serialized);
+  localStorage.setItem(DATA_UPDATED_KEY,String(updatedAt));
+  void writeDataMirror(serialized,updatedAt).catch(()=>{});
+  return serialized;
 }
 function money(n){return new Intl.NumberFormat('cs-CZ',{maximumFractionDigits:0}).format(Number(n)||0)+' Kč'}
 function moneyExact(n){return new Intl.NumberFormat('cs-CZ',{minimumFractionDigits:2,maximumFractionDigits:2}).format(Number(n)||0)+' Kč'}
@@ -2930,6 +2985,7 @@ async function login(){
   const hash=await derivePassword(password,b64ToBytes(rec.salt));
   document.getElementById('loginPass').value='';
   if(username===rec.username && hash===rec.hash){
+    await restoreLatestPersistedData();
     sessionStorage.setItem('aba_unlocked','1');
     document.getElementById('login').classList.add('hidden');
     document.getElementById('app').classList.remove('hidden');
@@ -5497,15 +5553,28 @@ function deleteWithdrawal(id){
  if(withdrawalEditId===id)withdrawalEditId=null;
  saveData();renderSettings();
 }
-function exportData(){
+async function exportData(){
  data.settings.lastBackupAt=new Date().toISOString();
- saveData();
+ const serialized=saveData();
+ try{await writeDataMirror(serialized,Number(localStorage.getItem(DATA_UPDATED_KEY)||Date.now()))}catch(e){}
+ const fileName=`ABA_zaloha_${new Date().toISOString().slice(0,10)}_v${APP_VERSION}.json`;
  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+ const file=new File([blob],fileName,{type:'application/json'});
+ if(navigator.share && navigator.canShare?.({files:[file]})){
+   try{
+     await navigator.share({files:[file],title:'Záloha ABA'});
+     renderSettings();
+     return;
+   }catch(e){
+     if(e?.name==='AbortError'){renderSettings();return}
+   }
+ }
  const a=document.createElement('a');
  a.href=URL.createObjectURL(blob);
- a.download=`ABA_zaloha_${new Date().toISOString().slice(0,10)}_v${APP_VERSION}.json`;
+ a.download=fileName;
+ document.body.appendChild(a);
  a.click();
- URL.revokeObjectURL(a.href);
+ setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},1000);
  renderSettings();
 }
 function formatBackupDay(iso){
@@ -5543,13 +5612,21 @@ function openInternalBackups(){
 function importData(file){
   if(!file)return;
   const reader=new FileReader();
-  reader.onload=()=>{
+  reader.onload=async()=>{
     try{
-      const imported=migrateData(JSON.parse(reader.result));
+      const raw=JSON.parse(reader.result);
+      if(raw && Array.isArray(raw.tickets) && raw.tickets.length){
+        if(!raw.settings||typeof raw.settings!=='object')raw.settings={};
+        ['ticketLedgerRepair20260809','ticketLedgerRepair20260809V2','ticketLedgerUpgrade20260813','ticketLedgerUpgrade20260816','ticketLedgerUpgrade20260817','ticketLedgerUpgrade20260818V160'].forEach(key=>raw.settings[key]=true);
+      }
+      const imported=migrateData(raw);
       if(!confirm('Obnovit data ze zálohy? Současná data budou nahrazena obsahem zálohy.'))return;
       data=imported;
-      saveData();
-      alert('Záloha byla úspěšně obnovena.');
+      const serialized=saveData();
+      await writeDataMirror(serialized,Number(localStorage.getItem(DATA_UPDATED_KEY)||Date.now()));
+      const verification=localStorage.getItem(KEY);
+      if(verification!==serialized)throw new Error('Kontrola uložených dat selhala.');
+      alert(`Záloha byla úspěšně obnovena a trvale uložena (${data.tickets.length} tiketů).`);
       renderAll();
       showView('dashboard');
     }catch(e){

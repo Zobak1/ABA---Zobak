@@ -1,4 +1,4 @@
-const CACHE='aba-pwa-v1-8-2-sport-directories';
+const CACHE='aba-pwa-v1-8-3-persistent-backup';
 const ASSETS=[
   './',
   './index.html',

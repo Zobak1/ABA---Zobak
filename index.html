@@ -1955,7 +1955,7 @@ body.codex-open{
 
 <header>
   <strong>ABA – Angel Bet Analytics</strong>
-  <div style="display:flex;align-items:center;gap:10px"><span id="versionBadge" class="small">v1.8.3</span><span>Zobák</span><button class="secondary" onclick="logout()">Odhlásit</button></div>
+  <div style="display:flex;align-items:center;gap:10px"><span id="versionBadge" class="small">v1.8.4</span><span>Zobák</span><button class="secondary" onclick="logout()">Odhlásit</button></div>
 </header>
 <div class="layout">
 <nav>
@@ -1987,7 +1987,7 @@ body.codex-open{
 </section>
 
 <script>
-const APP_VERSION='1.8.3';
+const APP_VERSION='1.8.4';
 const KEY='abu_zobak_v1';
 const AUTH_KEY='abu_auth_v1';
 const BACKUP_KEY='abu_internal_backups_v1';
@@ -2894,9 +2894,11 @@ async function restoreLatestPersistedData(){
   const mirror=await readDataMirror();
   if(!mirror?.serialized)return;
   const local=localStorage.getItem(KEY);
-  if(local===mirror.serialized)return;
-  const localUpdatedAt=Number(localStorage.getItem(DATA_UPDATED_KEY)||0);
-  if(local && localUpdatedAt>=Number(mirror.updatedAt||0))return;
+  // Existující data této instalace jsou vždy autoritativní. Safari a aplikace
+  // na ploše mohou mít oddělený localStorage, ale sdílenou IndexedDB; porovnání
+  // pouhých časů proto dříve dovolilo starší kopii přepsat 122 tiketů na 111.
+  // Zrcadlo slouží výhradně k obnově, když místní data úplně chybějí.
+  if(local)return;
   try{
     data=migrateData(JSON.parse(mirror.serialized));
     localStorage.setItem(KEY,mirror.serialized);
@@ -5583,7 +5585,7 @@ async function exportData(){
    setTimeout(()=>{URL.revokeObjectURL(url);a.remove()},3000);
    renderSettings();
  }catch(e){
-   alert('Export zálohy se nepodařilo otevřít. Zavři ABA, znovu ji spusť a zkontroluj verzi 1.8.3.');
+   alert('Export zálohy se nepodařilo otevřít. Zavři ABA, znovu ji spusť a zkontroluj verzi 1.8.4.');
  }
 }
 function formatBackupDay(iso){

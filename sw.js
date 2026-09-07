@@ -1,4 +1,4 @@
-const CACHE='aba-pwa-v1-8-3-persistent-backup';
+const CACHE='aba-pwa-v1-8-4-local-data-authority';
 const ASSETS=[
   './',
   './index.html',

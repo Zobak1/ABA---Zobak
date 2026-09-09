@@ -1,4 +1,4 @@
-const CACHE='aba-pwa-v1-8-9-db-authority';
+const CACHE='aba-pwa-v1-8-10-tennis-both-set';
 const ASSETS=[
   './',
   './index.html',

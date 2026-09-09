@@ -1955,7 +1955,7 @@ body.codex-open{
 
 <header>
   <strong>ABA – Angel Bet Analytics</strong>
-  <div style="display:flex;align-items:center;gap:10px"><span id="versionBadge" class="small">v1.8.7</span><span>Zobák</span><button class="secondary" onclick="logout()">Odhlásit</button></div>
+  <div style="display:flex;align-items:center;gap:10px"><span id="versionBadge" class="small">v1.8.8</span><span>Zobák</span><button class="secondary" onclick="logout()">Odhlásit</button></div>
 </header>
 <div class="layout">
 <nav>
@@ -1987,7 +1987,7 @@ body.codex-open{
 </section>
 
 <script>
-const APP_VERSION='1.8.7';
+const APP_VERSION='1.8.8';
 const KEY='abu_zobak_v1';
 const PRIMARY_KEY='aba_current_data_v2';
 const AUTH_KEY='abu_auth_v1';
@@ -2451,7 +2451,6 @@ const VERIFIED_TICKETS_20260813=[
 ];
 if(!defaultData.consideredMatches){defaultData.consideredMatches=[]}
 if(!defaultData.analyses){defaultData.analyses=[]}
-const HAD_LOCAL_DATA_ON_BOOT=!!(localStorage.getItem(PRIMARY_KEY)||localStorage.getItem(KEY));
 let data=loadData();
 data.tickets.forEach(t=>{
   if(t.status==='Výherní' && Number(t.payout||0)<=0){
@@ -2464,7 +2463,7 @@ data.tickets.forEach(t=>{
     t.payout=0;
   }
 });
-if(HAD_LOCAL_DATA_ON_BOOT)saveData();
+/* Při startu se data pouze načítají; nic se automaticky nepřepisuje. */
 if(!data.consideredMatches){data.consideredMatches=[]}
 if(!data.analyses){data.analyses=[]}
 data.tickets.forEach(t=>t.matches.forEach(m=>{
@@ -2478,7 +2477,7 @@ data.tickets.forEach(t=>t.matches.forEach(m=>{
       if(!m.betCategory)m.betCategory=inferredBet.category;
       if(!m.betType)m.betType=inferredBet.type;
 }));
-if(HAD_LOCAL_DATA_ON_BOOT)saveData();
+/* Při startu se data pouze načítají; nic se automaticky nepřepisuje. */
 let draft=null;
 
 function migrateData(raw){
@@ -2853,11 +2852,12 @@ function migrateData(raw){
 }
 function loadData(){
   try{
-    const stored=localStorage.getItem(PRIMARY_KEY)||localStorage.getItem(KEY);
+    const stored=localStorage.getItem(KEY);
     if(stored)return migrateData(JSON.parse(stored));
   }catch(e){}
   return migrateData(structuredClone(defaultData));
 }
+function dataMirrorKey(){return navigator.standalone===true?'pwa-main-v2':'browser-main-v2'}
 function openDataDb(){
   return new Promise((resolve,reject)=>{
     if(!('indexedDB' in window)){reject(new Error('IndexedDB není podporováno.'));return}
@@ -2874,7 +2874,7 @@ async function writeDataMirror(serialized,updatedAt=Date.now()){
   const db=await openDataDb();
   return new Promise((resolve,reject)=>{
     const tx=db.transaction(DATA_DB_STORE,'readwrite');
-    tx.objectStore(DATA_DB_STORE).put({serialized,updatedAt},'main');
+    tx.objectStore(DATA_DB_STORE).put({serialized,updatedAt},dataMirrorKey());
     tx.oncomplete=()=>{db.close();resolve()};
     tx.onerror=()=>{db.close();reject(tx.error||new Error('Data nelze uložit.'))};
     tx.onabort=()=>{db.close();reject(tx.error||new Error('Uložení bylo přerušeno.'))};
@@ -2885,7 +2885,7 @@ async function readDataMirror(){
     const db=await openDataDb();
     return await new Promise((resolve,reject)=>{
       const tx=db.transaction(DATA_DB_STORE,'readonly');
-      const request=tx.objectStore(DATA_DB_STORE).get('main');
+      const request=tx.objectStore(DATA_DB_STORE).get(dataMirrorKey());
       request.onsuccess=()=>resolve(request.result||null);
       request.onerror=()=>reject(request.error);
       tx.oncomplete=()=>db.close();
@@ -2894,21 +2894,15 @@ async function readDataMirror(){
 }
 async function restoreLatestPersistedData(){
   const mirror=await readDataMirror();
-  if(!mirror?.serialized)return;
-  const local=localStorage.getItem(PRIMARY_KEY)||localStorage.getItem(KEY);
-  // Existující data této instalace jsou vždy autoritativní. Safari a aplikace
-  // na ploše mohou mít oddělený localStorage, ale sdílenou IndexedDB; porovnání
-  // pouhých časů proto dříve dovolilo starší kopii přepsat 122 tiketů na 111.
-  // Zrcadlo slouží výhradně k obnově, když místní data úplně chybějí.
-  if(local){
-    try{data=migrateData(JSON.parse(local));}catch(e){}
-    return;
-  }
+  const local=localStorage.getItem(KEY);
   try{
-    data=migrateData(JSON.parse(mirror.serialized));
-    localStorage.setItem(PRIMARY_KEY,mirror.serialized);
-    localStorage.setItem(KEY,mirror.serialized);
-    localStorage.setItem(DATA_UPDATED_KEY,String(mirror.updatedAt||Date.now()));
+    if(mirror?.serialized){
+      data=migrateData(JSON.parse(mirror.serialized));
+      localStorage.setItem(KEY,mirror.serialized);
+      localStorage.setItem(DATA_UPDATED_KEY,String(mirror.updatedAt||Date.now()));
+      return;
+    }
+    if(local)data=migrateData(JSON.parse(local));
   }catch(e){}
 }
 function loadInternalBackups(){
@@ -2929,13 +2923,12 @@ function createInternalBackup(snapshot){
 }
 function saveData(){
   data.schemaVersion=29;
-  const previous=localStorage.getItem(PRIMARY_KEY)||localStorage.getItem(KEY);
+  const previous=localStorage.getItem(KEY);
   if(previous){
     try{createInternalBackup(JSON.parse(previous))}catch(e){}
   }
   const serialized=JSON.stringify(data);
   const updatedAt=Date.now();
-  localStorage.setItem(PRIMARY_KEY,serialized);
   localStorage.setItem(KEY,serialized);
   localStorage.setItem(DATA_UPDATED_KEY,String(updatedAt));
   void writeDataMirror(serialized,updatedAt).catch(()=>{});
@@ -2995,7 +2988,7 @@ async function login(){
   document.getElementById('loginPass').value='';
   if(username===rec.username && hash===rec.hash){
     await restoreLatestPersistedData();
-    const persisted=localStorage.getItem(PRIMARY_KEY)||localStorage.getItem(KEY);
+    const persisted=localStorage.getItem(KEY);
     if(persisted){
       try{data=migrateData(JSON.parse(persisted));}catch(e){}
     }else{
@@ -5660,7 +5653,7 @@ function importData(file){
       data=imported;
       const serialized=saveData();
       await writeDataMirror(serialized,Number(localStorage.getItem(DATA_UPDATED_KEY)||Date.now()));
-      const verification=localStorage.getItem(PRIMARY_KEY);
+      const verification=localStorage.getItem(KEY);
       if(verification!==serialized)throw new Error('Kontrola uložených dat selhala.');
       alert(`Záloha byla úspěšně obnovena a trvale uložena (${data.tickets.length} tiketů).`);
       renderAll();

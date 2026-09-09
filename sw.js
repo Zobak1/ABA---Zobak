@@ -1,4 +1,4 @@
-const CACHE='aba-pwa-v1-8-7-authoritative-data';
+const CACHE='aba-pwa-v1-8-8-pwa-database';
 const ASSETS=[
   './',
   './index.html',

@@ -1,4 +1,4 @@
-const CACHE='aba-pwa-v1-8-6-safe-login';
+const CACHE='aba-pwa-v1-8-7-authoritative-data';
 const ASSETS=[
   './',
   './index.html',

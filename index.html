@@ -1955,7 +1955,7 @@ body.codex-open{
 
 <header>
   <strong>ABA – Angel Bet Analytics</strong>
-  <div style="display:flex;align-items:center;gap:10px"><span id="versionBadge" class="small">v1.8.8</span><span>Zobák</span><button class="secondary" onclick="logout()">Odhlásit</button></div>
+  <div style="display:flex;align-items:center;gap:10px"><span id="versionBadge" class="small">v1.8.9</span><span>Zobák</span><button class="secondary" onclick="logout()">Odhlásit</button></div>
 </header>
 <div class="layout">
 <nav>
@@ -1987,7 +1987,7 @@ body.codex-open{
 </section>
 
 <script>
-const APP_VERSION='1.8.8';
+const APP_VERSION='1.8.9';
 const KEY='abu_zobak_v1';
 const PRIMARY_KEY='aba_current_data_v2';
 const AUTH_KEY='abu_auth_v1';
@@ -2929,8 +2929,10 @@ function saveData(){
   }
   const serialized=JSON.stringify(data);
   const updatedAt=Date.now();
-  localStorage.setItem(KEY,serialized);
-  localStorage.setItem(DATA_UPDATED_KEY,String(updatedAt));
+  try{
+    localStorage.setItem(KEY,serialized);
+    localStorage.setItem(DATA_UPDATED_KEY,String(updatedAt));
+  }catch(e){}
   void writeDataMirror(serialized,updatedAt).catch(()=>{});
   return serialized;
 }
@@ -2988,12 +2990,6 @@ async function login(){
   document.getElementById('loginPass').value='';
   if(username===rec.username && hash===rec.hash){
     await restoreLatestPersistedData();
-    const persisted=localStorage.getItem(KEY);
-    if(persisted){
-      try{data=migrateData(JSON.parse(persisted));}catch(e){}
-    }else{
-      saveData();
-    }
     sessionStorage.setItem('aba_unlocked','1');
     document.getElementById('login').classList.add('hidden');
     document.getElementById('app').classList.remove('hidden');
@@ -5653,8 +5649,8 @@ function importData(file){
       data=imported;
       const serialized=saveData();
       await writeDataMirror(serialized,Number(localStorage.getItem(DATA_UPDATED_KEY)||Date.now()));
-      const verification=localStorage.getItem(KEY);
-      if(verification!==serialized)throw new Error('Kontrola uložených dat selhala.');
+      const verification=await readDataMirror();
+      if(!verification||verification.serialized!==serialized)throw new Error('Kontrola uložených dat selhala.');
       alert(`Záloha byla úspěšně obnovena a trvale uložena (${data.tickets.length} tiketů).`);
       renderAll();
       showView('dashboard');

@@ -1,4 +1,4 @@
-const CACHE='aba-pwa-v1-8-5-ios-export';
+const CACHE='aba-pwa-v1-8-6-safe-login';
 const ASSETS=[
   './',
   './index.html',

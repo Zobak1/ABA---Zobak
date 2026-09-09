@@ -1955,7 +1955,7 @@ body.codex-open{
 
 <header>
   <strong>ABA – Angel Bet Analytics</strong>
-  <div style="display:flex;align-items:center;gap:10px"><span id="versionBadge" class="small">v1.8.5</span><span>Zobák</span><button class="secondary" onclick="logout()">Odhlásit</button></div>
+  <div style="display:flex;align-items:center;gap:10px"><span id="versionBadge" class="small">v1.8.6</span><span>Zobák</span><button class="secondary" onclick="logout()">Odhlásit</button></div>
 </header>
 <div class="layout">
 <nav>
@@ -1987,7 +1987,7 @@ body.codex-open{
 </section>
 
 <script>
-const APP_VERSION='1.8.5';
+const APP_VERSION='1.8.6';
 const KEY='abu_zobak_v1';
 const AUTH_KEY='abu_auth_v1';
 const BACKUP_KEY='abu_internal_backups_v1';
@@ -2450,6 +2450,7 @@ const VERIFIED_TICKETS_20260813=[
 ];
 if(!defaultData.consideredMatches){defaultData.consideredMatches=[]}
 if(!defaultData.analyses){defaultData.analyses=[]}
+const HAD_LOCAL_DATA_ON_BOOT=!!localStorage.getItem(KEY);
 let data=loadData();
 data.tickets.forEach(t=>{
   if(t.status==='Výherní' && Number(t.payout||0)<=0){
@@ -2462,7 +2463,7 @@ data.tickets.forEach(t=>{
     t.payout=0;
   }
 });
-saveData();
+if(HAD_LOCAL_DATA_ON_BOOT)saveData();
 if(!data.consideredMatches){data.consideredMatches=[]}
 if(!data.analyses){data.analyses=[]}
 data.tickets.forEach(t=>t.matches.forEach(m=>{
@@ -2476,7 +2477,7 @@ data.tickets.forEach(t=>t.matches.forEach(m=>{
       if(!m.betCategory)m.betCategory=inferredBet.category;
       if(!m.betType)m.betType=inferredBet.type;
 }));
-saveData()
+if(HAD_LOCAL_DATA_ON_BOOT)saveData();
 let draft=null;
 
 function migrateData(raw){
@@ -2988,6 +2989,12 @@ async function login(){
   document.getElementById('loginPass').value='';
   if(username===rec.username && hash===rec.hash){
     await restoreLatestPersistedData();
+    const persisted=localStorage.getItem(KEY);
+    if(persisted){
+      try{data=migrateData(JSON.parse(persisted));}catch(e){}
+    }else{
+      saveData();
+    }
     sessionStorage.setItem('aba_unlocked','1');
     document.getElementById('login').classList.add('hidden');
     document.getElementById('app').classList.remove('hidden');

@@ -30,4 +30,7 @@ jobs:
             --retry 2 \
             --header "apikey: $SUPABASE_ANON_KEY" \
             --header "Authorization: Bearer $SUPABASE_ANON_KEY" \
-            "$SUPABASE_URL/rest/v1/"
+            "$SUPABASE_URL/auth/v1/health"
+
+          echo ""
+          echo "Supabase healthcheck completed"
